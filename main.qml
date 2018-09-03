@@ -22,11 +22,6 @@ Rectangle {
         TextField {
             id: qinput
             onAccepted: {
-                var socketmessage = {};
-                socketmessage.type = "recognizer_loop:utterance";
-                socketmessage.data = {};
-                socketmessage.data.utterances = [qinput.text];
-//                mycroft.sendMessage(JSON.stringify(socketmessage));
                 mycroft.sendText(qinput.text)
             }
         }

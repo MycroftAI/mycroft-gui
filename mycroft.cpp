@@ -43,6 +43,8 @@ void Mycroft::sendRequest(const QString &json)
         qWarning() << "mycroft connection not open!";
         return;
     }
+
+    qDebug() << "REQUEST" << json;
     m_webSocket.sendTextMessage(json);
 }
 
@@ -50,7 +52,7 @@ void Mycroft::sendText(const QString &message)
 {
     QJsonObject root;
     root["type"] = "recognizer_loop:utterance";
-    root["data"] = QJsonObject({{"utterances", message}});
+    root["data"] = QJsonObject({{"utterances", QJsonArray({message})}});
 
     QJsonDocument doc(root);
     sendRequest(doc.toJson());
