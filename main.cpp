@@ -1,7 +1,7 @@
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <QQuickView>
 #include <QtQml>
-#include "wsocket.h"
+#include "mycroft.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,11 +9,10 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<WSocket>("WSocket", 1, 0, "WSocket");
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty())
-        return -1;
+    qmlRegisterType<Mycroft>("Mycroft", 1, 0, "Mycroft");
+    QQuickView view;
+    view.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
+    view.show();
 
     return app.exec();
 }
