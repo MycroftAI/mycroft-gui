@@ -23,16 +23,42 @@ void Mycroft::onConnected()
 
 void Mycroft::onTextMessageReceived(const QString &message)
 {
-     qDebug() << message;
-
     auto doc = QJsonDocument::fromJson(message.toLatin1());
-    qDebug() << doc["type"].toString();
+
+    auto type = doc["type"].toString();
+
+    //filter out the noise so we can print stuff later
+    if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
+        return;
+    }
+
+    if (type == QLatin1String("recognizer_loop:audio_output_start")) {
+        m_isSpeaking = true;
+        emit isSpeakingChanged();
+        return;
+    }
+    if (type == QLatin1String("recognizer_loop:audio_output_end")) {
+        m_isSpeaking = false;
+        emit isSpeakingChanged();
+        return;
+    }
+
+    if (type == "mycroft.skill.handler.start") {
+        m_currentSkill = doc["data"]["name"].toString();
+        emit currentSkillChanged();
+        qDebug() << doc["data"]["name"].toString();
+    }
+    if (type == "mycroft.skill.handler.complete") {
+        m_currentSkill = QString();
+        emit currentSkillChanged();
+    }
+    if (type == "speak") {
+        emit skillDataRecieved(m_currentSkill, doc["data"].toVariant().toMap());
+    }
+    qDebug() << message;
+
 
 //     20:18:01.759 Mycroft::onTextMessageReceived "{\"type\": \"speak\", \"data\": {\"utterance\": \"Why did the programmer quit his job? Because they didn't get arrays.\", \"expect_response\": false}, \"context\": {\"target\": null}}"
-
-// 20:18:02.041 Mycroft::onTextMessageReceived "{\"type\": \"recognizer_loop:audio_output_start\", \"data\": {}, \"context\": null}"
-//
-//     20:18:06.859 Mycroft::onTextMessageReceived "{\"type\": \"recognizer_loop:audio_output_end\", \"data\": {}, \"context\": null}"
 
 
 }
@@ -43,8 +69,6 @@ void Mycroft::sendRequest(const QString &json)
         qWarning() << "mycroft connection not open!";
         return;
     }
-
-    qDebug() << "REQUEST" << json;
     m_webSocket.sendTextMessage(json);
 }
 
@@ -84,11 +108,10 @@ Mycroft::Status Mycroft::status() const
     }
 }
 
-QVariantMap Mycroft::currentSkillData() const
+QString Mycroft::currentSkill() const
 {
-    return m_currentSkillData;
+    return m_currentSkill;
 }
-
 bool Mycroft::isSpeaking() const
 {
     return m_isSpeaking;

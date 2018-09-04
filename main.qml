@@ -10,7 +10,8 @@ Rectangle {
 
     Mycroft {
         id: mycroft
-        onStatusChanged: {
+        onSkillDataRecieved: {
+            text.text = data["utterance"];
         }
     }
 
@@ -25,5 +26,9 @@ Rectangle {
                 mycroft.sendText(qinput.text)
             }
         }
+    }
+
+    Text {
+        id: text
     }
 }
