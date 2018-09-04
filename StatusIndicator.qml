@@ -40,6 +40,7 @@ Item {
                 //this to make sure it will always do a complete loop when going to waiting
                 rotation: 359
                 graphicsColor: Kirigami.Theme.highlightedTextColor
+                backgroundColor: Kirigami.Theme.highlightColor
             }
             PropertyChanges {
                 target: root
@@ -52,6 +53,7 @@ Item {
                 target: innerCircle
                 rotation: 0
                 graphicsColor: Kirigami.Theme.highlightedTextColor
+                backgroundColor: Kirigami.Theme.highlightColor
             }
             PropertyChanges {
                 target: root
@@ -65,6 +67,7 @@ Item {
                 explicit: true
                 rotation: -90
                 graphicsColor: Kirigami.Theme.positiveTextColor
+                backgroundColor: Qt.tint(Kirigami.Theme.backgroundColor, Qt.rgba(Kirigami.Theme.positiveTextColor.r, Kirigami.Theme.positiveTextColor.g, Kirigami.Theme.positiveTextColor.b, 0.4))
             }
             PropertyChanges {
                 target: root
@@ -78,6 +81,7 @@ Item {
                 explicit: true
                 rotation: +90
                 graphicsColor: Kirigami.Theme.negativeTextColor
+                backgroundColor: Qt.tint(Kirigami.Theme.backgroundColor, Qt.rgba(Kirigami.Theme.negativeTextColor.r, Kirigami.Theme.negativeTextColor.g, Kirigami.Theme.negativeTextColor.b, 0.4))
             }
             PropertyChanges {
                 target: root
@@ -116,7 +120,7 @@ Item {
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)
         height: width
-        color: Kirigami.Theme.highlightColor
+        color: innerCircle.backgroundColor
         radius: height
         layer.enabled: true
         layer.effect: DropShadow {
@@ -161,8 +165,15 @@ Item {
     OpacityMask {
         id: innerCircle
         property color graphicsColor
+        property color backgroundColor
         property int animationLength: 1000
         Behavior on graphicsColor {
+            ColorAnimation {
+                duration: innerCircle.animationLength
+                easing.type: Easing.InOutCubic
+            }
+        }
+        Behavior on backgroundColor {
             ColorAnimation {
                 duration: innerCircle.animationLength
                 easing.type: Easing.InOutCubic
