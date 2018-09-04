@@ -19,8 +19,10 @@ StackView
                     "title": "",
                     "content": data["utterance"]
                 });
+                break;
             case "TimeSkill.handle_query_time":
                 mainStack.push("TimeDelegate.qml");
+                break;
             }
 
         }
