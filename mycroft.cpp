@@ -55,6 +55,9 @@ void Mycroft::onTextMessageReceived(const QString &message)
     if (type == "speak") {
         emit skillDataRecieved(m_currentSkill, doc["data"].toVariant().toMap());
     }
+    if (type == QLatin1String("metadata")) {
+        emit skillDataRecieved(m_currentSkill, doc["data"].toVariant().toMap());
+    }
 }
 
 void Mycroft::sendRequest(const QString &json)
