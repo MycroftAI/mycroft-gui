@@ -15,13 +15,13 @@ StackView
         onSkillDataRecieved: {
             switch(skill) {
             case "JokingSkill.handle_general_joke":
-                mainStack.push("TextDelegate.qml", {
+                mainStack.push("skill-uis/Text/main.qml", {
                     "title": "",
                     "content": data["utterance"]
                 });
                 break;
             case "TimeSkill.handle_query_time":
-                mainStack.push("TimeDelegate.qml");
+                mainStack.push("skill-uis/TimeSkill/main.qml");
                 break;
             }
 

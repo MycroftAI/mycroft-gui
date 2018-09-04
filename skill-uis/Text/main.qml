@@ -3,6 +3,8 @@ import QtQuick 2.4
 import QtQuick.Controls 2.0
 import org.kde.kirigami 2.4 as Kirigami
 
+import "../components"
+
 BasicDelegateBase {
     backgroundImage: "/opt/kde5/share/wallpapers/Kite/contents/images/1920x1200.jpg"
 

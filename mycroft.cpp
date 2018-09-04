@@ -59,6 +59,9 @@ void Mycroft::onTextMessageReceived(const QString &message)
         emit isListeningChanged();
         return;
     }
+    if (type == QLatin1String("mycroft.speech.recognition.unknown")) {
+        emit notUnderstood();
+    }
 
     if (type == "mycroft.skill.handler.start") {
         m_currentSkill = doc["data"]["name"].toString();
