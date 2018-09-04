@@ -34,7 +34,8 @@ Item {
             name: "idle"
             PropertyChanges {
                 target: innerCircle
-                rotation: 360
+                //this to make sure it will always do a complete loop when going to waiting
+                rotation: 359
                 graphicsColor: Kirigami.Theme.highlightedTextColor
             }
             PropertyChanges {
