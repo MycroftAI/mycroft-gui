@@ -34,4 +34,11 @@ Rectangle {
             Layout.fillWidth: true
         }
     }
+    StatusIndicator {
+        visible: true
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: parent.bottom
+        }
+    }
 }
