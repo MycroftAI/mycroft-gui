@@ -39,10 +39,6 @@ Rectangle {
         visible: true
         mycroftController: mycroft
 
-        onStateChanged: {
-            console.log(state);
-        }
-
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom

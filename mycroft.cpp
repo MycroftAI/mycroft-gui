@@ -33,6 +33,12 @@ void Mycroft::onTextMessageReceived(const QString &message)
         return;
     }
 
+    if (type == QLatin1String("intent_failure")) {
+        m_isListening = false;
+        emit isListeningChanged();
+        emit notUnderstood();qWarning()<<"HHHHHH";
+        return;
+    }
     if (type == QLatin1String("recognizer_loop:audio_output_start")) {
         m_isSpeaking = true;
         emit isSpeakingChanged();

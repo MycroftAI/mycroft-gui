@@ -86,7 +86,11 @@ Item {
             }
         }
         onNotUnderstood: root.state = "error";
-        onSkillDataRecieved: root.state = "ok";
+        onSkillDataRecieved: {
+            if (skill.length > 0) {
+                root.state = "ok";
+            }
+        }
     }
     onStateChanged: outerCircleRotation.running = true;
 
