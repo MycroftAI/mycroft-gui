@@ -46,6 +46,7 @@ Rectangle {
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
+            bottomMargin: Kirigami.Units.largeSpacing
         }
     }
 }
