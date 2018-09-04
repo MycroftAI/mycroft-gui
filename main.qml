@@ -20,15 +20,19 @@ Rectangle {
     }
 
     ColumnLayout {
+        anchors.fill: parent
         TextField {
+            Layout.fillWidth: true
             id: qinput
             onAccepted: {
                 mycroft.sendText(qinput.text)
             }
         }
-    }
-
-    Text {
-        id: text
+        MainView {
+            id: mainView
+            mycroft: mycroft
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
     }
 }
