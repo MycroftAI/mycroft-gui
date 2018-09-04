@@ -20,6 +20,7 @@ StackView
                     "content": data["utterance"]
                 });
             }
+
         }
 
         onSpeakingChanged: {

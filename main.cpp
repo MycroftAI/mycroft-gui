@@ -9,6 +9,9 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    qputenv("QT_QUICK_CONTROLS_THEME", "plasma");
+    qputenv("QT_WAYLAND_FORCE_DPI", "300");
+
     QGuiApplication app(argc, argv);
     QCommandLineParser parser;
 
@@ -20,14 +23,12 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Mycroft>("Mycroft", 1, 0, "Mycroft");
 
-
     QQuickView view;
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
 
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     if (width > 0) {
-        qDebug() << "setting width";
         view.setWidth(width);
         view.setMinimumWidth(width);
         view.setMaximumWidth(width);

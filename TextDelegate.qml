@@ -17,19 +17,22 @@ BasicDelegateBase {
         }
         Kirigami.Heading {
             id: title
+            Layout.fillWidth: true
             level: 1
             text: modelData.title
             wrapMode: Text.WordWrap
+            visible: text.length > 0
         }
-        Label {
+        Kirigami.Label {
             id: content
+            Layout.fillWidth: true
             text: modelData.text
             wrapMode: Text.WordWrap
             elide: Text.ElideRight
+            color: "#EEE"
         }
         Item {
             Layout.fillHeight: true
         }
     }
-
 }

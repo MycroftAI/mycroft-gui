@@ -27,7 +27,7 @@ void Mycroft::onTextMessageReceived(const QString &message)
 
     auto type = doc["type"].toString();
 
-    //filter out the noise so we can print stuff later
+    //filter out the noise so we can print debug stuff later without drowning in noise
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
         return;
     }
@@ -46,7 +46,6 @@ void Mycroft::onTextMessageReceived(const QString &message)
     if (type == "mycroft.skill.handler.start") {
         m_currentSkill = doc["data"]["name"].toString();
         emit currentSkillChanged();
-        qDebug() << doc["data"]["name"].toString();
     }
     if (type == "mycroft.skill.handler.complete") {
         m_currentSkill = QString();
@@ -55,12 +54,6 @@ void Mycroft::onTextMessageReceived(const QString &message)
     if (type == "speak") {
         emit skillDataRecieved(m_currentSkill, doc["data"].toVariant().toMap());
     }
-    qDebug() << message;
-
-
-//     20:18:01.759 Mycroft::onTextMessageReceived "{\"type\": \"speak\", \"data\": {\"utterance\": \"Why did the programmer quit his job? Because they didn't get arrays.\", \"expect_response\": false}, \"context\": {\"target\": null}}"
-
-
 }
 
 void Mycroft::sendRequest(const QString &json)
