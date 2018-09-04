@@ -12,15 +12,6 @@ Rectangle {
 
     Mycroft {
         id: mycroft
-
-        onListeningChanged: {
-            if(mycroft.listening) {
-                si.state = "waiting"
-            } else {
-                si.state = "ok"
-            }
-        }
-
     }
 
     Component.onCompleted: {
@@ -46,6 +37,7 @@ Rectangle {
     StatusIndicator {
         id: si
         visible: true
+        mycroftController: mycroft
 
         onStateChanged: {
             console.log(state);

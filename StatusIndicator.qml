@@ -22,11 +22,14 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import org.kde.kirigami 2.5 as Kirigami
+import Mycroft 1.0 as Mycroft
 
 Item {
     id: root
     width: Kirigami.Units.gridUnit * 5
     height: width
+
+    property Mycroft.Mycroft mycroftController
 
     state: "idle"
     states: [
@@ -75,6 +78,16 @@ Item {
         }
     ]
 
+    Connections {
+        target: mycroftController
+        onListeningChanged: {
+            if (mycroftController.listening) {
+                root.state = "waiting";
+            }
+        }
+        onNotUnderstood: root.state = "error";
+        onSkillDataRecieved: root.state = "ok";
+    }
     onStateChanged: outerCircleRotation.running = true;
 
     Rectangle {
