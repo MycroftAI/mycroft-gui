@@ -8,6 +8,7 @@ class Mycroft : public QObject
     Q_OBJECT
     Q_PROPERTY(Status status READ status NOTIFY socketStatusChanged)
     Q_PROPERTY(bool speaking READ isSpeaking NOTIFY isSpeakingChanged)
+    Q_PROPERTY(bool listening READ isListening NOTIFY isListeningChanged)
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
 
     Q_ENUMS(Status)
@@ -21,6 +22,7 @@ public:
     };
     explicit Mycroft(QObject *parent = nullptr);
     bool isSpeaking() const;
+    bool isListening() const;
     Status status() const;
     QString currentSkill() const;
 
@@ -28,6 +30,10 @@ signals:
     void socketStatusChanged();
     void closed();
     void isSpeakingChanged();
+    void isListeningChanged();
+
+    void notUnderstood();
+
     void currentSkillChanged();
     void skillDataRecieved(const QString &skill, const QVariantMap &data);
 
@@ -44,5 +50,6 @@ private:
 
     QString m_currentSkill;
     bool m_isSpeaking = false;
+    bool m_isListening = false;
 };
 

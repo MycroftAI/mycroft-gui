@@ -77,19 +77,6 @@ Item {
 
     onStateChanged: outerCircleRotation.running = true;
 
-MouseArea {
-    anchors.fill:parent
-    onClicked: {
-        if (root.state == "waiting")
-            root.state = "ok";
-        else if (root.state == "ok")
-            root.state = "error";
-        else
-            root.state = "waiting";
-    }
-}
-
-
     Rectangle {
         id: background
         anchors.centerIn: parent

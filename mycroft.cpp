@@ -26,6 +26,7 @@ void Mycroft::onTextMessageReceived(const QString &message)
     auto doc = QJsonDocument::fromJson(message.toLatin1());
 
     auto type = doc["type"].toString();
+    qDebug() << message;
 
     //filter out the noise so we can print debug stuff later without drowning in noise
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
@@ -42,10 +43,19 @@ void Mycroft::onTextMessageReceived(const QString &message)
         emit isSpeakingChanged();
         return;
     }
+    if (type == QLatin1String("recognizer_loop:record_begin")) {
+        m_isListening = true;
+        emit isListeningChanged();
+        return;
+    }
+    if (type == QLatin1String("recognizer_loop:record_end")) {
+        m_isListening = false;
+        emit isListeningChanged();
+        return;
+    }
 
     if (type == "mycroft.skill.handler.start") {
         m_currentSkill = doc["data"]["name"].toString();
-        qDebug() << m_currentSkill;
         emit currentSkillChanged();
     }
     if (type == "mycroft.skill.handler.complete") {
@@ -112,4 +122,8 @@ QString Mycroft::currentSkill() const
 bool Mycroft::isSpeaking() const
 {
     return m_isSpeaking;
+}
+bool Mycroft::isListening() const
+{
+    return m_isListening;
 }

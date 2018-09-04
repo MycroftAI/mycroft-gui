@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     qputenv("QT_QUICK_CONTROLS_THEME", "plasma");
-    qputenv("QT_WAYLAND_FORCE_DPI", "300");
+    qputenv("QT_WAYLAND_FORCE_DPI", "200");
 
     QGuiApplication app(argc, argv);
     QCommandLineParser parser;
