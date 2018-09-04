@@ -66,6 +66,10 @@ Item {
                 rotation: -90
                 graphicsColor: Kirigami.Theme.positiveTextColor
             }
+            PropertyChanges {
+                target: root
+                opacity: 1
+            }
         },
         State {
             name: "error"
@@ -75,6 +79,10 @@ Item {
                 rotation: +90
                 graphicsColor: Kirigami.Theme.negativeTextColor
             }
+            PropertyChanges {
+                target: root
+                opacity: 1
+            }
         }
     ]
 
@@ -83,6 +91,8 @@ Item {
         onListeningChanged: {
             if (mycroftController.listening) {
                 root.state = "waiting";
+            } else {
+                fadeTimer.restart();
             }
         }
         onNotUnderstood: root.state = "error";
@@ -92,7 +102,14 @@ Item {
             }
         }
     }
-    onStateChanged: outerCircleRotation.running = true;
+    onStateChanged: {
+        outerCircleRotation.running = true;
+        switch (root.state) {
+        case "ok":
+        case "error":
+            fadeTimer.restart();
+        }
+    }
 
     Rectangle {
         id: background
@@ -204,7 +221,6 @@ Item {
     Timer {
         id: fadeTimer
         interval: 3000
-        running: root.state == "ok" || root.state == "error"
         repeat: false
         onTriggered: root.state = "idle"
     }
