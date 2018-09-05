@@ -15,13 +15,10 @@ StackView
         onSkillDataRecieved: {
             switch(skill) {
             case "JokingSkill.handle_general_joke":
-                mainStack.push("skill-uis/Text/main.qml", {
-                    "title": "",
-                    "content": data["utterance"]
-                });
+                mainStack.push("skill-uis/Fallback/main.qml", data);
                 break;
             case "TimeSkill.handle_query_time":
-                mainStack.push("skill-uis/TimeSkill/main.qml");
+                mainStack.push("skill-uis/TimeSkill/main.qml", data);
                 break;
             case "WikipediaSkill.handle_intent":
                 if(data["utterance"]) return;

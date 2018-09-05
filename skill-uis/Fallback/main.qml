@@ -8,22 +8,13 @@ import "../components"
 BasicDelegateBase {
     backgroundImage: "/opt/kde5/share/wallpapers/Kite/contents/images/1920x1200.jpg"
 
-    property alias title: title.text
-    property alias content: content.text
+    property alias utterance: content.text
 
     ColumnLayout { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors.fill: parent
         anchors.margins: Kirigami.Units.largeSpacing
         Item {
             Layout.fillHeight: true
-        }
-        Kirigami.Heading {
-            id: title
-            Layout.fillWidth: true
-            level: 1
-            text: modelData.title
-            wrapMode: Text.WordWrap
-            visible: text.length > 0
         }
         Kirigami.Label {
             id: content
