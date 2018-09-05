@@ -35,7 +35,10 @@ StackView
 
             var _url = skillLoader.uiForMetadataType(data["type"]);
             if (!_url) {
-                return;
+                if (mainStack.depth > 1) {
+                    mainStack.pop();
+                    mainStack.metadataType = "";
+                }
             }
 
             if (mainStack.metadataType == data["type"]) {
@@ -53,6 +56,7 @@ StackView
             if (!Mycroft.MycroftController.speaking) {
                 if (mainStack.depth > 1) {
                     mainStack.pop();
+                    mainStack.metadataType = "";
                 }
             }
         }
