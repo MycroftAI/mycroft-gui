@@ -23,8 +23,10 @@ StackView
             case "TimeSkill.handle_query_time":
                 mainStack.push("skill-uis/TimeSkill/main.qml");
                 break;
+            case "WikipediaSkill.handle_intent":
+                if(data["utterance"]) return;
+                mainStack.push("skill-uis/Wikipedia/main.qml", data);
             }
-
         }
 
         onSpeakingChanged: {
