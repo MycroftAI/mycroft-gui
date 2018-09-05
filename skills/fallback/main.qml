@@ -22,7 +22,6 @@ BasicDelegateBase {
             text: modelData.text
             wrapMode: Text.WordWrap
             elide: Text.ElideRight
-            color: "#EEE"
         }
         Item {
             Layout.fillHeight: true

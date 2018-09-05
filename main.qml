@@ -8,7 +8,7 @@ Rectangle {
     visible: true
     width: 640
     height: 480
-//     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
     Mycroft {
         id: mycroft
