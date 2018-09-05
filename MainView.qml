@@ -10,25 +10,33 @@ StackView
 
     initialItem: Idler {}
 
+    SkillLoader {
+        id: skillLoader
+    }
+
     Connections {
         target: mycroft
         onSkillDataRecieved: {
-            switch(skill) {
+            //These few lines are a cludge to make existing skills work that don't have metadata (yet)
+            switch(mycroft.currentSkill) {
             case "JokingSkill.handle_general_joke":
-                mainStack.push("skill-uis/Fallback/main.qml", data);
+                data["type"] = "Fallback"
                 break;
             case "TimeSkill.handle_query_time":
-                mainStack.push("skill-uis/TimeSkill/main.qml", data);
-                break;
-            case "WikipediaSkill.handle_intent":
-                if(data["utterance"]) return;
-                mainStack.push("skill-uis/Wikipedia/main.qml", data);
-                break;
-            case "YoutubeSkill.youtube":
-                if(data["utterance"]) return;
-                mainStack.push("skill-uis/Video/main.qml", data);
+                data["type"] = "Time"
                 break;
             }
+
+            if (!data["type"]) {
+                return;
+            }
+
+            var url = skillLoader.uiForMetadataType(data[type]);
+            if (!url) {
+                return;
+            }
+
+            mainStack.push(url, data);
         }
 
         onSpeakingChanged: {

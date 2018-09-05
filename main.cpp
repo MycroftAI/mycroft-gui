@@ -3,7 +3,9 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QtQml>
+
 #include "mycroft.h"
+#include "skillloader.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +24,8 @@ int main(int argc, char *argv[])
     parser.process(app);
 
     qmlRegisterType<Mycroft>("Mycroft", 1, 0, "Mycroft");
+    qmlRegisterType<SkillLoader>("Mycroft", 1, 0, "SkillLoader");
+
 
     QQuickView view;
     int width = parser.value(widthOption).toInt();
