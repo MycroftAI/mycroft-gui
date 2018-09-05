@@ -9,6 +9,7 @@ StackView
     id: mainStack
 
     initialItem: Idler {}
+    property string metadataType
 
     SkillLoader {
         id: skillLoader
@@ -27,17 +28,26 @@ StackView
                 break;
             }
 
+
             if (!data["type"]) {
                 return;
             }
 
+
             var _url = skillLoader.uiForMetadataType(data["type"]);
-            console.log(_url);
             if (!_url) {
                 return;
             }
 
-            mainStack.push(_url, data);
+            if (mainStack.metadataType == data["type"]) {
+                Object.assign(mainStack.currentItem, data);
+            } else {
+                if (mainStack.depth > 1) {
+                    mainStack.pop();
+                }
+                mainStack.metadataType = data["type"];
+                mainStack.push(_url, data);
+            }
         }
 
         onSpeakingChanged: {
