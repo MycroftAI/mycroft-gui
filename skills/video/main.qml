@@ -10,7 +10,7 @@ import "../components"
 BasicDelegateBase {
     backgroundImage: "https://source.unsplash.com/random"
     
-    property alias content: video.source
+    property alias video: video.source
 
     Item { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors.fill: parent
@@ -18,7 +18,6 @@ BasicDelegateBase {
         Video {
             id: video
             anchors.fill: parent
-            source: modelData.video
             focus: true
             fillMode: VideoOutput.Stretch
             autoPlay: true
