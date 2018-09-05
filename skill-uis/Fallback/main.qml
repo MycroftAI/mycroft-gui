@@ -6,7 +6,7 @@ import org.kde.kirigami 2.4 as Kirigami
 import "../components"
 
 BasicDelegateBase {
-    backgroundImage: "/opt/kde5/share/wallpapers/Kite/contents/images/1920x1200.jpg"
+    backgroundImage: "https://source.unsplash.com/random"
 
     property alias utterance: content.text
 

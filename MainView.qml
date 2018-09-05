@@ -23,6 +23,11 @@ StackView
             case "WikipediaSkill.handle_intent":
                 if(data["utterance"]) return;
                 mainStack.push("skill-uis/Wikipedia/main.qml", data);
+                break;
+            case "YoutubeSkill.youtube":
+                if(data["utterance"]) return;
+                mainStack.push("skill-uis/Video/main.qml", data);
+                break;
             }
         }
 
