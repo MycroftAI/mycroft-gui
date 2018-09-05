@@ -7,7 +7,9 @@ StackView
 
     id: mainStack
 
-    initialItem: Idler {}
+    initialItem: Idler {
+        id: initialPage
+    }
     property string metadataType
 
     Mycroft.SkillLoader {
@@ -44,18 +46,19 @@ StackView
             if (mainStack.metadataType == data["type"]) {
                 Object.assign(mainStack.currentItem, data);
             } else {
-                if (mainStack.depth > 1) {
-                    mainStack.pop();
-                }
                 mainStack.metadataType = data["type"];
-                mainStack.push(_url, data);
+                if (mainStack.depth > 1) {
+                    mainStack.replace(_url, data);
+                } else {
+                    mainStack.push(_url, data);
+                }
             }
         }
 
         onSpeakingChanged: {
             if (!Mycroft.MycroftController.speaking) {
                 if (mainStack.depth > 1) {
-                    mainStack.pop();
+                    mainStack.pop(initialPage);
                     mainStack.metadataType = "";
                 }
             }
