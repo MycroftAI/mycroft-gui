@@ -7,14 +7,15 @@ import Mycroft 1.0 as Mycroft
 
 Mycroft.DelegateBase {
     backgroundImage: "background.jpg"
+    backgroundHorizontalAlignment: Image.AlignLeft
+    backgroundDim: wideMode ? 0 : 0.6
 
     property alias utterance: content.text
 
     ColumnLayout { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors {
             fill: parent
-            margins: Kirigami.Units.largeSpacing
-            leftMargin: parent.width > parent.height ? parent.width / 3 : Kirigami.Units.largeSpacing
+            leftMargin: wideMode ? parent.width / 3 : 0
         }
         Item {
             Layout.fillHeight: true

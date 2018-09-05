@@ -4,14 +4,21 @@ import org.kde.kirigami 2.4 as Kirigami
 
 Controls.Control {
     id: control
+    //FIXME: all of this should be grouped
     property alias backgroundImage: img.source
+    property alias backgroundHorizontalAlignment: img.horizontalAlignment
+    property alias backgroundVerticalAlignment: img.verticalAlignment
+    property alias backgroundDim: rect.opacity
+
+    //To do some automatic responsive layouting
+    readonly property bool wideMode: Math.min(width, height) > Kirigami.Units.gridUnit * 18
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    leftPadding: Kirigami.Units.smallSpacing
-    topPadding: Kirigami.Units.smallSpacing
-    rightPadding: Kirigami.Units.smallSpacing
-    bottomPadding: Kirigami.Units.smallSpacing
+    leftPadding: Kirigami.Units.largeSpacing
+    topPadding: Kirigami.Units.largeSpacing
+    rightPadding: Kirigami.Units.largeSpacing
+    bottomPadding: Kirigami.Units.largeSpacing
 
     //this to make all items children of contentItem so everything will have paddings automagically
     default property alias data: main.data
@@ -24,6 +31,7 @@ Controls.Control {
             fillMode: Image.PreserveAspectCrop
         }
         Rectangle {
+            id: rect
             anchors.fill: parent
             //TODO: api for having skills that just fill a solid color
             color: "black"
