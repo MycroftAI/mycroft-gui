@@ -26,7 +26,6 @@ void Mycroft::onTextMessageReceived(const QString &message)
     auto doc = QJsonDocument::fromJson(message.toLatin1());
 
     auto type = doc["type"].toString();
-    qDebug() << message;
 
     //filter out the noise so we can print debug stuff later without drowning in noise
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {

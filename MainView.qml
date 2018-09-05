@@ -20,10 +20,10 @@ StackView
             //These few lines are a cludge to make existing skills work that don't have metadata (yet)
             switch(mycroft.currentSkill) {
             case "JokingSkill.handle_general_joke":
-                data["type"] = "Fallback"
+                data["type"] = "fallback"
                 break;
             case "TimeSkill.handle_query_time":
-                data["type"] = "Time"
+                data["type"] = "time"
                 break;
             }
 
@@ -31,12 +31,13 @@ StackView
                 return;
             }
 
-            var url = skillLoader.uiForMetadataType(data[type]);
-            if (!url) {
+            var _url = skillLoader.uiForMetadataType(data["type"]);
+            console.log(_url);
+            if (!_url) {
                 return;
             }
 
-            mainStack.push(url, data);
+            mainStack.push(_url, data);
         }
 
         onSpeakingChanged: {

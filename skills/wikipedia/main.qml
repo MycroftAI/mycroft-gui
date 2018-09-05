@@ -12,10 +12,6 @@ BasicDelegateBase {
 
     backgroundImage: img.source
 
-    Component.onCompleted: {
-        console.log(image, text)
-    }
-
     GridLayout { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors.fill: parent
         anchors.margins: Kirigami.Units.largeSpacing
@@ -34,7 +30,6 @@ BasicDelegateBase {
             id: title
             level: 1
             Layout.fillWidth: true
-            text: modelData.title
             wrapMode: Text.WordWrap
         }
         Label {
