@@ -1,8 +1,8 @@
 import QtQuick 2.4
+import org.kde.kirigami 2.4 as Kirigami
 
 Item {
     id: seekControl
-    height: Math.min(parent.width, parent.height) / 20
     property int duration: 0
     property int playPosition: 0
     property int seekPosition: 0
@@ -10,49 +10,38 @@ Item {
     property bool seeking: false
 
     Rectangle {
-        id: background
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.3
-        radius: parent.height / 15
-    }
-
-    Rectangle {
         id: progressBar
-        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
-        width: seekControl.duration == 0 ? 0 : background.width * seekControl.playPosition / seekControl.duration
+        anchors { left: parent.left; bottom: parent.verticalCenter }
+        width: seekControl.duration == 0 ? 0 : parent.width * seekControl.playPosition / seekControl.duration
+        height: 4
         color: "white"
         opacity: 0.7
     }
 
     Text {
-        width: 90
-        anchors { left: parent.left; top: parent.top; bottom: parent.bottom; leftMargin: 10 }
+        anchors { left: parent.left; top: parent.verticalCenter; bottom: parent.bottom; topMargin: Units.smallSpacing}
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         color: "white"
-        smooth: true
         text: formatTime(playPosition)
     }
 
     Text {
-        width: 90
-        anchors { right: parent.right; top: parent.top; bottom: parent.bottom; rightMargin: 10 }
+        anchors { right: parent.right; top: parent.verticalCenter; bottom: parent.bottom; topMargin: Units.smallSpacing}
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
         color: "white"
-        smooth: true
         text: formatTime(duration)
     }
 
     Rectangle {
         id: progressHandle
-        height: parent.height
-        width: parent.height / 2
+        height: progressBar.height
+        width: progressBar.height / 2
         color: "white"
         opacity: 0.5
         anchors.verticalCenter: progressBar.verticalCenter
-        x: seekControl.duration == 0 ? 0 : seekControl.playPosition / seekControl.duration * background.width
+        x: seekControl.duration == 0 ? 0 : seekControl.playPosition / seekControl.duration * parent.width
 
         MouseArea {
             id: mouseArea
@@ -87,7 +76,7 @@ Item {
         interval: 300
         running: seekControl.seeking
         onTriggered: {
-            seekControl.seekPosition = progressHandle.x*seekControl.duration / background.width
+            seekControl.seekPosition = progressHandle.x*seekControl.duration / parent.width
         }
     }
 
