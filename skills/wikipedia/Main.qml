@@ -3,9 +3,9 @@ import QtQuick 2.4
 import QtQuick.Controls 2.0
 import org.kde.kirigami 2.4 as Kirigami
 
-import "../components"
+import Mycroft 1.0 as Mycroft
 
-BasicDelegateBase {
+Mycroft.DelegateBase {
     property alias title: title.text
     property alias image: img.source
     property alias content: content.text
