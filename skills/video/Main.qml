@@ -11,6 +11,7 @@ BasicDelegateBase {
     backgroundImage: "https://source.unsplash.com/random"
     
     property alias video: video.source
+    property alias status: video.currentStatus
 
     Item { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors.fill: parent
@@ -24,6 +25,21 @@ BasicDelegateBase {
             Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
             Keys.onLeftPressed: video.seek(video.position - 5000)
             Keys.onRightPressed: video.seek(video.position + 5000)
+            property var currentStatus
+
+            onCurrentStatusChanged: {
+                switch(currentStatus){
+                    case "stop":
+                        video.stop();
+                        break;
+                    case "pause":
+                        video.pause()
+                        break;
+                    case "resume":
+                        video.play()
+                        break;
+                }
+            }
             
             MouseArea{
                 anchors.fill: parent
