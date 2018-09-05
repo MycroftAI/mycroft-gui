@@ -1,11 +1,12 @@
 module Mycroft
 plugin mycroftplugin
 classname MycroftPlugin
-depends QtQuick.Controls 2.0
-depends QtGraphicalEffects 1.0
-designersupported
 
-typeinfo plugins.qmltypes
+#typeinfo plugins.qmltypes
 
 StatusIndicator 1.0 StatusIndicator.qml
 DelegateBase 1.0 DelegateBase.qml
+
+designersupported
+depends QtQuick.Controls 2.0
+depends QtGraphicalEffects 1.0

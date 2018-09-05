@@ -44,7 +44,8 @@ void MycroftPlugin::registerTypes(const char *uri)
 
     qmlRegisterType<SkillLoader>(uri, 1, 0, "SkillLoader");
 
-    qmlProtectModule(uri, 1);
+    //use this only when all qml files are registered by the plugin
+   // qmlProtectModule(uri, 1);
 }
 
 #include "moc_mycroftplugin.cpp"
