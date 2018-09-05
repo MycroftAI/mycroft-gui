@@ -1,8 +1,9 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
-import Mycroft 1.0
 import org.kde.kirigami 2.4 as Kirigami
+
+import Mycroft 1.0 as Mycroft
 
 Rectangle {
     visible: true
@@ -10,12 +11,8 @@ Rectangle {
     height: 480
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    Mycroft {
-        id: mycroft
-    }
-
     Component.onCompleted: {
-        mycroft.open("ws://0.0.0.0:8181/core");
+        Mycroft.MycroftController.open("ws://0.0.0.0:8181/core");
     }
 
     ColumnLayout {
@@ -24,20 +21,18 @@ Rectangle {
             Layout.fillWidth: true
             id: qinput
             onAccepted: {
-                mycroft.sendText(qinput.text)
+                Mycroft.MycroftController.sendText(qinput.text)
             }
         }
         MainView {
             id: mainView
-            mycroft: mycroft
             Layout.fillHeight: true
             Layout.fillWidth: true
         }
     }
-    StatusIndicator {
+    Mycroft.StatusIndicator {
         id: si
         visible: true
-        mycroftController: mycroft
 
         anchors {
             horizontalCenter: parent.horizontalCenter

@@ -1,27 +1,27 @@
-#include "mycroft.h"
+#include "mycroftcontroller.h"
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QDebug>
 
-Mycroft::Mycroft(QObject *parent): QObject(parent)
+MycroftController::MycroftController(QObject *parent): QObject(parent)
 {
-    connect(&m_webSocket, &QWebSocket::connected, this, &Mycroft::onConnected);
-    connect(&m_webSocket, &QWebSocket::disconnected, this, &Mycroft::closed);
-    connect(&m_webSocket, &QWebSocket::stateChanged, this, &Mycroft::onStatusChanged);
-    connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &Mycroft::onTextMessageReceived);
+    connect(&m_webSocket, &QWebSocket::connected, this, &MycroftController::onConnected);
+    connect(&m_webSocket, &QWebSocket::disconnected, this, &MycroftController::closed);
+    connect(&m_webSocket, &QWebSocket::stateChanged, this, &MycroftController::onStatusChanged);
+    connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onTextMessageReceived);
 }
 
-void Mycroft::open(const QUrl &url)
+void MycroftController::open(const QUrl &url)
 {
     m_webSocket.open(QUrl(url));
 }
 
-void Mycroft::onConnected()
+void MycroftController::onConnected()
 {
 }
 
-void Mycroft::onTextMessageReceived(const QString &message)
+void MycroftController::onTextMessageReceived(const QString &message)
 {
     auto doc = QJsonDocument::fromJson(message.toLatin1());
 
@@ -78,7 +78,7 @@ void Mycroft::onTextMessageReceived(const QString &message)
     }
 }
 
-void Mycroft::sendRequest(const QString &json)
+void MycroftController::sendRequest(const QString &json)
 {
     if (m_webSocket.state() != QAbstractSocket::ConnectedState) {
         qWarning() << "mycroft connection not open!";
@@ -87,7 +87,7 @@ void Mycroft::sendRequest(const QString &json)
     m_webSocket.sendTextMessage(json);
 }
 
-void Mycroft::sendText(const QString &message)
+void MycroftController::sendText(const QString &message)
 {
     QJsonObject root;
     root["type"] = "recognizer_loop:utterance";
@@ -98,13 +98,13 @@ void Mycroft::sendText(const QString &message)
 }
 
 
-void Mycroft::onStatusChanged(QAbstractSocket::SocketState state)
+void MycroftController::onStatusChanged(QAbstractSocket::SocketState state)
 {
     emit socketStatusChanged();
     qDebug() << "State changed to " << status();
 }
 
-Mycroft::Status Mycroft::status() const
+MycroftController::Status MycroftController::status() const
 {
     switch(m_webSocket.state())
     {
@@ -123,15 +123,16 @@ Mycroft::Status Mycroft::status() const
     }
 }
 
-QString Mycroft::currentSkill() const
+QString MycroftController::currentSkill() const
 {
     return m_currentSkill;
 }
-bool Mycroft::isSpeaking() const
+bool MycroftController::isSpeaking() const
 {
     return m_isSpeaking;
 }
-bool Mycroft::isListening() const
+bool MycroftController::isListening() const
 {
     return m_isListening;
 }
+

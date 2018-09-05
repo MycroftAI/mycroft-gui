@@ -25,9 +25,10 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     WebSockets
 )
 
-add_executable(mycroft-gui-app main.cpp mycroft.cpp skillloader.cpp)
+add_executable(mycroft-gui-app main.cpp)
 target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebSockets)
 
+add_subdirectory(import)
 
 install( DIRECTORY skills DESTINATION ${KDE_INSTALL_FULL_DATADIR}/mycroft-gui/
     PATTERN "*.qmlc" EXCLUDE

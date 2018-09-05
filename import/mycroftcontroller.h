@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QWebSocket>
 
-class Mycroft : public QObject
+class MycroftController : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Status status READ status NOTIFY socketStatusChanged)
@@ -20,7 +20,7 @@ public:
         Closed,
         Error
     };
-    explicit Mycroft(QObject *parent = nullptr);
+    explicit MycroftController(QObject *parent = nullptr);
     bool isSpeaking() const;
     bool isListening() const;
     Status status() const;

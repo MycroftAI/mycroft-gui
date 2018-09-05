@@ -29,8 +29,6 @@ Item {
     width: Kirigami.Units.gridUnit * 5
     height: width
 
-    property Mycroft.Mycroft mycroftController
-
     state: "idle"
     states: [
         State {
@@ -91,9 +89,9 @@ Item {
     ]
 
     Connections {
-        target: mycroftController
+        target: Mycroft.MycroftController
         onListeningChanged: {
-            if (mycroftController.listening) {
+            if (Mycroft.MycroftController.listening) {
                 root.state = "waiting";
             } else {
                 fadeTimer.restart();

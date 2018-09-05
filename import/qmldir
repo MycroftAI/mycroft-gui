@@ -1,0 +1,11 @@
+module Mycroft
+plugin mycroftplugin
+classname MycroftPlugin
+depends QtQuick.Controls 2.0
+depends QtGraphicalEffects 1.0
+designersupported
+
+typeinfo plugins.qmltypes
+
+StatusIndicator 1.0 StatusIndicator.qml
+

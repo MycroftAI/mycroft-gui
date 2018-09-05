@@ -1,25 +1,24 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.4
-import Mycroft 1.0
+import Mycroft 1.0 as Mycroft
 
 StackView
 {
-    property Mycroft mycroft
 
     id: mainStack
 
     initialItem: Idler {}
     property string metadataType
 
-    SkillLoader {
+    Mycroft.SkillLoader {
         id: skillLoader
     }
 
     Connections {
-        target: mycroft
+        target: Mycroft.MycroftController
         onSkillDataRecieved: {
             //These few lines are a cludge to make existing skills work that don't have metadata (yet)
-            switch(mycroft.currentSkill) {
+            switch(Mycroft.MycroftController.currentSkill) {
             case "JokingSkill.handle_general_joke":
                 data["type"] = "fallback"
                 break;
@@ -51,7 +50,7 @@ StackView
         }
 
         onSpeakingChanged: {
-            if (!mycroft.speaking) {
+            if (!Mycroft.MycroftController.speaking) {
                 if (mainStack.depth > 1) {
                     mainStack.pop();
                 }
