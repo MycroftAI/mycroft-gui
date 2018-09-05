@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         view.setMaximumWidth(height);
     }
 
-    view.setSource(QUrl(QStringLiteral("main.qml")));
+    view.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
     view.show();
 
     return app.exec();

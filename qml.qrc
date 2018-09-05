@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MainView.qml</file>
+        <file>Idler.qml</file>
+    </qresource>
+</RCC>

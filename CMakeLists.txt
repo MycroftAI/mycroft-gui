@@ -19,9 +19,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_D
 include(KDEInstallDirs)
 set(CMAKE_AUTOMOC ON)
 
-
-
-
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Quick
     Core
@@ -30,8 +27,16 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     WebSockets
 )
 
-add_executable(mycroft-gui-app main.cpp)
-target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebSockets)
+SET(mycroft_gui_app_SRC
+    main.cpp
+)
+
+qt5_add_resources(mycroft_gui_app_SRC
+    qml.qrc
+)
+
+add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
+target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick)
 
 
 install(TARGETS mycroft-gui-app ${INSTALL_TARGETS_DEFAULT_ARGS})
