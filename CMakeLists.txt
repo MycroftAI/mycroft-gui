@@ -13,7 +13,7 @@ set(VERSION 2.1.0)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(KDECompilerSettings NO_POLICY_SCOPE)
+include(KDECompilerSettings )
 include(ECMInstallIcons)
 
 
@@ -28,6 +28,8 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
 add_executable(mycroft-gui-app main.cpp)
 target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebSockets)
 
+
+install(TARGETS mycroft-gui-app ${INSTALL_TARGETS_DEFAULT_ARGS})
 add_subdirectory(import)
 
 install( DIRECTORY skills DESTINATION ${KDE_INSTALL_FULL_DATADIR}/mycroft-gui/
