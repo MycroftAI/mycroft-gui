@@ -22,7 +22,7 @@ StackView
             //These few lines are a cludge to make existing skills work that don't have metadata (yet)
             switch(Mycroft.MycroftController.currentSkill) {
             case "JokingSkill.handle_general_joke":
-                data["type"] = "fallback"
+                data["type"] = "joke"
                 break;
             case "TimeSkill.handle_query_time":
                 data["type"] = "time"
