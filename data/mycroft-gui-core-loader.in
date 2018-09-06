@@ -1,0 +1,2 @@
+cd ${MYCROFT_CORE_DIR}
+./mycroft.sh start
