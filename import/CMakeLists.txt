@@ -9,7 +9,7 @@ set(mycroftimport_SRCS
     )
 
 
-add_library(mycroftplugin ${mycroftimport_SRCS} ${RESOURCES})
+add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
 
 
 target_link_libraries(mycroftplugin
