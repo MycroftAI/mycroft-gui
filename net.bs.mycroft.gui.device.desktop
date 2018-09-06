@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=mycroft-gui-app --width 400 --height 800 --hideTextInput
+Icon=kmenuedit
+Type=Application
+StartupNotify=true
+
+Name=Mycroft Device Simulator

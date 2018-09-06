@@ -43,6 +43,8 @@ install(TARGETS mycroft-gui-app ${INSTALL_TARGETS_DEFAULT_ARGS})
 add_subdirectory(import)
 
 install( PROGRAMS net.bs.mycroft.gui.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
+install( PROGRAMS net.bs.mycroft.gui.device.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
+
 
 install( DIRECTORY skills DESTINATION ${KDE_INSTALL_FULL_DATADIR}/mycroft-gui/
     PATTERN "*.qmlc" EXCLUDE
