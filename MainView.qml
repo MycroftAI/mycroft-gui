@@ -44,7 +44,12 @@ StackView
             }
 
             if (mainStack.metadataType == data["type"]) {
-                Object.assign(mainStack.currentItem, data);
+                var key;
+                for (key in data) {
+                    if (mainStack.currentItem.hasOwnProperty(key)) {
+                        mainStack.currentItem[key] = data[key];
+                    }
+                }
             } else {
                 mainStack.metadataType = data["type"];
                 if (mainStack.depth > 1) {
