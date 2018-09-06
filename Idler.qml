@@ -24,8 +24,8 @@ Rectangle {
     ClockFace {
         id: face
         anchors.centerIn: parent
-        width: Math.max(parent.width, parent.height) * 0.7
-        height: Math.max(parent.width, parent.height) * 0.7
+        width: Math.min(parent.width, parent.height) * 0.7
+        height: Math.min(parent.width, parent.height) * 0.7
         visible: Mycroft.MycroftController.status == Mycroft.MycroftController.Open
         showSecondsHand: true
         Timer {
