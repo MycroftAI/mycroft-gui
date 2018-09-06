@@ -98,7 +98,7 @@ Item {
             }
         }
         onNotUnderstood: root.state = "error";
-        onSkillDataRecieved: {
+        onFallbackTextRecieved: {
             if (skill.length > 0) {
                 root.state = "ok";
             }

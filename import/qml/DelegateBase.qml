@@ -4,6 +4,7 @@ import org.kde.kirigami 2.4 as Kirigami
 
 Controls.Control {
     id: control
+    property int graceTime: 6000
     //FIXME: all of this should be grouped
     property alias backgroundImage: img.source
     property alias backgroundHorizontalAlignment: img.horizontalAlignment

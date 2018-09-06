@@ -26,8 +26,9 @@ Kirigami.AbstractApplicationWindow {
                 }
                 visible: !hideTextInput
             }
-            MainView {
+            Mycroft.StackSkillView {
                 id: mainView
+                initialItem: Idler {}
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
