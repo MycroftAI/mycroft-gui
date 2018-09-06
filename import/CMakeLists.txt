@@ -8,6 +8,8 @@ set(mycroftimport_SRCS
     skillloader.cpp
     )
 
+    
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
 
