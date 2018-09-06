@@ -5,9 +5,7 @@ import Mycroft 1.0 as Mycroft
 /* Class used to simulate the homescreen in cases where we're not using minimal shell
  */
 
-Rectangle {
-    color: "black"
-
+Item {
     //I was asked to have a button. I have no idea why one wouldn't just connect on startup...
     Button {
         anchors.centerIn: parent

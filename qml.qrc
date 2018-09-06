@@ -4,5 +4,6 @@
         <file>Idler.qml</file>
         <file alias="Hand.qml">skills//time/Hand.qml</file>
         <file alias="ClockFace.qml">skills//time/ClockFace.qml</file>
+        <file alias="background.png">data/background.png</file>
     </qresource>
 </RCC>

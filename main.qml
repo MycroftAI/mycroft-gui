@@ -5,16 +5,16 @@ import org.kde.kirigami 2.4 as Kirigami
 
 import Mycroft 1.0 as Mycroft
 
-
 Kirigami.AbstractApplicationWindow {
     visible: true
 
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    Item {
+    Image {
         width: deviceWidth || parent.width
         height: deviceHeight || parent.height
+        source: "background.png"
         anchors.centerIn: parent
         ColumnLayout {
             anchors.fill: parent
