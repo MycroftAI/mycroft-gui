@@ -71,10 +71,10 @@ void MycroftController::onTextMessageReceived(const QString &message)
         emit currentSkillChanged();
     }
     if (type == "speak") {
-        emit skillDataRecieved(m_currentSkill, doc["data"].toVariant().toMap());
+        emit fallbackTextRecieved(m_currentSkill, doc["data"].toVariant().toMap());
     }
     if (type == QLatin1String("metadata")) {
-        emit skillDataRecieved(m_currentSkill, doc["data"].toVariant().toMap());
+        emit skillDataRecieved(doc["data"].toVariant().toMap());
     }
 }
 
