@@ -2,6 +2,7 @@
 #include <QQuickView>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QQmlContext>
 #include <QtQml>
 
 int main(int argc, char *argv[])
@@ -9,31 +10,29 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
-    qputenv("QT_WAYLAND_FORCE_DPI", "200");
 
     QGuiApplication app(argc, argv);
     QCommandLineParser parser;
 
     auto widthOption = QCommandLineOption("width", "width", "width");
     auto heightOption = QCommandLineOption("height", "height", "height");
-    parser.addOptions({widthOption, heightOption});
+    auto hideTextInputOption = QCommandLineOption("hideTextInput");
+    parser.addOptions({widthOption, heightOption, hideTextInputOption});
     parser.parse(QCoreApplication::arguments());
     parser.process(app);
 
     QQuickView view;
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
 
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    if (width > 0) {
-        view.setWidth(width);
+    view.engine()->rootContext()->setContextProperty("deviceWidth", width);
+    view.engine()->rootContext()->setContextProperty("deviceHeight", height);
+    view.engine()->rootContext()->setContextProperty("hideTextInput", parser.isSet(hideTextInputOption));
+
+    if (width && height) {
         view.setMinimumWidth(width);
-        view.setMaximumWidth(width);
-    }
-    if (height > 0) {
-        view.setWidth(height);
-        view.setMinimumWidth(height);
-        view.setMaximumWidth(height);
+        view.setMinimumHeight(height);
     }
 
     view.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
