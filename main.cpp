@@ -17,7 +17,6 @@ int main(int argc, char *argv[])
     auto widthOption = QCommandLineOption("width", "width", "width");
     auto heightOption = QCommandLineOption("height", "height", "height");
     auto hideTextInputOption = QCommandLineOption("hideTextInput");
-    parser.addOptions({widthOption, heightOption, hideTextInputOption});
     auto fontSizeOption = QCommandLineOption("fontSize", "fontSize", "fontSize");
     parser.addOptions({widthOption, heightOption, hideTextInputOption, fontSizeOption});
 
@@ -53,12 +52,10 @@ int main(int argc, char *argv[])
         if (width > 0) {
             obj->setProperty("width", width);
             obj->setProperty("minimumWidth", width);
-            obj->setProperty("maximumWidth", width);
         }
         if (height > 0) {
             obj->setProperty("height", height);
             obj->setProperty("minimumHeight", height);
-            obj->setProperty("maximumHeight", height);
         }
     }
 
