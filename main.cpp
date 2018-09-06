@@ -4,7 +4,7 @@
 #include <QCommandLineOption>
 #include <QQmlContext>
 #include <QtQml>
-
+#include <QFont>
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -18,6 +18,9 @@ int main(int argc, char *argv[])
     auto heightOption = QCommandLineOption("height", "height", "height");
     auto hideTextInputOption = QCommandLineOption("hideTextInput");
     parser.addOptions({widthOption, heightOption, hideTextInputOption});
+    auto fontSizeOption = QCommandLineOption("fontSize", "fontSize", "fontSize");
+    parser.addOptions({widthOption, heightOption, hideTextInputOption, fontSizeOption});
+
     parser.parse(QCoreApplication::arguments());
     parser.process(app);
 
@@ -25,18 +28,40 @@ int main(int argc, char *argv[])
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
+    int fontSize = parser.value(fontSizeOption).toInt();
 
-    view.engine()->rootContext()->setContextProperty("deviceWidth", width);
-    view.engine()->rootContext()->setContextProperty("deviceHeight", height);
-    view.engine()->rootContext()->setContextProperty("hideTextInput", parser.isSet(hideTextInputOption));
+    QFont font = app.font();
 
-    if (width && height) {
-        view.setMinimumWidth(width);
-        view.setMinimumHeight(height);
+    //app font needs to be set before object creation
+    if (fontSize > 0) {
+        font.setPointSize(fontSize);
+        app.setFont(font);
     }
 
-    view.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
-    view.show();
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("deviceWidth", width);
+    engine.rootContext()->setContextProperty("deviceHeight", height);
+    engine.rootContext()->setContextProperty("hideTextInput", parser.isSet(hideTextInputOption));
+
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    if (engine.rootObjects().count() > 0) {
+        QObject *obj = engine.rootObjects().first();
+        if (fontSize > 0) {
+            obj->setProperty("font", font);
+        }
+        if (width > 0) {
+            obj->setProperty("width", width);
+            obj->setProperty("minimumWidth", width);
+            obj->setProperty("maximumWidth", width);
+        }
+        if (height > 0) {
+            obj->setProperty("height", height);
+            obj->setProperty("minimumHeight", height);
+            obj->setProperty("maximumHeight", height);
+        }
+    }
+
 
     return app.exec();
 }

@@ -5,7 +5,10 @@ import org.kde.kirigami 2.4 as Kirigami
 
 import Mycroft 1.0 as Mycroft
 
-Rectangle {
+
+Kirigami.AbstractApplicationWindow {
+    visible: true
+
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
