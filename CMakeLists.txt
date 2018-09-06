@@ -42,6 +42,8 @@ target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick)
 install(TARGETS mycroft-gui-app ${INSTALL_TARGETS_DEFAULT_ARGS})
 add_subdirectory(import)
 
+install( PROGRAMS net.bs.mycroft.gui.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
+
 install( DIRECTORY skills DESTINATION ${KDE_INSTALL_FULL_DATADIR}/mycroft-gui/
     PATTERN "*.qmlc" EXCLUDE
 )
