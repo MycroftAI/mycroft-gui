@@ -21,7 +21,6 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
 
 void MycroftController::start()
 {
-    qDebug() << "STaRT";
     QProcess::startDetached("mycroft-gui-core-loader");
     m_reconnectTimer.start();
     emit socketStatusChanged();

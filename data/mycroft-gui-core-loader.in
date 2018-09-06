@@ -1,2 +1,3 @@
+#!/bin/sh
 cd ${MYCROFT_CORE_DIR}
-./mycroft.sh start
+./start-mycroft.sh all
