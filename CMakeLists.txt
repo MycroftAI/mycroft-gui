@@ -19,6 +19,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_D
 include(KDEInstallDirs)
 set(CMAKE_AUTOMOC ON)
 
+#this is used for mycroft spawning. It's horrible and should not be needed, but mycroft packaging is questionable at best
+#in any sane world mycroft would install something in $PATH
+set(MYCROFT_CORE_DIR "/opt/mycroft")
+
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Quick
     Core
@@ -49,3 +53,6 @@ install( PROGRAMS net.bs.mycroft.gui.device.desktop DESTINATION  ${KDE_INSTALL_A
 install( DIRECTORY skills DESTINATION ${KDE_INSTALL_FULL_DATADIR}/mycroft-gui/
     PATTERN "*.qmlc" EXCLUDE
 )
+
+configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})

@@ -21,6 +21,7 @@ StackView
 
         //These few lines are a cludge to make existing skills work that don't have metadata (yet)
         onFallbackTextRecieved: {
+            console.log("Fallback", skill);
             var regex = /(.*)Skill*/;
             var found = skill.match(regex);
             if (found.length > 1) {

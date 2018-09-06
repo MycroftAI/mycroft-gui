@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QWebSocket>
+#include <QTimer>
 
 class MycroftController : public QObject
 {
@@ -39,7 +40,7 @@ signals:
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
 public slots:
-    void open(const QUrl &url);
+    void start();
     void sendRequest(const QString &json);
     void sendText(const QString &message);
 private slots:
@@ -48,6 +49,7 @@ private slots:
     void onStatusChanged(QAbstractSocket::SocketState state);
 private:
     QWebSocket m_webSocket;
+    QTimer m_reconnectTimer;
 
     QString m_currentSkill;
     bool m_isSpeaking = false;

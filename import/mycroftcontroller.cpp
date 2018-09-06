@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QDebug>
+#include <QProcess>
 
 MycroftController::MycroftController(QObject *parent): QObject(parent)
 {
@@ -10,15 +11,26 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
     connect(&m_webSocket, &QWebSocket::disconnected, this, &MycroftController::closed);
     connect(&m_webSocket, &QWebSocket::stateChanged, this, &MycroftController::onStatusChanged);
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onTextMessageReceived);
+
+    m_reconnectTimer.setInterval(1000);
+    connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
+        m_webSocket.open(QUrl("ws://0.0.0.0:8181/core"));
+    });
 }
 
-void MycroftController::open(const QUrl &url)
+
+void MycroftController::start()
 {
-    m_webSocket.open(QUrl(url));
+    qDebug() << "STaRT";
+    QProcess::startDetached("mycroft-gui-core-loader");
+    m_reconnectTimer.start();
+    emit socketStatusChanged();
 }
 
 void MycroftController::onConnected()
 {
+    m_reconnectTimer.stop();
+    emit socketStatusChanged();
 }
 
 void MycroftController::onTextMessageReceived(const QString &message)
@@ -106,6 +118,10 @@ void MycroftController::onStatusChanged(QAbstractSocket::SocketState state)
 
 MycroftController::Status MycroftController::status() const
 {
+    if (m_reconnectTimer.isActive()) {
+        return Connecting;
+    }
+
     switch(m_webSocket.state())
     {
     case QAbstractSocket::ConnectingState:

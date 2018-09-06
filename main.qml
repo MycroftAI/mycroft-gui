@@ -12,10 +12,6 @@ Kirigami.AbstractApplicationWindow {
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    Component.onCompleted: {
-        Mycroft.MycroftController.open("ws://0.0.0.0:8181/core");
-    }
-
     Item {
         width: deviceWidth || parent.width
         height: deviceHeight || parent.height
