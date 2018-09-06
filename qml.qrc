@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>MainView.qml</file>
         <file>Idler.qml</file>
+        <file alias="Hand.qml">skills//time/Hand.qml</file>
+        <file alias="ClockFace.qml">skills//time/ClockFace.qml</file>
     </qresource>
 </RCC>
