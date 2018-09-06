@@ -14,7 +14,6 @@ Mycroft.DelegateBase {
 
     GridLayout { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors.fill: parent
-        anchors.margins: Kirigami.Units.largeSpacing
         columns: 2
         Item {
             Layout.fillHeight: true
@@ -38,7 +37,6 @@ Mycroft.DelegateBase {
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             elide: Text.ElideRight
-            color: "#EEE"
         }
         Item {
             Layout.columnSpan: 2
