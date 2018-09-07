@@ -5,22 +5,23 @@ import org.kde.kirigami 2.4 as Kirigami
 
 import Mycroft 1.0 as Mycroft
 
+import "panel"
+
 Kirigami.AbstractApplicationWindow {
     visible: true
 
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
+    SlidingPanel {
+        width: parent.width
+    }
     Image {
         width: deviceWidth || parent.width
         height: deviceHeight || parent.height
         source: "background.png"
         anchors.centerIn: parent
         clip: true
-
-        Settings {
-            width: parent.width
-        }
 
         ColumnLayout {
             anchors.fill: parent
