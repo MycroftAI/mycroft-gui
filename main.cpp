@@ -12,10 +12,6 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
 
-    //phone hack for window resize reason
-    if (QGuiApplication::platformName() == "xcb") {
-        qputenv("QT_QUICK_BACKEND", "software");
-    }
     QCommandLineParser parser;
 
     auto widthOption = QCommandLineOption("width", "width", "width");
