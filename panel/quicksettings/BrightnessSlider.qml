@@ -23,13 +23,11 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 SliderBase {
     id: root
 
-    leftIconSource: Qt.resolvedUrl("./brightness-decrease.svg")
+    leftIconSource: Qt.resolvedUrl("brightness-decrease.svg")
     rightIconSource: Qt.resolvedUrl("./brightness-increase.svg")
 
     property int screenBrightness
     readonly property int maximumScreenBrightness: pmSource.data["PowerDevil"] ? pmSource.data["PowerDevil"]["Maximum Screen Brightness"] || 0 : 0
-
-    spacing: Kirigami.Units.smallSpacing
 
     PlasmaCore.DataSource {
         id: pmSource
