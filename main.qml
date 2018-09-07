@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import org.kde.kirigami 2.4 as Kirigami
-
+import QtQuick.Window 2.2
 import Mycroft 1.0 as Mycroft
 
 import "panel"
@@ -15,6 +15,8 @@ Kirigami.AbstractApplicationWindow {
     maximumHeight : deviceHeight || undefined
     minimumWidth : deviceWidth || undefined
     maximumWidth : deviceWidth || undefined
+    x: deviceWidth ? Screen.desktopAvailableHeight - width : undefined
+    y: deviceHeight ? Screen.desktopAvailableHeight - height : undefined
 
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
