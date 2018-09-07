@@ -11,6 +11,11 @@ Kirigami.AbstractApplicationWindow {
     id: root
     visible: true
 
+    minimumHeight : deviceHeight || undefined
+    maximumHeight : deviceHeight || undefined
+    minimumWidth : deviceWidth || undefined
+    maximumWidth : deviceWidth || undefined
+
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
@@ -18,11 +23,8 @@ Kirigami.AbstractApplicationWindow {
         width: root.width
     }
     Image {
-        width: deviceWidth || parent.width
-        height: deviceHeight || parent.height
         source: "background.png"
-        anchors.centerIn: parent
-        clip: true
+        anchors.fill: parent
 
         ColumnLayout {
             anchors.fill: parent

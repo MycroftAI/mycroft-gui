@@ -49,14 +49,6 @@ int main(int argc, char *argv[])
         if (fontSize > 0) {
             obj->setProperty("font", font);
         }
-        if (width > 0) {
-            obj->setProperty("width", width);
-            obj->setProperty("minimumWidth", width);
-        }
-        if (height > 0) {
-            obj->setProperty("height", height);
-            obj->setProperty("minimumHeight", height);
-        }
     }
 
 
