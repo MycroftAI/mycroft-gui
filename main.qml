@@ -16,8 +16,19 @@ Kirigami.AbstractApplicationWindow {
         height: deviceHeight || parent.height
         source: "background.png"
         anchors.centerIn: parent
+
+        Settings {
+            width: parent.width
+        }
+
         ColumnLayout {
             anchors.fill: parent
+            Mycroft.StackSkillView {
+                id: mainView
+                initialItem: Idler {}
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
             TextField {
                 Layout.fillWidth: true
                 id: qinput
@@ -25,12 +36,6 @@ Kirigami.AbstractApplicationWindow {
                     Mycroft.MycroftController.sendText(qinput.text)
                 }
                 visible: !hideTextInput
-            }
-            Mycroft.StackSkillView {
-                id: mainView
-                initialItem: Idler {}
-                Layout.fillHeight: true
-                Layout.fillWidth: true
             }
         }
         Mycroft.StatusIndicator {
