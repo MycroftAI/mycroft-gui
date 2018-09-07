@@ -9,9 +9,13 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    QGuiApplication app(argc, argv);
     qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
 
-    QGuiApplication app(argc, argv);
+    //phone hack for window resize reason
+    if (QGuiApplication::platformName() == "xcb") {
+        qput env("QT_QUICK_BACKEND", "software");
+    }
     QCommandLineParser parser;
 
     auto widthOption = QCommandLineOption("width", "width", "width");
