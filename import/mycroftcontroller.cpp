@@ -14,7 +14,11 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
 
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
-        m_webSocket.open(QUrl("ws://0.0.0.0:8181/core"));
+        QString socket = qgetenv("MYCROFT_SOCKET");
+        if (socket.isEmpty()) {
+            socket = "ws://0.0.0.0:8181/core";
+        }
+        m_webSocket.open(QUrl(socket));
     });
 }
 
