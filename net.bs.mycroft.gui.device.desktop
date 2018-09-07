@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=mycroft-gui-app --width 400 --height 800 --hideTextInput --fontSize 8 --platform xcb
+Exec=QT_QUICK_BACKEND=software mycroft-gui-app --width 400 --height 800 --hideTextInput --fontSize 8 --platform xcb
 Icon=kmenuedit
 Type=Application
 StartupNotify=true
