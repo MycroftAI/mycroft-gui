@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     //phone hack for window resize reason
     if (QGuiApplication::platformName() == "xcb") {
-        qput env("QT_QUICK_BACKEND", "software");
+        qputenv("QT_QUICK_BACKEND", "software");
     }
     QCommandLineParser parser;
 
