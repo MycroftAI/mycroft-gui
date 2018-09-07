@@ -28,6 +28,16 @@ Kirigami.AbstractApplicationWindow {
                 initialItem: Idler {}
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                Mycroft.StatusIndicator {
+                    id: si
+                    visible: true
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom
+                        bottomMargin: Kirigami.Units.largeSpacing
+                    }
+                }
             }
             TextField {
                 Layout.fillWidth: true
@@ -36,16 +46,6 @@ Kirigami.AbstractApplicationWindow {
                     Mycroft.MycroftController.sendText(qinput.text)
                 }
                 visible: !hideTextInput
-            }
-        }
-        Mycroft.StatusIndicator {
-            id: si
-            visible: true
-
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                bottom: parent.bottom
-                bottomMargin: Kirigami.Units.largeSpacing
             }
         }
     }
