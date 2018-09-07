@@ -3,6 +3,7 @@
 * Youtube: https://github.com/AIIX/youtube-skill
 * Stock Skill: https://github.com/aiix/skill-stock
 * Recipes Skill: https://github.com/AIIX/food-wizard
+* Pairing Skill: github.com/bhush9/skill-pairing
 
 ### Installation Instructions
 * cd mycroft-core
