@@ -16,6 +16,7 @@ Kirigami.AbstractApplicationWindow {
         height: deviceHeight || parent.height
         source: "background.png"
         anchors.centerIn: parent
+        clip: true
 
         Settings {
             width: parent.width
