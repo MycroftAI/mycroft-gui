@@ -87,25 +87,28 @@ void MycroftController::onTextMessageReceived(const QString &message)
     if (type == QLatin1String("metadata")) {
         emit skillDataRecieved(doc["data"].toVariant().toMap());
     }
+
+    qDebug() << message;
 }
 
-void MycroftController::sendRequest(const QString &json)
+void MycroftController::sendRequest(const QString &type, const QVariantMap &data)
 {
     if (m_webSocket.state() != QAbstractSocket::ConnectedState) {
         qWarning() << "mycroft connection not open!";
         return;
     }
-    m_webSocket.sendTextMessage(json);
+    QJsonObject root;
+
+    root["type"] = type;
+    root["data"] = QJsonObject::fromVariantMap(data);
+
+    QJsonDocument doc(root);
+    m_webSocket.sendTextMessage(doc.toJson());
 }
 
 void MycroftController::sendText(const QString &message)
 {
-    QJsonObject root;
-    root["type"] = "recognizer_loop:utterance";
-    root["data"] = QJsonObject({{"utterances", QJsonArray({message})}});
-
-    QJsonDocument doc(root);
-    sendRequest(doc.toJson());
+    sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{"utterances", QStringList({message})}}));
 }
 
 

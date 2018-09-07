@@ -41,7 +41,7 @@ signals:
 
 public slots:
     void start();
-    void sendRequest(const QString &json);
+    void sendRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
 private slots:
     void onConnected();
