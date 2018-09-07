@@ -27,6 +27,17 @@ Item {
         }
     }
 
+    onOpenedChanged: {
+        if (opened) {
+            hideTimer.restart();
+        }
+    }
+
+    Timer {
+        id: hideTimer
+        interval: 5000
+        onTriggered: seekControl.opened = false;
+    }
     Rectangle {
         anchors {
             left: parent.left
@@ -55,7 +66,10 @@ Item {
                 implicitWidth: Kirigami.Units.iconSizes.medium
                 implicitHeight: implicitWidth
                 Kirigami.Theme.inherit: true
-                onClicked: video.playbackState === MediaPlayer.PlayingState ? video.pause() : video.play()
+                onClicked: {
+                    video.playbackState === MediaPlayer.PlayingState ? video.pause() : video.play();
+                    hideTimer.restart();
+                }
                 //text: "bah"
                 //FIXME: do we really want those completely custom controls? as soon as plasma style can follow correctly colorSet it should use that
                 contentItem: Rectangle {
@@ -83,7 +97,10 @@ Item {
                 value: seekControl.playPosition
                 from: 0
                 to: seekControl.duration
-                onMoved: seekControl.seekPosition = value
+                onMoved: {
+                    seekControl.seekPosition = value;
+                    hideTimer.restart();
+                }
                 handle: Rectangle {
                     x: slider.position * (parent.width - width)
                     implicitWidth: Kirigami.Units.gridUnit
