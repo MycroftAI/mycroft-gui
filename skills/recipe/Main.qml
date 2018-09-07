@@ -44,7 +44,6 @@ Mycroft.DelegateBase {
                 Layout.fillWidth: true
                 //text: modelData.title
                 wrapMode: Text.WordWrap
-                color: "#EEE"
             }
 
 
@@ -58,8 +57,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                    text: "Source:"
+                        text: "Source:"
                 }
 
                 Label {
@@ -68,8 +66,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                }
+                    }
 
             }
 
@@ -83,8 +80,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                    text: "Calories:"
+                        text: "Calories:"
                 }
 
                 Label {
@@ -93,8 +89,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                }
+                    }
 
             }
 
@@ -108,8 +103,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                    text: "Diet Type:"
+                        text: "Diet Type:"
                 }
 
                 Label {
@@ -118,8 +112,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                }
+                    }
 
             }
 
@@ -133,8 +126,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                    text: "Health Tags:"
+                        text: "Health Tags:"
                 }
 
 
@@ -144,8 +136,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    color: "#EEE"
-                }
+                    }
             }
         }
 
@@ -162,8 +153,7 @@ Mycroft.DelegateBase {
                     Layout.fillWidth: true
                     //text: modelData.title
                     wrapMode: Text.WordWrap
-                    color: "#EEE"
-                    text: "Ingredients:"
+                        text: "Ingredients:"
                 }
 
                 ListView {
@@ -175,8 +165,7 @@ Mycroft.DelegateBase {
                         Layout.fillWidth: true
                         wrapMode: Text.WordWrap
                         elide: Text.ElideRight
-                        color: "#EEE"
-                        text: modelData
+                                text: modelData
                     }
                     model: recipeIngredients.ingredients
                 }
