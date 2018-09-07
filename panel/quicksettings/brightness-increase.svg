@@ -102,19 +102,19 @@
        class="ColorScheme-Text"
        id="path4508"
        d="M 8,5 C 6.3490681,5 5,6.3490681 5,8 5,9.6509319 6.3490681,11 8,11 9.6509319,11 11,9.6509319 11,8 11,6.3490681 9.6509319,5 8,5 Z M 8,5.6816406 A 2.319176,2.319176 0 0 1 10.318359,8 2.319176,2.319176 0 0 1 8,10.318359 2.319176,2.319176 0 0 1 5.6816406,8 2.319176,2.319176 0 0 1 8,5.6816406 Z"
-       style="color:#7b7c7e;fill:currentColor" />
+       style="fill:currentColor" />
     <g
        id="g4539">
       <path
          inkscape:connector-curvature="0"
          class="ColorScheme-Text"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          d="M 8,1 7.5859375,4.4863281 A 3.5423729,3.5423729 0 0 1 8,4.4570312 3.5423729,3.5423729 0 0 1 8.4140625,4.484375 Z"
          id="path4520" />
       <path
          inkscape:connector-curvature="0"
          class="ColorScheme-Text"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          d="m 8.4160156,11.501953 a 3.5423729,3.5423729 0 0 1 -0.4648437,0.03516 3.5423729,3.5423729 0 0 1 -0.3613281,-0.01953 l 0.4121093,3.480469 z"
          id="path4525" />
     </g>
@@ -124,20 +124,20 @@
        cy="8"
        cx="8"
        id="path4559"
-       style="color:#7b7c7e;fill:currentColor" />
+       style="fill:currentColor" />
     <g
        transform="rotate(90,8.0009766,7.999026)"
        id="g4620">
       <path
          id="path4616"
          d="M 8,1 7.5859375,4.4863281 A 3.5423729,3.5423729 0 0 1 8,4.4570312 3.5423729,3.5423729 0 0 1 8.4140625,4.484375 Z"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          class="ColorScheme-Text"
          inkscape:connector-curvature="0" />
       <path
          id="path4618"
          d="m 8.4160156,11.501953 a 3.5423729,3.5423729 0 0 1 -0.4648437,0.03516 3.5423729,3.5423729 0 0 1 -0.3613281,-0.01953 l 0.4121093,3.480469 z"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          class="ColorScheme-Text"
          inkscape:connector-curvature="0" />
     </g>
@@ -147,13 +147,13 @@
       <path
          inkscape:connector-curvature="0"
          class="ColorScheme-Text"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          d="M 8,1 7.5859375,4.4863281 A 3.5423729,3.5423729 0 0 1 8,4.4570312 3.5423729,3.5423729 0 0 1 8.4140625,4.484375 Z"
          id="path4622" />
       <path
          inkscape:connector-curvature="0"
          class="ColorScheme-Text"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          d="m 8.4160156,11.501953 a 3.5423729,3.5423729 0 0 1 -0.4648437,0.03516 3.5423729,3.5423729 0 0 1 -0.3613281,-0.01953 l 0.4121093,3.480469 z"
          id="path4624" />
     </g>
@@ -163,13 +163,13 @@
       <path
          id="path4628"
          d="M 8,1 7.5859375,4.4863281 A 3.5423729,3.5423729 0 0 1 8,4.4570312 3.5423729,3.5423729 0 0 1 8.4140625,4.484375 Z"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          class="ColorScheme-Text"
          inkscape:connector-curvature="0" />
       <path
          id="path4630"
          d="m 8.4160156,11.501953 a 3.5423729,3.5423729 0 0 1 -0.4648437,0.03516 3.5423729,3.5423729 0 0 1 -0.3613281,-0.01953 l 0.4121093,3.480469 z"
-         style="color:#7b7c7e;fill:currentColor"
+         style="fill:currentColor"
          class="ColorScheme-Text"
          inkscape:connector-curvature="0" />
     </g>

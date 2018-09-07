@@ -20,6 +20,8 @@ Kirigami.AbstractApplicationWindow {
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
     SlidingPanel {
+        //to change the color of the entire panel, uncomment this
+       // Kirigami.Theme.colorSet: Kirigami.Theme.Window
         width: root.width
     }
     Image {

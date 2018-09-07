@@ -21,7 +21,6 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.2 as Controls
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.5 as Kirigami
 
 Controls.Control {
@@ -41,13 +40,12 @@ Controls.Control {
     implicitHeight: implicitWidth + topPadding + bottomPadding
 
     contentItem: ColumnLayout {
-        PlasmaCore.IconItem {
+        Kirigami.Icon {
             id: icon
             Layout.preferredHeight: Kirigami.Units.iconSizes.medium
             Layout.fillWidth: true
-            colorGroup: PlasmaCore.ColorScope.colorGroup
         }
-        PlasmaComponents.Label {
+        Controls.Label {
             id: label
             Layout.fillWidth: true
             text: model.text

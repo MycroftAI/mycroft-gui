@@ -30,6 +30,7 @@ Item {
     width: 500
     height: 600
     SlidingPanel {
+        Kirigami.Theme.colorSet: Kirigami.Theme.Window
         width: root.width
     }
 }

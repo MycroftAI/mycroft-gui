@@ -42,7 +42,23 @@ Controls.Drawer {
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
     contentItem: PlasmaCore.ColorScope {
         Kirigami.Theme.colorSet: root.Kirigami.Theme.colorSet
-        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        colorGroup: {
+            switch(Kirigami.Theme.colorSet) {
+            case Kirigami.Theme.Window:
+                return PlasmaCore.Theme.NormalColorGroup;
+            case Kirigami.Theme.Button:
+                return PlasmaCore.Theme.ButtonColorGroup;
+            case Kirigami.Theme.View:
+                return PlasmaCore.Theme.ViewColorGroup;
+            case Kirigami.Theme.Selection:
+                return PlasmaCore.Theme.NormalColorGroup;
+            case Kirigami.Theme.Tooltip:
+                return PlasmaCore.Theme.ComplementaryColorGroup;
+            case Kirigami.Theme.Complementary:
+                return PlasmaCore.Theme.ComplementaryColorGroup;
+            }
+        }
+
         implicitWidth: layout.implicitWidth + Kirigami.Units.largeSpacing * 2
         implicitHeight: layout.implicitHeight + Kirigami.Units.largeSpacing * 2
         ColumnLayout {
