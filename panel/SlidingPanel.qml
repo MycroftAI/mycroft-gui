@@ -57,9 +57,6 @@ Controls.Drawer {
                 Layout.fillWidth: true
                 drawer: root
             }
-            Controls.Label {
-                text:   root.bottomItem ? root.bottomItem.implicitHeight : 0
-            }
             Item {
                 id: contentArea
                 Layout.fillWidth: true

@@ -18,9 +18,29 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.9
+import QtQuick 2.1
+import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.2 as Controls
+import org.kde.kirigami 2.5 as Kirigami
 
-SliderBase {
-    leftIconSource: "audio-volume-low"
-    rightIconSource: "audio-volume-high"
+RowLayout {
+    spacing: Kirigami.Units.smallSpacing
+    property alias leftIconSource: leftIcon.source
+    property alias rightIconSource: rightIcon.source
+    property alias slider: slider
+
+    Kirigami.Icon {
+        id: leftIcon
+        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+        Layout.preferredHeight: Layout.preferredWidth
+    }
+    Controls.Slider {
+        id: slider
+        Layout.fillWidth: true
+    }
+    Kirigami.Icon {
+        id: rightIcon
+        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+        Layout.preferredHeight: Layout.preferredWidth
+    }
 }

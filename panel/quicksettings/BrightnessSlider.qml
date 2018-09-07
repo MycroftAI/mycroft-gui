@@ -17,14 +17,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.1
-import QtQuick.Layouts 1.2
-import QtQuick.Controls 2.2 as Controls
+import QtQuick 2.9
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.kirigami 2.5 as Kirigami
 
-RowLayout {
+SliderBase {
     id: root
+
+    leftIconSource: Qt.resolvedUrl("./brightness-decrease.svg")
+    rightIconSource: Qt.resolvedUrl("./brightness-increase.svg")
 
     property int screenBrightness
     readonly property int maximumScreenBrightness: pmSource.data["PowerDevil"] ? pmSource.data["PowerDevil"]["Maximum Screen Brightness"] || 0 : 0
@@ -41,39 +41,20 @@ RowLayout {
                 connectSource(source);
             }
         }
-
         onDataChanged: {
             root.screenBrightness = pmSource.data["PowerDevil"]["Screen Brightness"];
         }
     }
 
-    Kirigami.Icon {
-        //TODO: put in theme
-        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-        Layout.preferredHeight: Layout.preferredWidth
-        source: Qt.resolvedUrl("./brightness-decrease.svg")
+    slider.value: root.screenBrightness
+    slider.onMoved: {
+        var service = pmSource.serviceForSource("PowerDevil");
+        var operation = service.operationDescription("setBrightness");
+        operation.brightness = slider.value;
+        operation.silent = true
+        service.startOperationCall(operation);
     }
-
-    Controls.Slider {
-        id: brightnessSlider
-        Layout.fillWidth: true
-        value: root.screenBrightness
-        onMoved: {
-            var service = pmSource.serviceForSource("PowerDevil");
-            var operation = service.operationDescription("setBrightness");
-            operation.brightness = value;
-            operation.silent = true
-            service.startOperationCall(operation);
-        }
-        from: to > 100 ? 1 : 0
-        to: root.maximumScreenBrightness
-    }
-
-    Kirigami.Icon {
-        //TODO: put in theme
-        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-        Layout.preferredHeight: Layout.preferredWidth
-        source: Qt.resolvedUrl("./brightness-increase.svg")
-    }
+    slider.from: slider.to > 100 ? 1 : 0
+    slider.to: root.maximumScreenBrightness
 }
 

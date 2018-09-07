@@ -13,6 +13,7 @@
         <file>panel/quicksettings/SystemSettingsDelegate.qml</file>
         <file>panel/quicksettings/brightness-increase.svg</file>
         <file>panel/quicksettings/DisableMycroftDelegate.qml</file>
+        <file>panel/quicksettings/SliderBase.qml</file>
         <file>panel/quicksettings/BrightnessSlider.qml</file>
         <file>panel/quicksettings/VolumeSlider.qml</file>
     </qresource>
