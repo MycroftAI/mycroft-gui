@@ -8,13 +8,14 @@ import Mycroft 1.0 as Mycroft
 import "panel"
 
 Kirigami.AbstractApplicationWindow {
+    id: root
     visible: true
 
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
     SlidingPanel {
-        width: parent.width
+        width: root.width
     }
     Image {
         width: deviceWidth || parent.width
