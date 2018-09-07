@@ -4,6 +4,7 @@
 * Stock Skill: https://github.com/aiix/skill-stock
 * Recipes Skill: https://github.com/AIIX/food-wizard
 * Pairing Skill: github.com/bhush9/skill-pairing
+* Game skill: https://github.com/davidedmundson/skill-samegame (UI bundled)
 
 ### Installation Instructions
 * cd mycroft-core
