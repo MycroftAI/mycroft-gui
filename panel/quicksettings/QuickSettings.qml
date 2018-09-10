@@ -28,6 +28,8 @@ import org.kde.kirigami 2.5 as Kirigami
 ColumnLayout {
     id: root
 
+    signal delegateClicked
+
     function toggleAirplane() {
         print("toggle airplane mode")
     }

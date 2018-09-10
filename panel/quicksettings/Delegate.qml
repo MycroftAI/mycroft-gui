@@ -62,7 +62,10 @@ Controls.Control {
     MouseArea {
         id: iconMouseArea
         anchors.fill: parent
-        onClicked: delegateRoot.clicked(mouse)
+        onClicked: {
+            delegateRoot.clicked(mouse);
+            root.delegateClicked();
+        }
     }
 }
 

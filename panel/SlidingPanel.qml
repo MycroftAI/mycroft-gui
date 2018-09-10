@@ -72,6 +72,7 @@ Controls.Drawer {
             QuickSettings {
                 Layout.fillWidth: true
                 drawer: root
+                onDelegateClicked: root.close();
             }
             Item {
                 id: contentArea

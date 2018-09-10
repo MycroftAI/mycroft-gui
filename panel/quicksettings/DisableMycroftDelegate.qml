@@ -21,11 +21,18 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.1
 import org.kde.kirigami 2.5 as Kirigami
 import Mycroft 1.0 as Mycroft
+import org.kde.plasma.private.volume 0.1 as PA
 
 Delegate {
     id: delegate
     iconSource: toggled ? "mic-off" : "mic-on"
     text: toggled ? i18n("Enable") : i18n("Disable")
+
+    onToggledChanged: paSinkModel.preferredSink.muted = toggled
+
+    PA.SinkModel {
+        id: paSinkModel
+    }
     onClicked: {
         Mycroft.MycroftController.sendRequest(delegate.toggled ? "mycroft.mic.unmute" : "mycroft.mic.mute", {});
     }
