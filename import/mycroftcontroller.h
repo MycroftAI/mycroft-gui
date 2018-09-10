@@ -36,7 +36,7 @@ signals:
     void notUnderstood();
 
     void currentSkillChanged();
-    void skillDataRecieved(const QVariantMap &data);
+    void skillDataRecieved(const QString &type, const QVariantMap &data);
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
 public slots:

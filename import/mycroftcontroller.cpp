@@ -80,19 +80,16 @@ void MycroftController::onTextMessageReceived(const QString &message)
     if (type == "mycroft.skill.handler.start") {
         m_currentSkill = doc["data"]["name"].toString();
         emit currentSkillChanged();
-    }
-    if (type == "mycroft.skill.handler.complete") {
+    } else if (type == "mycroft.skill.handler.complete") {
         m_currentSkill = QString();
         emit currentSkillChanged();
-    }
-    if (type == "speak") {
+    } else if (type == "speak") {
         emit fallbackTextRecieved(m_currentSkill, doc["data"].toVariant().toMap());
     }
-    if (type == QLatin1String("metadata")) {
-        emit skillDataRecieved(doc["data"].toVariant().toMap());
-    }
+    //NOTE: in order for items to wait for an answer, all answers need to be sent as a signal, and the type always sent alongside
+    emit skillDataRecieved(type, doc["data"].toVariant().toMap());
 
-    qDebug() << message;
+    qDebug() << type <<message;
 }
 
 void MycroftController::sendRequest(const QString &type, const QVariantMap &data)

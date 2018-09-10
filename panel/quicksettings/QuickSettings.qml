@@ -53,10 +53,10 @@ ColumnLayout {
     }
 
 
-    BrightnessSlider {
+    VolumeSlider {
         Layout.fillWidth: true
     }
-    VolumeSlider {
+    BrightnessSlider {
         Layout.fillWidth: true
     }
 }

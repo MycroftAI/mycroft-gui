@@ -20,9 +20,33 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.1
 import org.kde.kirigami 2.5 as Kirigami
+import Mycroft 1.0 as Mycroft
 
 Delegate {
-    iconSource: "mic-off"
-    text: i18n("Disable")
+    id: delegate
+    iconSource: toggled ? "mic-off" : "mic-on"
+    text: toggled ? i18n("Enable") : i18n("Disable")
+    onClicked: {
+        Mycroft.MycroftController.sendRequest(delegate.toggled ? "mycroft.mic.unmute" : "mycroft.mic.mute", {});
+    }
+    Component.onCompleted: {
+        Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
+    }
+    Connections {
+        target: Mycroft.MycroftController
+        onSocketStatusChanged: {
+            if (Mycroft.MycroftController.status == Mycroft.MycroftController.Open) {
+                Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
+            }
+        }
+        onSkillDataRecieved: {
+            if (type == "mycroft.mic.get_status.response") {
+                delegate.toggled = data.muted;
+
+            } else if (type =="mycroft.mic.mute" || type =="mycroft.mic.unmute") {
+                Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
+            }
+        }
+    }
 }
 
