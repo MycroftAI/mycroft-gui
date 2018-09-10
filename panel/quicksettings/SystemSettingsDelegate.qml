@@ -22,7 +22,7 @@ import QtQuick.Layouts 1.1
 import org.kde.kirigami 2.5 as Kirigami
 
 Delegate {
-    iconSource: "run-build"
+    iconSource: "configure"
     text: i18n("Settings")
     onClicked: plasmoid.nativeInterface.executeCommand("plasma-settings");
 }
