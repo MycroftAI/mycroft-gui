@@ -46,6 +46,7 @@ Kirigami.AbstractApplicationWindow {
                         bottom: parent.bottom
                         bottomMargin: Kirigami.Units.largeSpacing
                     }
+                    z: 999
                 }
             }
             TextField {
