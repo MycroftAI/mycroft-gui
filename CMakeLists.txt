@@ -23,6 +23,9 @@ set(CMAKE_AUTOMOC ON)
 #in any sane world mycroft would install something in $PATH
 set(MYCROFT_CORE_DIR "/opt/mycroft")
 
+configure_file(config-mycroft.h.in ${CMAKE_CURRENT_BINARY_DIR}/config-mycroft.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Quick
     Core

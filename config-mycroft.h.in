@@ -1,0 +1,2 @@
+#define MYCROFT_CORE_DIR "${MYCROFT_CORE_DIR}"
+#define MYCROFT_SKILLS_UI_DIR MYCROFT_CORE_DIR "/skills/ui/skills"
