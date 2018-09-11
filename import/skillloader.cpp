@@ -18,7 +18,7 @@ QString SkillLoader::uiForMetadataType(const QString &metaDataType) const
 {
     const QStringList &dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "mycroft-gui", QStandardPaths::LocateDirectory);
     for(const QString &dir: dirs) {
-        const QString filePath = dir + "/skills/"+ metaDataType + "/Main.qml";
+        const QString filePath = "/opt/mycroft/skills/ui/skills/"+ metaDataType + "/Main.qml";
         qDebug() << "query" << filePath;
         if (QFileInfo::exists(filePath)) {
             return  QUrl::fromLocalFile(filePath).toString();

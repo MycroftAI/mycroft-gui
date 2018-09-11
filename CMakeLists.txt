@@ -52,7 +52,7 @@ install( PROGRAMS net.bs.mycroft.gui.device2.desktop DESTINATION  ${KDE_INSTALL_
 install( PROGRAMS net.bs.mycroft.gui.device3.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
 
 
-install( DIRECTORY skills DESTINATION ${KDE_INSTALL_FULL_DATADIR}/mycroft-gui/
+install( DIRECTORY skills DESTINATION ${MYCROFT_CORE_DIR}/skills/ui
     PATTERN "*.qmlc" EXCLUDE
 )
 
