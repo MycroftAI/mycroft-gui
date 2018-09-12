@@ -12,35 +12,33 @@ Mycroft.DelegateBase {
 
     backgroundImage: img.source
 
-    GridLayout { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
+    Flickable {
         anchors.fill: parent
-        columns: 2
-        Item {
-            Layout.fillHeight: true
-            Layout.columnSpan: 2
-        }
-        Image {
-            id: img
-            fillMode: Image.PreserveAspectCrop
-            Layout.preferredWidth: Kirigami.Units.gridUnit * 2
-            Layout.preferredHeight: Kirigami.Units.gridUnit * 2
-        }
-        Kirigami.Heading {
-            id: title
-            level: 1
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-        }
-        Label {
-            id: content
-            Layout.columnSpan: 2
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-            elide: Text.ElideRight
-        }
-        Item {
-            Layout.columnSpan: 2
-            Layout.fillHeight: true
+        contentHeight: layout.height
+        topMargin: Math.max(0, (height - contentHeight)/2)
+        GridLayout {
+            id: layout
+            width: parent.width
+            columns: 2
+            Image {
+                id: img
+                fillMode: Image.PreserveAspectCrop
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 2
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 2
+            }
+            Kirigami.Heading {
+                id: title
+                level: 1
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+            }
+            Label {
+                id: content
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
+                width: parent.width
+                wrapMode: Text.WordWrap
+            }
         }
     }
 }
