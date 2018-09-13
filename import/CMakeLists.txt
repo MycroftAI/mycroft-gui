@@ -6,6 +6,7 @@ set(mycroftimport_SRCS
     mycroftplugin.cpp
     mycroftcontroller.cpp
     skillloader.cpp
+    intentwatcher.cpp
     )
 
     

@@ -5,6 +5,16 @@
 #include <QDebug>
 #include <QProcess>
 
+MycroftController *MycroftController::instance()
+{
+    static MycroftController* s_self = nullptr;
+    if (!s_self) {
+        s_self = new MycroftController;
+    }
+    return s_self;
+}
+
+
 MycroftController::MycroftController(QObject *parent): QObject(parent)
 {
     connect(&m_webSocket, &QWebSocket::connected, this, &MycroftController::onConnected);
@@ -21,7 +31,6 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
         m_webSocket.open(QUrl(socket));
     });
 }
-
 
 void MycroftController::start()
 {
@@ -46,6 +55,8 @@ void MycroftController::onTextMessageReceived(const QString &message)
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
         return;
     }
+
+    emit intentRecevied(type, doc["data"].toVariant().toMap());
 
     if (type == QLatin1String("intent_failure")) {
         m_isListening = false;
@@ -75,6 +86,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
     }
     if (type == QLatin1String("mycroft.speech.recognition.unknown")) {
         emit notUnderstood();
+        return;
     }
 
     if (type == "mycroft.skill.handler.start") {
@@ -88,8 +100,6 @@ void MycroftController::onTextMessageReceived(const QString &message)
     }
     //NOTE: in order for items to wait for an answer, all answers need to be sent as a signal, and the type always sent alongside
     emit skillDataRecieved(type, doc["data"].toVariant().toMap());
-
-    qDebug() << type <<message;
 }
 
 void MycroftController::sendRequest(const QString &type, const QVariantMap &data)
@@ -146,10 +156,12 @@ QString MycroftController::currentSkill() const
 {
     return m_currentSkill;
 }
+
 bool MycroftController::isSpeaking() const
 {
     return m_isSpeaking;
 }
+
 bool MycroftController::isListening() const
 {
     return m_isListening;

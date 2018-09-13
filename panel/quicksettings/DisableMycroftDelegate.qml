@@ -36,6 +36,7 @@ Delegate {
     onClicked: {
         Mycroft.MycroftController.sendRequest(delegate.toggled ? "mycroft.mic.unmute" : "mycroft.mic.mute", {});
     }
+
     Component.onCompleted: {
         Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
     }
@@ -46,14 +47,22 @@ Delegate {
                 Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
             }
         }
-        onSkillDataRecieved: {
-            if (type == "mycroft.mic.get_status.response") {
-                delegate.toggled = data.muted;
+    }
 
-            } else if (type =="mycroft.mic.mute" || type =="mycroft.mic.unmute") {
-                Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
-            }
+    Mycroft.IntentWatcher {
+        intent: "mycroft.mic.get_status.response"
+        onInvoked: {
+            delegate.toggled = data.muted;
         }
+    }
+    Mycroft.IntentWatcher {
+        intent: "mycroft.mic.mute"
+        onInvoked: Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
+    }
+
+    Mycroft.IntentWatcher {
+        intent: "mycroft.mic.unmute"
+        onInvoked: Mycroft.MycroftController.sendRequest("mycroft.mic.get_status", {});
     }
 }
 

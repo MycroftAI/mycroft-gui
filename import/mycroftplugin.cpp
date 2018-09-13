@@ -21,6 +21,7 @@
 
 #include "mycroftcontroller.h"
 #include "skillloader.h"
+#include "intentwatcher.h"
 
 #include <QQmlEngine>
 #include <QQmlContext>
@@ -32,7 +33,7 @@ static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
 
-    return new MycroftController;
+    return MycroftController::instance();
 }
 
 void MycroftPlugin::registerTypes(const char *uri)
@@ -43,6 +44,7 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<MycroftController>(uri, 1, 0, "MycroftController", mycroftControllerSingletonProvider);
 
     qmlRegisterType<SkillLoader>(uri, 1, 0, "SkillLoader");
+    qmlRegisterType<IntentWatcher>(uri, 1, 0, "IntentWatcher");
 
     //use this only when all qml files are registered by the plugin
    // qmlProtectModule(uri, 1);

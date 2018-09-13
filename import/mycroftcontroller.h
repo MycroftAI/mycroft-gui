@@ -21,7 +21,8 @@ public:
         Closed,
         Error
     };
-    explicit MycroftController(QObject *parent = nullptr);
+    static MycroftController* instance();
+
     bool isSpeaking() const;
     bool isListening() const;
     Status status() const;
@@ -36,6 +37,8 @@ signals:
     void notUnderstood();
 
     void currentSkillChanged();
+
+    void intentRecevied(const QString &type, const QVariantMap &data);
     void skillDataRecieved(const QString &type, const QVariantMap &data);
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
@@ -48,6 +51,8 @@ private slots:
     void onTextMessageReceived(const QString &message);
     void onStatusChanged(QAbstractSocket::SocketState state);
 private:
+    explicit MycroftController(QObject *parent = nullptr);
+
     QWebSocket m_webSocket;
     QTimer m_reconnectTimer;
 
