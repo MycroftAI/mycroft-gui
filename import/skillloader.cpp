@@ -19,7 +19,7 @@ SkillLoader::~SkillLoader()
 QString SkillLoader::uiForMetadataType(const QString &metaDataType) const
 {
     const QString filePath = MYCROFT_SKILLS_UI_DIR + QLatin1String("/") + metaDataType + "/Main.qml";
-    qDebug() << "query" << filePath;
+    qDebug() << "loading" << filePath;
     if (QFileInfo::exists(filePath)) {
         return  QUrl::fromLocalFile(filePath).toString();
     }

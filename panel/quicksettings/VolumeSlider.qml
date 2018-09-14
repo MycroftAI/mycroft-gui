@@ -45,9 +45,9 @@ SliderBase {
             }
         }
         onSkillDataRecieved: {
-            for (var i in data) {
-                print(i+ ": "+data[i])
-            }
+//             for (var i in data) {
+//                 print(i+ ": "+data[i])
+//             }
             //TODO
             if (type == "mycroft.volume") {
                 
