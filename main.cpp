@@ -4,12 +4,17 @@
 #include <QCommandLineOption>
 #include <QQmlContext>
 #include <QtQml>
-#include <QFont>
+#include <QDebug>
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    QStringList arguments;
+    for (int a = 0; a < argc; ++a) {
+        arguments << QString::fromLocal8Bit(argv[a]);
+    }
+
     qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
 
     QCommandLineParser parser;
@@ -17,25 +22,19 @@ int main(int argc, char *argv[])
     auto widthOption = QCommandLineOption("width", "width", "width");
     auto heightOption = QCommandLineOption("height", "height", "height");
     auto hideTextInputOption = QCommandLineOption("hideTextInput");
-    auto fontSizeOption = QCommandLineOption("fontSize", "fontSize", "fontSize");
-    parser.addOptions({widthOption, heightOption, hideTextInputOption, fontSizeOption});
+    auto dpiOption = QCommandLineOption("dpi", "dpi", "dpi");
+    parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption});
 
-    parser.parse(QCoreApplication::arguments());
-    parser.process(app);
+    parser.process(arguments);
+
+    qputenv("QT_WAYLAND_FORCE_DPI", parser.value(dpiOption).toLatin1());
+
+    QGuiApplication app(argc, argv);
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
-    int fontSize = parser.value(fontSizeOption).toInt();
-
-    QFont font = app.font();
-
-    //app font needs to be set before object creation
-    if (fontSize > 0) {
-        font.setPointSize(fontSize);
-        app.setFont(font);
-    }
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("deviceWidth", width);
@@ -43,14 +42,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("hideTextInput", parser.isSet(hideTextInputOption));
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
-    if (engine.rootObjects().count() > 0) {
-        QObject *obj = engine.rootObjects().first();
-        if (fontSize > 0) {
-            obj->setProperty("font", font);
-        }
-    }
-
 
     return app.exec();
 }
