@@ -52,10 +52,12 @@ void MycroftController::onTextMessageReceived(const QString &message)
 
     auto type = doc["type"].toString();
 
+
     //filter out the noise so we can print debug stuff later without drowning in noise
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
         return;
     }
+    qDebug() << "type" << type;
 
     emit intentRecevied(type, doc["data"].toVariant().toMap());
 
@@ -98,11 +100,12 @@ void MycroftController::onTextMessageReceived(const QString &message)
         emit currentSkillChanged();
     } else if (type == "speak") {
         emit fallbackTextRecieved(m_currentSkill, doc["data"].toVariant().toMap());
+    } else if (type == QLatin1String("mycroft.stop.handled")) {
+        emit stopped();
     }
-    //NOTE: in order for items to wait for an answer, all answers need to be sent as a signal, and the type always sent alongside
-    emit skillDataRecieved(type, doc["data"].toVariant().toMap());
-
-    //qDebug() << type <<message;
+    else if (type == "metadata") {
+        emit skillDataRecieved(doc["data"].toVariant().toMap());
+    }
 }
 
 void MycroftController::sendRequest(const QString &type, const QVariantMap &data)

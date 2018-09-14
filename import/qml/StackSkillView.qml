@@ -62,15 +62,16 @@ StackView {
             }
         }
 
-        onSkillDataRecieved: {
-            if (data["type"] === "stop") {
-                //explictly unset
-                if (mainStack.depth > 1) {
-                    mainStack.pop();
-                    mycroftConnection.metadataType = "";
-                }
-                return;
+        onStopped: {
+            //explictly unset
+            if (mainStack.depth > 1) {
+                mainStack.pop();
+                mycroftConnection.metadataType = "";
             }
+            return;
+        }
+
+        onSkillDataRecieved: {
             openSkillUi(data["type"], data);
         }
 

@@ -29,17 +29,22 @@ public:
     QString currentSkill() const;
 
 signals:
+    //socket stuff
     void socketStatusChanged();
     void closed();
+
+    //mycroft
     void isSpeakingChanged();
     void isListeningChanged();
-
+    void stopped();
     void notUnderstood();
-
     void currentSkillChanged();
 
+    //signal with nearly all data
     void intentRecevied(const QString &type, const QVariantMap &data);
-    void skillDataRecieved(const QString &type, const QVariantMap &data);
+    //type == metadata
+    void skillDataRecieved(const QVariantMap &data);
+    //type utterances, type is the current skill
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
 public slots:
