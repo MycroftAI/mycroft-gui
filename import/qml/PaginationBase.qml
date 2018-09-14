@@ -5,9 +5,10 @@ import QtQuick.Layouts 1.3
 Item
 {
     default property alias secondaryItems: secondary.contentData
-
-    width: 900 //FIXME
-    height: 500
+    property var pageWidth
+    property var pageHeght
+    width: pageWidth
+    height: pageHeght
 
     GridLayout {
         id: layout
@@ -33,7 +34,7 @@ Item
             }
         }
 
-        Rectangle {
+        Item {
             visible: !layout.singleItem
             id: mainItemPlaceHolder
             Layout.fillWidth: true

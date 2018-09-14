@@ -32,6 +32,7 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
     });
 }
 
+
 void MycroftController::start()
 {
     QProcess::startDetached("mycroft-gui-core-loader");
@@ -100,6 +101,8 @@ void MycroftController::onTextMessageReceived(const QString &message)
     }
     //NOTE: in order for items to wait for an answer, all answers need to be sent as a signal, and the type always sent alongside
     emit skillDataRecieved(type, doc["data"].toVariant().toMap());
+
+    //qDebug() << type <<message;
 }
 
 void MycroftController::sendRequest(const QString &type, const QVariantMap &data)
@@ -126,7 +129,7 @@ void MycroftController::sendText(const QString &message)
 void MycroftController::onStatusChanged(QAbstractSocket::SocketState state)
 {
     emit socketStatusChanged();
-    qDebug() << "State changed to " << status();
+    //qDebug() << "State changed to " << status();
 }
 
 MycroftController::Status MycroftController::status() const
