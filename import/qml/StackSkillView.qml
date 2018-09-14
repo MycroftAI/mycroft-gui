@@ -27,9 +27,6 @@ StackView {
         target: Mycroft.MycroftController
 
         function openSkillUi(type, data) {
-            if (type == "") {
-                return;
-            }
             var _url = skillLoader.uiForMetadataType(type);
             if (!_url) {
                 return;
@@ -61,12 +58,11 @@ StackView {
             var regex = /(.*)Skill*/;
             var found = skill.match(regex);
             if (found.length > 1) {
-//                 openSkillUi(found[1].toLowerCase(), data);
+                openSkillUi(found[1].toLowerCase(), data);
             }
         }
 
         onSkillDataRecieved: {
-            console.log("Skill data", data["type"]);
             if (data["type"] === "stop") {
                 //explictly unset
                 if (mainStack.depth > 1) {
@@ -78,14 +74,14 @@ StackView {
             openSkillUi(data["type"], data);
         }
 
-//         onSpeakingChanged: {
-//             if (!Mycroft.MycroftController.speaking) {
-//                 if (mainStack.depth > 1) {
-//                     popTimer.restart();
-//                     countdownAnim.restart();
-//                 }
-//             }
-//         }
+        onSpeakingChanged: {
+            if (!Mycroft.MycroftController.speaking) {
+                if (mainStack.depth > 1) {
+                    popTimer.restart();
+                    countdownAnim.restart();
+                }
+            }
+        }
     }
 
     Timer {
