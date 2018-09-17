@@ -1,11 +1,12 @@
 import QtQuick 2.5
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
+import org.kde.kirigami 2.5 as Kirigami
 
 Item {
-    //default property alias secondaryItems: secondary.contentData
     property var pageWidth
     property var pageHeght
+    property alias spacing: secondary.spacing
     width: pageWidth
     height: pageHeght
 
@@ -64,7 +65,8 @@ Item {
             id: secondary
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
+            clip: false
+            spacing: Kirigami.Units.largeSpacing
         }
     }
 }
