@@ -4,30 +4,31 @@ import QtQuick.Layouts 1.3
 import org.kde.kirigami 2.5 as Kirigami
 
 Item {
-    property var pageWidth
-    property var pageHeght
+    id: root
     property alias spacing: secondary.spacing
-    width: pageWidth
-    height: pageHeght
+    property int switchWidth: Kirigami.Units.gridUnit * 35
+    property int switchHeight: Kirigami.Units.gridUnit * 35
 
-    readonly property Item primaryItem: secondaryItems ? secondaryItems[0] : null
+    readonly property Item primaryItem: items ? items[0] : null
 
-    default property list<Item> secondaryItems
-    onSecondaryItemsChanged: {
+    default property list<Item> items
+
+    onItemsChanged: {
         if (layout.singleItem) {
             secondary.insertItem(0, primaryItem);
         }
-        for (var i = 1; i < secondaryItems.length; ++i) {
-            secondary.addItem(secondaryItems[i]);
+        for (var i = 1; i < items.length; ++i) {
+            secondary.addItem(items[i]);
         }
+        secondary.currentIndex = 0;
     }
 
     GridLayout {
         id: layout
         anchors.fill: parent
         //anchors.margins: 20
-        property bool singleItem: columns < 2 && height < 800
-        columns: width > 800 ? 2 : 1
+        property bool singleItem: columns < 2 && height < switchWidth
+        columns: width > switchHeight ? 2 : 1
 
         onSingleItemChanged: {
             if (singleItem) {
@@ -53,6 +54,7 @@ Item {
                 primaryItem.width = Qt.binding(function() {return mainItemPlaceHolder.width})
                 primaryItem.height = Qt.binding(function() {return mainItemPlaceHolder.height})
             }
+            secondary.currentIndex = 0;
         }
 
         Item {
@@ -63,10 +65,20 @@ Item {
         }
         SwipeView {
             id: secondary
+            currentIndex: 0
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: false
             spacing: Kirigami.Units.largeSpacing
         }
     }
+    PageIndicator {
+        visible: secondary.contentChildren.length > 1
+        count: secondary.count
+        currentIndex: secondary.currentIndex
+
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+    Label {text: secondary.currentIndex}
 }
