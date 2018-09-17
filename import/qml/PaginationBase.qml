@@ -2,35 +2,55 @@ import QtQuick 2.5
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 
-Item
-{
-    default property alias secondaryItems: secondary.contentData
+Item {
+    //default property alias secondaryItems: secondary.contentData
     property var pageWidth
     property var pageHeght
     width: pageWidth
     height: pageHeght
 
+    readonly property Item primaryItem: secondaryItems ? secondaryItems[0] : null
+
+    default property list<Item> secondaryItems
+    onSecondaryItemsChanged: {
+        if (layout.singleItem) {
+            secondary.insertItem(0, primaryItem);
+        }
+        for (var i = 1; i < secondaryItems.length; ++i) {
+            secondary.addItem(secondaryItems[i]);
+        }
+    }
+
     GridLayout {
         id: layout
         anchors.fill: parent
-        anchors.margins: 20
+        //anchors.margins: 20
         property bool singleItem: columns < 2 && height < 800
         columns: width > 800 ? 2 : 1
 
         onSingleItemChanged: {
             if (singleItem) {
-                foo = mainItemPlaceHolder.children[0];
-                foo.layer.enabled = false //DAVE This is a hack round something..but I don't know what
-                secondary.insertItem(0, foo)
+                if (primaryItem.hasOwnProperty("layer")) {
+                    primaryItem.layer.enabled = false //DAVE This is a hack round something..but I don't know what
+                }
+                secondary.insertItem(0, primaryItem)
             } else {
-                var foo = secondary.takeItem(0);
-                console.log(foo.color);
-                foo.parent = mainItemPlaceHolder
-                foo.visible = true
-                foo.opacity = 1
-                foo.layer.enabled = true //see above
-                foo.width = Qt.binding(function() {return mainItemPlaceHolder.width})
-                foo.height = Qt.binding(function() {return mainItemPlaceHolder.height})
+                console.log(primaryItem.color);
+                if (secondary.itemAt(0) != primaryItem) {
+                    console.error("ERROR: the first item is not primaryItem: this should never happen")
+                    return;
+                }
+                secondary.takeItem(0);
+                primaryItem.parent = mainItemPlaceHolder
+                primaryItem.x = 0;
+                primaryItem.visible = true
+                primaryItem.opacity = 1
+                if (primaryItem.hasOwnProperty("layer")) {
+                    primaryItem.layer.enabled = true //see above
+                }
+                //FIXME: should this be unbinded when going to singleItem?
+                primaryItem.width = Qt.binding(function() {return mainItemPlaceHolder.width})
+                primaryItem.height = Qt.binding(function() {return mainItemPlaceHolder.height})
             }
         }
 
