@@ -100,7 +100,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
         emit currentSkillChanged();
     } else if (type == "speak") {
         emit fallbackTextRecieved(m_currentSkill, doc["data"].toVariant().toMap());
-    } else if (type == QLatin1String("mycroft.stop.handled")) {
+    } else if (type == QLatin1String("mycroft.stop.handled") || type == QLatin1String("mycroft.stop")) {
         emit stopped();
     }
     else if (type == "metadata") {
