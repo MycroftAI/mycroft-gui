@@ -73,6 +73,7 @@ Item {
         }
     }
     RowLayout {
+        visible: secondary.contentChildren.length > 1
         anchors {
             bottom: parent.bottom
             right: parent.right
@@ -89,7 +90,6 @@ Item {
             Layout.fillHeight: true
             Controls.PageIndicator {
                 anchors.centerIn: parent
-                visible: secondary.contentChildren.length > 1
                 count: secondary.count
                 currentIndex: secondary.currentIndex
             }
