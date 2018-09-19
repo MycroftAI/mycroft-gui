@@ -1,5 +1,5 @@
 import QtQuick 2.5
-import QtQuick.Controls 2.4
+import QtQuick.Controls 2.4 as Controls
 import QtQuick.Layouts 1.3
 import org.kde.kirigami 2.5 as Kirigami
 
@@ -63,7 +63,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true //fill width to evenly split layout
         }
-        SwipeView {
+        Controls.SwipeView {
             id: secondary
             currentIndex: 0
             Layout.fillWidth: true
@@ -72,13 +72,32 @@ Item {
             spacing: Kirigami.Units.largeSpacing
         }
     }
-    PageIndicator {
-        visible: secondary.contentChildren.length > 1
-        count: secondary.count
-        currentIndex: secondary.currentIndex
-
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
+    RowLayout {
+        anchors {
+            bottom: parent.bottom
+            right: parent.right
+            margins: Kirigami.Units.largeSpacing
+        }
+        width: secondary.width - Kirigami.Units.largeSpacing*2
+        Controls.RoundButton {
+            icon.name: "go-previous-symbolic"
+            enabled: secondary.currentIndex > 0
+            onClicked: secondary.currentIndex--
+        }
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Controls.PageIndicator {
+                anchors.centerIn: parent
+                visible: secondary.contentChildren.length > 1
+                count: secondary.count
+                currentIndex: secondary.currentIndex
+            }
+        }
+        Controls.RoundButton {
+            icon.name: "go-next-symbolic"
+            enabled: secondary.currentIndex < secondary.count - 1
+            onClicked: secondary.currentIndex++
+        }
     }
-    Label {text: secondary.currentIndex}
 }
