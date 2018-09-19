@@ -34,6 +34,8 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     WebSockets
 )
 
+find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS Plasma I18n)
+
 SET(mycroft_gui_app_SRC
     main.cpp
 )
@@ -45,6 +47,7 @@ qt5_add_resources(mycroft_gui_app_SRC
 add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
 target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick)
 
+add_subdirectory(containments)
 
 install(TARGETS mycroft-gui-app ${INSTALL_TARGETS_DEFAULT_ARGS})
 add_subdirectory(import)
