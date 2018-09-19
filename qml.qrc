@@ -5,16 +5,17 @@
         <file alias="Hand.qml">skills//time/Hand.qml</file>
         <file alias="ClockFace.qml">skills//time/ClockFace.qml</file>
         <file alias="background.png">data/background.png</file>
-        <file>panel/SlidingPanel.qml</file>
-        <file>panel/quicksettings/Delegate.qml</file>
-        <file>panel/quicksettings/QuickSettings.qml</file>
-        <file>panel/quicksettings/brightness-decrease.svg</file>
-        <file>panel/quicksettings/HomeDelegate.qml</file>
-        <file>panel/quicksettings/SystemSettingsDelegate.qml</file>
-        <file>panel/quicksettings/brightness-increase.svg</file>
-        <file>panel/quicksettings/DisableMycroftDelegate.qml</file>
-        <file>panel/quicksettings/SliderBase.qml</file>
-        <file>panel/quicksettings/BrightnessSlider.qml</file>
-        <file>panel/quicksettings/VolumeSlider.qml</file>
+
+        <file>containments/panel/package/contents/ui/SlidingPanel.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/Delegate.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/SliderBase.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/QuickSettings.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/VolumeSlider.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/brightness-decrease.svg</file>
+        <file>containments/panel/package/contents/ui/quicksettings/HomeDelegate.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/SystemSettingsDelegate.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/BrightnessSlider.qml</file>
+        <file>containments/panel/package/contents/ui/quicksettings/brightness-increase.svg</file>
+        <file>containments/panel/package/contents/ui/quicksettings/DisableMycroftDelegate.qml</file>
     </qresource>
 </RCC>

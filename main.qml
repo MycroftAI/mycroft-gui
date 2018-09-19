@@ -5,7 +5,7 @@ import org.kde.kirigami 2.4 as Kirigami
 import QtQuick.Window 2.2
 import Mycroft 1.0 as Mycroft
 
-import "panel"
+import "containments/panel/package/contents/ui" as Panel
 
 Kirigami.AbstractApplicationWindow {
     id: root
@@ -21,7 +21,7 @@ Kirigami.AbstractApplicationWindow {
     color: "grey"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    SlidingPanel {
+    Panel.SlidingPanel {
         //to change the color of the entire panel, uncomment this
        // Kirigami.Theme.colorSet: Kirigami.Theme.Window
         width: root.width
