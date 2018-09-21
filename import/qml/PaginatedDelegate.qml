@@ -10,6 +10,11 @@ DelegateBase {
     property int switchHeight: Kirigami.Units.gridUnit * 35
     readonly property Kirigami.Page primaryPage: pages ? pages[0] : null
 
+    property alias currentIndex: secondary.currentIndex
+    property alias currentItem: secondary.currentItem
+    property alias count: secondary.count
+    readonly property bool moving: secondary.contentItem.moving
+
     default property list<Kirigami.Page> pages
 
     leftPadding: 0
