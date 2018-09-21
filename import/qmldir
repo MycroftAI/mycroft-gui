@@ -7,6 +7,7 @@ classname MycroftPlugin
 StatusIndicator 1.0 StatusIndicator.qml
 DelegateBase 1.0 DelegateBase.qml
 PaginatedDelegate 1.0 PaginatedDelegate.qml
+ScrollableDelegate 1.0 ScrollableDelegate.qml
 StackSkillView 1.0 StackSkillView.qml
 
 designersupported

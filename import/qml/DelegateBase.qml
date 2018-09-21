@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.4 as Kirigami
 
+//TODO: should all delegates be a Kirigami Page?
 Controls.Control {
     id: control
     property int graceTime: 6000
