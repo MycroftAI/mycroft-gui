@@ -12,6 +12,8 @@ Controls.Control {
     property alias backgroundVerticalAlignment: img.verticalAlignment
     property alias backgroundDim: rect.opacity
 
+    readonly property bool userInteracting: main.pressed
+
     //To do some automatic responsive layouting
     readonly property bool wideMode: Math.min(width, height) > Kirigami.Units.gridUnit * 18
 
@@ -41,7 +43,8 @@ Controls.Control {
         }
     }
 
-    contentItem: Item {
+    contentItem: MouseArea {
         id: main
+        drag.filterChildren: true
     }
 }

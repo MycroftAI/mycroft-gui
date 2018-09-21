@@ -86,6 +86,18 @@ StackView {
             }
         }
     }
+    Connections {
+        target: mainStack.currentItem
+        onUserInteractingChanged: {
+            if (mainStack.currentItem.userInteracting) {
+                popTimer.running = false;
+                countdownAnim.running = false;
+            } else if (!Mycroft.MycroftController.speaking) {
+                popTimer.restart();
+                countdownAnim.restart();
+            }
+        }
+    }
 
     Timer {
         id: popTimer
