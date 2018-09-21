@@ -21,9 +21,23 @@ StackView {
         id: skillLoader
     }
 
+    RoundButton {
+        z: 99999
+        icon.name: "go-previous-symbolic"
+        enabled: secondary.currentIndex > 0
+        visible: mainStack.depth > 1
+        onClicked: {
+            if (mainStack.depth > 1) {
+                mainStack.pop();
+                mycroftConnection.metadataType.pop();
+                popTimer.running = false;
+                countdownAnim.running = false;
+            }
+        }
+    }
     Connections {
         id: mycroftConnection
-        property string metadataType
+        property var metadataType: []
         target: Mycroft.MycroftController
 
         function openSkillUi(type, data) {
@@ -32,7 +46,7 @@ StackView {
                 return;
             }
 
-            if (mycroftConnection.metadataType == type) {
+            if (mycroftConnection.metadataType[mycroftConnection.metadataType.length - 1] == type) {
                 var key;
                 for (key in data) {
                     if (mainStack.currentItem.hasOwnProperty(key)) {
@@ -40,12 +54,8 @@ StackView {
                     }
                 }
             } else {
-                mycroftConnection.metadataType = type;
-                if (mainStack.depth > 1) {
-                    mainStack.replace(_url, data);
-                } else {
-                    mainStack.push(_url, data);
-                }
+                mycroftConnection.metadataType.push(type);
+                mainStack.push(_url, data);
             }
 
             popTimer.running = false;
@@ -68,7 +78,7 @@ StackView {
                 popTimer.running = false;
                 countdownAnim.running = false;
                 mainStack.pop();
-                mycroftConnection.metadataType = "";
+                mycroftConnection.metadataType.pop();
             }
             return;
         }
@@ -105,7 +115,7 @@ StackView {
         onTriggered: {
             if (mainStack.depth > 1) {
                 mainStack.pop(get(0));
-                mycroftConnection.metadataType = "";
+                mycroftConnection.metadataType = [];
             }
         }
     }
