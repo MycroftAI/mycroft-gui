@@ -28,7 +28,7 @@ Rectangle {
 
     color: Kirigami.Theme.backgroundColor
 
-    visible: tasksModel.activeTask.valid
+    visible: tasksModel.activeTask.valid && !tasksModel.data(tasksModel.activeTask, TaskManager.AbstractTasksModel.IsFullScreen)
 
     TaskManager.TasksModel {
         id: tasksModel
@@ -41,7 +41,7 @@ Rectangle {
     }
     Controls.Label {
         anchors.centerIn: parent
-        text: tasksModel.data(tasksModel.activeTask, TaskManager.TasksModel.AppName) || ""
+        text: tasksModel.data(tasksModel.activeTask, TaskManager.AbstractTasksModel.AppName) || ""
     }
 
     PlasmaCore.DataSource {

@@ -19,6 +19,7 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
+import QtGraphicalEffects 1.0
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -112,7 +113,26 @@ PlasmaCore.ColorScope {
             slidingPanel.peeking = false;
         }
         WindowControl {
+            id: windowControl
             anchors.fill: parent
+        }
+        RowLayout {
+            id: appletIconsRow
+            anchors {
+                top: parent.top
+                right: parent.right
+                bottom: parent.bottom
+                margins: Kirigami.units.smallSpacing
+            }
+            visible: !windowControl.visible
+            readonly property int implicitHeight: children.length > 0 ? Kirigami.Units.gridUnit * 5 : 0
+            layer.enabled: true
+            layer.effect: DropShadow {
+                opacity: root.opacity
+                transparentBorder: true
+                horizontalOffset: 0
+                verticalOffset: 2
+            }
         }
     }
 
@@ -130,10 +150,7 @@ PlasmaCore.ColorScope {
                     panelWindow.visible = false;
                 }
             }
-            bottomItem: RowLayout {
-                id: appletIconsRow
-                readonly property int implicitHeight: children.length > 0 ? Kirigami.Units.gridUnit * 5 : 0
-            }
+            bottomItem: Item {}
         }
     }
 }

@@ -116,12 +116,12 @@ Item {
 
             //this will kill any mouse events to the applet
             //first version is not interactive
-            MouseArea {
+/*            MouseArea {
                 anchors.fill: parent
                 z: 9999
                 onPressed: mouse.accepted = true
             }
-
+*/
             DropShadow {
                 visible: applet && applet.backgroundHints == PlasmaCore.Types.StandardBackground
                 anchors.fill: parent
@@ -130,7 +130,7 @@ Item {
                 source: applet
             }
 
-            implicitWidth: root.smallScreenMode || appletsSpace.layout.children.length < 2 ? appletsView.width :  Math.max(applet.switchWidth + 1, Math.max( applet.Layout.minimumWidth, appletsView.width/4))
+            implicitWidth: root.smallScreenMode || appletsSpace.layout.children.length < 2 ? appletsView.width :  Math.max(applet.switchWidth + 1, Math.max( applet.Layout.minimumWidth, appletsView.width/2))
             implicitHeight: appletsView.height
 
             PlasmaComponents.BusyIndicator {
