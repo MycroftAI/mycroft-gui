@@ -138,8 +138,8 @@ PlasmaCore.ColorScope {
 
     Window {
         id: panelWindow
-        color: "transparent"
         visible: false
+        color: Qt.rgba(0, 0, 0, 0.6 * slidingPanel.position)
         SlidingPanel {
             id: slidingPanel
             width: plasmoid.availableScreenRect.width
