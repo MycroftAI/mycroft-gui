@@ -34,6 +34,7 @@ PlasmaCore.ColorScope {
     width: 480
     height: 640
     colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
     property Item toolBox
     property var layoutManager: LayoutManager
@@ -109,6 +110,9 @@ PlasmaCore.ColorScope {
         }
         onReleased: {
             slidingPanel.peeking = false;
+        }
+        WindowControl {
+            anchors.fill: parent
         }
     }
 
