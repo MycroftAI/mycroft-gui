@@ -23,6 +23,8 @@ StackView {
 
     RoundButton {
         z: 99999
+        x: mainStack.leftPadding
+        y: mainStack.topPadding
         icon.name: "go-previous-symbolic"
         enabled: secondary.currentIndex > 0
         visible: mainStack.depth > 1

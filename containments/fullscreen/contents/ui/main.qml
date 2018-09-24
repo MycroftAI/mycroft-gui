@@ -190,8 +190,14 @@ Item {
 
     Mycroft.StackSkillView {
         id: mainStack
-        anchors.fill: parent
-
+        anchors {
+            fill: parent
+            //topMargin: plasmoid.availableScreenRect.y
+            bottomMargin: root.height - plasmoid.availableScreenRect.y - plasmoid.availableScreenRect.height
+            leftMargin: plasmoid.availableScreenRect.x
+            rightMargin: root.width - plasmoid.availableScreenRect.x - plasmoid.availableScreenRect.width
+        }
+        topPadding: plasmoid.availableScreenRect.y
         initialItem: initialScreen
         popEnter: Transition {
             OpacityAnimator {

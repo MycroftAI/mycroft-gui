@@ -8,10 +8,10 @@ DelegateBase {
     //this to make all items children of the scrollview item so everything will have paddings automagically
     default property alias data: main.contentData
 
-    leftPadding: main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing
-    topPadding: main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing
-    rightPadding: main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing
-    bottomPadding: main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing
+    leftPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0)
+    topPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.topPadding : 0)
+    rightPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0)
+    bottomPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.bottomPadding : 0)
 
     Component.onCompleted: main.contentItem.clip = false
     contentItem: Controls.ScrollView {

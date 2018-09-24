@@ -19,10 +19,10 @@ Controls.Control {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    leftPadding: Kirigami.Units.largeSpacing
-    topPadding: Kirigami.Units.largeSpacing
-    rightPadding: Kirigami.Units.largeSpacing
-    bottomPadding: Kirigami.Units.largeSpacing
+    leftPadding: (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0) + Kirigami.Units.largeSpacing
+    topPadding: (Controls.StackView.view ? Controls.StackView.view.topPadding : 0) + Kirigami.Units.largeSpacing
+    rightPadding: (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0) + Kirigami.Units.largeSpacing
+    bottomPadding: (Controls.StackView.view ? Controls.StackView.view.bottomPadding : 0) + Kirigami.Units.largeSpacing
 
     //this to make all items children of contentItem so everything will have paddings automagically
     default property alias data: main.data

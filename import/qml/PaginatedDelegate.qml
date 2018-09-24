@@ -16,10 +16,10 @@ DelegateBase {
 
     default property list<Kirigami.Page> pages
 
-    leftPadding: 0
-    topPadding: 0
-    rightPadding: 0
-    bottomPadding: 0
+    leftPadding: (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0)
+    topPadding: (Controls.StackView.view ? Controls.StackView.view.topPadding : 0)
+    rightPadding: (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0)
+    bottomPadding: (Controls.StackView.view ? Controls.StackView.view.bottomPadding : 0)
 
     onPagesChanged: {
         if (layout.singleItem) {
@@ -80,7 +80,6 @@ DelegateBase {
             currentIndex: 0
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
         }
     }
 
