@@ -162,7 +162,10 @@ Item {
                 left: parent.left
                 right: parent.right
                 top: parent.top
-                margins: root.smallScreenMode ? 0 : Kirigami.Units.largeSpacing
+                property int extraMargin: root.smallScreenMode ? 0 : Kirigami.Units.largeSpacing
+                topMargin: mainStack.topPadding + extraMargin
+                leftMargin: mainStack.leftPadding + extraMargin
+                rightMargin: mainStack.rightPadding + extraMargin
             }
             flickableDirection: Flickable.HorizontalFlick
             boundsBehavior: Flickable.StopAtBounds
@@ -181,6 +184,9 @@ Item {
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
+                leftMargin: mainStack.leftPadding + extraMargin
+                bottomMargin: mainStack.bottomMargin + extraMargin
+                rightMargin: mainStack.rightPadding + extraMargin
             }
             height: (parent.height / 3) * 2
             active: !root.smallScreenMode
@@ -190,14 +196,13 @@ Item {
 
     Mycroft.StackSkillView {
         id: mainStack
-        anchors {
-            fill: parent
-            //topMargin: plasmoid.availableScreenRect.y
-            bottomMargin: root.height - plasmoid.availableScreenRect.y - plasmoid.availableScreenRect.height
-            leftMargin: plasmoid.availableScreenRect.x
-            rightMargin: root.width - plasmoid.availableScreenRect.x - plasmoid.availableScreenRect.width
-        }
+        anchors.fill: parent
+
         topPadding: plasmoid.availableScreenRect.y
+        bottomPadding: root.height - plasmoid.availableScreenRect.y - plasmoid.availableScreenRect.height
+        leftPadding: plasmoid.availableScreenRect.x
+        rightPadding: root.width - plasmoid.availableScreenRect.x - plasmoid.availableScreenRect.width
+
         initialItem: initialScreen
         popEnter: Transition {
             OpacityAnimator {

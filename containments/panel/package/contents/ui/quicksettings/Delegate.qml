@@ -42,6 +42,8 @@ Controls.Control {
     contentItem: ColumnLayout {
         Kirigami.Icon {
             id: icon
+            //FIXME: temporary
+            isMask: true
             Layout.preferredHeight: Kirigami.Units.iconSizes.medium
             Layout.fillWidth: true
         }

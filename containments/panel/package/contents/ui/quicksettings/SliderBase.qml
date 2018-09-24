@@ -31,6 +31,7 @@ RowLayout {
 
     Kirigami.Icon {
         id: leftIcon
+        isMask: true
         Layout.preferredWidth: Kirigami.Units.iconSizes.medium
         Layout.preferredHeight: Layout.preferredWidth
     }
@@ -40,6 +41,7 @@ RowLayout {
     }
     Kirigami.Icon {
         id: rightIcon
+        isMask: true
         Layout.preferredWidth: Kirigami.Units.iconSizes.medium
         Layout.preferredHeight: Layout.preferredWidth
     }
