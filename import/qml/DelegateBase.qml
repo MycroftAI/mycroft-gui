@@ -19,6 +19,15 @@ Controls.Control {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
+    /**
+     * FIXME: do we want this at all?
+     * If the delegate supports an own "back" action
+     * it can reimplement this function and implement the going back in there.
+     * @returns if true the delegate managed its own back action and the view won't pop it, if returns false the management of back is global and the delegate will be removed from the stack
+     */
+    function goBack() {
+        return false;
+    }
     leftPadding: (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0) + Kirigami.Units.largeSpacing
     topPadding: (Controls.StackView.view ? Controls.StackView.view.topPadding : 0) + Kirigami.Units.largeSpacing
     rightPadding: (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0) + Kirigami.Units.largeSpacing

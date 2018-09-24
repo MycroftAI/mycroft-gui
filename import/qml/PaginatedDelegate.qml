@@ -16,6 +16,14 @@ DelegateBase {
 
     default property list<Kirigami.Page> pages
 
+    function goBack() {
+        if (secondary.currentIndex > 0) {
+            secondary.currentIndex--;
+            return true;
+        } else {
+            return false;
+        }
+    }
     leftPadding: (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0)
     topPadding: (Controls.StackView.view ? Controls.StackView.view.topPadding : 0)
     rightPadding: (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0)

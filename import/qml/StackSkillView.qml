@@ -23,13 +23,16 @@ StackView {
 
     RoundButton {
         z: 99999
-        x: mainStack.leftPadding
-        y: mainStack.topPadding
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            leftMargin: mainStack.leftPadding + Kirigami.Units.largeSpacing
+            bottomMargin: mainStack.bottomPadding + Kirigami.Units.largeSpacing
+        }
         icon.name: "go-previous-symbolic"
-        enabled: secondary.currentIndex > 0
         visible: mainStack.depth > 1
         onClicked: {
-            if (mainStack.depth > 1) {
+            if ((!mainStack.currentItem.hasOwnProperty("goBack") || !mainStack.currentItem.goBack()) && mainStack.depth > 1) {
                 mainStack.pop();
                 mycroftConnection.metadataType.pop();
                 popTimer.running = false;
