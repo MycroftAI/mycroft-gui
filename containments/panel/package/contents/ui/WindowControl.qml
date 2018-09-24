@@ -19,6 +19,7 @@
 
 import QtQuick 2.1
 import QtQuick.Controls 2.2 as Controls
+import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.taskmanager 0.1 as TaskManager
 import org.kde.kirigami 2.5 as Kirigami
 
@@ -42,6 +43,29 @@ Rectangle {
         anchors.centerIn: parent
         text: tasksModel.data(tasksModel.activeTask, TaskManager.TasksModel.AppName) || ""
     }
+
+    PlasmaCore.DataSource {
+        id: executable
+        engine: "executable"
+        connectedSources: []
+        onNewData: disconnectSource(sourceName)
+
+        function exec(cmd) {
+            executable.connectSource(cmd)
+        }
+    }
+
+    Controls.ToolButton {
+        anchors {
+            top: parent.top
+            left: parent.left
+            bottom: parent.bottom
+        }
+        width: height
+        icon.name: "view-grid-symbolic"
+        onClicked: executable.exec('qdbus org.kde.kglobalaccel /component/kwin invokeShortcut "ExposeAll"')
+    }
+
     Controls.ToolButton {
         anchors {
             top: parent.top
