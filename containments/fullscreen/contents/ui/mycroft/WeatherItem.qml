@@ -49,9 +49,6 @@ ItemBase {
         onTriggered: fetchDashWeather();
     }
     function fetchDashWeather() {
-        for(var i in geoDataSource.data) {
-            print("GGG"+i+" "+geoDataSource.data.keys())
-        }
 
         var doc = new XMLHttpRequest()
         var url = 'https://api.openweathermap.org/data/2.5/forecast?' +
@@ -64,7 +61,6 @@ ItemBase {
         doc.onreadystatechange = function() {
             if (doc.readyState === XMLHttpRequest.DONE) {
                 root.weatherData = JSON.parse(doc.responseText);
-                print(root.weatherData);
             }
         }
     }
@@ -76,7 +72,8 @@ ItemBase {
             source: {
                 if (!weatherData) {
                     return;
-                }print("AAAA"+weatherData.list[0].weather[0].icon)
+                }
+
                 switch (weatherData.list[0].weather[0].icon) {
                 case "01d":
                     return "weather-clear";
