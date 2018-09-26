@@ -21,6 +21,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 
+import org.kde.plasma.private.minishell 2.0 as MiniShell
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -136,7 +137,7 @@ PlasmaCore.ColorScope {
         }
     }
 
-    Window {
+    MiniShell.FullScreenPanel {
         id: panelWindow
         visible: false
         color: Qt.rgba(0, 0, 0, 0.6 * slidingPanel.position)
