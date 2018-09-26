@@ -140,17 +140,13 @@ PlasmaCore.ColorScope {
     MiniShell.FullScreenPanel {
         id: panelWindow
         visible: false
+        width: Screen.width
+        height: Screen.height
         color: Qt.rgba(0, 0, 0, 0.6 * slidingPanel.position)
         SlidingPanel {
             id: slidingPanel
             width: plasmoid.availableScreenRect.width
-            onVisibleChanged: {
-                if (visible) {
-                    panelWindow.showFullScreen();
-                } else {
-                    panelWindow.visible = false;
-                }
-            }
+            onVisibleChanged: panelWindow.visible = visible;
             bottomItem: Item {}
         }
     }
