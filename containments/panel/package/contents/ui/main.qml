@@ -134,6 +134,23 @@ PlasmaCore.ColorScope {
                 horizontalOffset: 0
                 verticalOffset: 2
             }
+            Row {
+                spacing: Kirigami.Units.smallSpacing
+                Layout.fillHeight: true
+                Repeater {
+                    id: statusNotifierRepeater
+                    model: PlasmaCore.SortFilterModel {
+                        id: filteredStatusNotifiers
+                        filterRole: "Title"
+                        sourceModel: PlasmaCore.DataModel {
+                            dataSource: statusNotifierSource
+                        }
+                    }
+
+                    delegate: TaskWidget {
+                    }
+                }
+            }
         }
     }
 
