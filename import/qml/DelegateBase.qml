@@ -1,5 +1,5 @@
 import QtQuick 2.4
-import QtQuick.Controls 2.0 as Controls
+import QtQuick.Controls 2.2 as Controls
 import org.kde.kirigami 2.4 as Kirigami
 
 //TODO: should all delegates be a Kirigami Page?
@@ -12,6 +12,22 @@ Controls.Control {
     property alias backgroundVerticalAlignment: img.verticalAlignment
     property alias backgroundDim: rect.opacity
 
+    signal backRequested
+
+    property Component controlBar: Controls.RoundButton {
+        z: 99999
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            leftMargin: control.leftPadding
+            bottomMargin: control.bottomPadding
+        }
+        icon.name: "go-previous-symbolic"
+        onClicked: control.backRequested();
+    }
+
+    readonly property Item controlBarItem: controlBar.createObject(control);
+
     readonly property bool userInteracting: main.pressed
 
     //To do some automatic responsive layouting
@@ -19,15 +35,6 @@ Controls.Control {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    /**
-     * FIXME: do we want this at all?
-     * If the delegate supports an own "back" action
-     * it can reimplement this function and implement the going back in there.
-     * @returns if true the delegate managed its own back action and the view won't pop it, if returns false the management of back is global and the delegate will be removed from the stack
-     */
-    function goBack() {
-        return false;
-    }
     leftPadding: (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0) + Kirigami.Units.largeSpacing
     topPadding: (Controls.StackView.view ? Controls.StackView.view.topPadding : 0) + Kirigami.Units.largeSpacing
     rightPadding: (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0) + Kirigami.Units.largeSpacing

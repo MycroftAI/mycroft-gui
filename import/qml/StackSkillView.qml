@@ -21,25 +21,6 @@ StackView {
         id: skillLoader
     }
 
-    RoundButton {
-        z: 99999
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-            leftMargin: mainStack.leftPadding + Kirigami.Units.largeSpacing
-            bottomMargin: mainStack.bottomPadding + Kirigami.Units.largeSpacing
-        }
-        icon.name: "go-previous-symbolic"
-        visible: mainStack.depth > 1
-        onClicked: {
-            if ((!mainStack.currentItem.hasOwnProperty("goBack") || !mainStack.currentItem.goBack()) && mainStack.depth > 1) {
-                mainStack.pop();
-                mycroftConnection.metadataType.pop();
-                popTimer.running = false;
-                countdownAnim.running = false;
-            }
-        }
-    }
     Connections {
         id: mycroftConnection
         property var metadataType: []
@@ -94,7 +75,7 @@ StackView {
 
         onSpeakingChanged: {
             if (!Mycroft.MycroftController.speaking) {
-                if (mainStack.depth > 1) {
+                if (mainStack.depth > 1 && (!mainStack.currentItem.hasOwnProperty("graceTime") || (mainStack.currentItem.graceTime != Infinity && mainStack.currentItem.graceTime > 0))) {
                     popTimer.restart();
                     countdownAnim.restart();
                 }
@@ -103,11 +84,17 @@ StackView {
     }
     Connections {
         target: mainStack.currentItem
+        onBackRequested: {
+            mainStack.pop();
+            mycroftConnection.metadataType.pop();
+            popTimer.running = false;
+            countdownAnim.running = false;
+        }
         onUserInteractingChanged: {
             if (mainStack.currentItem.userInteracting) {
                 popTimer.running = false;
                 countdownAnim.running = false;
-            } else if (!Mycroft.MycroftController.speaking) {
+            } else if (!Mycroft.MycroftController.speaking && (!mainStack.currentItem.hasOwnProperty("graceTime") || (mainStack.currentItem.graceTime != Infinity && mainStack.currentItem.graceTime > 0))) {
                 popTimer.restart();
                 countdownAnim.restart();
             }

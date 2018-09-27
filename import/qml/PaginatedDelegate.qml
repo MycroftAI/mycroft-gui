@@ -16,14 +16,6 @@ DelegateBase {
 
     default property list<Kirigami.Page> pages
 
-    function goBack() {
-        if (secondary.currentIndex > 0) {
-            secondary.currentIndex--;
-            return true;
-        } else {
-            return false;
-        }
-    }
     leftPadding: (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0)
     topPadding: (Controls.StackView.view ? Controls.StackView.view.topPadding : 0)
     rightPadding: (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0)
@@ -85,6 +77,7 @@ DelegateBase {
         }
         Controls.SwipeView {
             id: secondary
+            clip: true
             currentIndex: 0
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -107,30 +100,41 @@ DelegateBase {
         }
     }
 
-    RowLayout {
+    controlBar: Item {
         id: bottomBar
-        visible: secondary.contentChildren.length > 1
+        height: childrenRect.height
         anchors {
             bottom: parent.bottom
+            left: parent.left
             right: parent.right
             margins: Kirigami.Units.largeSpacing
         }
-        width: secondary.width - Kirigami.Units.largeSpacing*2
+
         Controls.RoundButton {
             icon.name: "go-previous-symbolic"
-            enabled: secondary.currentIndex > 0
-            onClicked: secondary.currentIndex--
-        }
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Controls.PageIndicator {
-                anchors.centerIn: parent
-                count: secondary.count
-                currentIndex: secondary.currentIndex
+            anchors {
+                left: parent.left
+            }
+            onClicked: {
+                if (secondary.currentIndex > 0) {
+                    secondary.currentIndex--;
+                } else {
+                    root.backRequested();
+                }
             }
         }
+
+        Controls.PageIndicator {
+            visible: secondary.contentChildren.length > 1
+            anchors.verticalCenter: parent.verticalCenter
+            x: secondary.x + secondary.width/2 - width/2
+            count: secondary.count
+            currentIndex: secondary.currentIndex
+        }
+
         Controls.RoundButton {
+            visible: secondary.contentChildren.length > 1
+            anchors.right: parent.right
             icon.name: "go-next-symbolic"
             enabled: secondary.currentIndex < secondary.count - 1
             onClicked: secondary.currentIndex++
