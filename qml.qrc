@@ -2,9 +2,11 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Idler.qml</file>
+        <file>HintsPage.qml</file>
         <file alias="Hand.qml">skills//time/Hand.qml</file>
         <file alias="ClockFace.qml">skills//time/ClockFace.qml</file>
         <file alias="background.png">data/background.png</file>
+        <file alias="banner.png">data/banner.png</file>
 
         <file>containments/panel/package/contents/ui/SlidingPanel.qml</file>
         <file>containments/panel/package/contents/ui/quicksettings/Delegate.qml</file>
