@@ -46,6 +46,18 @@ Kirigami.ApplicationWindow {
         panel.width = Qt.binding(function(){return root.width});
     }
 
+    //HACK
+    Connections {
+        target: root.pageStack.layers
+        onDepthChanged: {
+            if (root.pageStack.layers.depth == 1) {
+                globalDrawer.handle.handleAnchor = handleAnchor;
+            } else {
+                globalDrawer.handle.handleAnchor = null;
+            }
+        }
+    }
+
     globalDrawer: Kirigami.GlobalDrawer {
         title: "Mycroft"
         bannerImageSource: "banner.png"
@@ -70,43 +82,49 @@ Kirigami.ApplicationWindow {
 
     pageStack.globalToolBar.style: pageStack.layers.depth == 1 ? Kirigami.ApplicationHeaderStyle.None : Kirigami.ApplicationHeaderStyle.Auto
 
-    pageStack.initialPage: Image {
-        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-        source: "background.png"
-        anchors.fill: parent
-
-        Mycroft.StackSkillView {
-            id: mainView
+    pageStack.initialPage: Kirigami.Page {
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
+        Image {
+            Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+            source: "background.png"
             anchors.fill: parent
-            initialItem: Idler {}
-            Layout.fillHeight: true
-            Layout.fillWidth: true
 
-            Mycroft.StatusIndicator {
-                id: si
-                visible: true
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    bottom: parent.bottom
-                    bottomMargin: Kirigami.Units.largeSpacing
+            Mycroft.StackSkillView {
+                id: mainView
+                anchors.fill: parent
+                initialItem: Idler {}
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                Mycroft.StatusIndicator {
+                    id: si
+                    visible: true
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom
+                        bottomMargin: Kirigami.Units.largeSpacing
+                    }
+                    z: 999
                 }
-                z: 999
             }
         }
-    }
 
-    footer: RowLayout {
-        visible: !hideTextInput
-        Item {
-            id: handleAnchor
-            Layout.fillHeight: true
-            Layout.preferredWidth: height
-        }
-        TextField {
-            Layout.fillWidth: true
-            id: qinput
-            onAccepted: {
-                Mycroft.MycroftController.sendText(qinput.text)
+        footer: RowLayout {
+            visible: !hideTextInput
+            Item {
+                id: handleAnchor
+                Layout.fillHeight: true
+                Layout.preferredWidth: height
+            }
+            TextField {
+                Layout.fillWidth: true
+                id: qinput
+                onAccepted: {
+                    Mycroft.MycroftController.sendText(qinput.text)
+                }
             }
         }
     }
