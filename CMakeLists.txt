@@ -39,20 +39,39 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     WebSockets
 )
 
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS Plasma I18n)
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
+    find_package(Qt5QuickControls2 ${QT_MIN_VERSION} REQUIRED)
+endif()
+
+find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS I18n)
+
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
+endif()
 
 SET(mycroft_gui_app_SRC
     main.cpp
 )
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set(mycroft_gui_app_EXTRA_LIBS
+        Qt5::AndroidExtras
+        Qt5::QuickControls2
+        Qt5::WebSockets
+    )
+endif()
 
 qt5_add_resources(mycroft_gui_app_SRC
     qml.qrc
 )
 
 add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
-target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick)
+target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick ${mycroft_gui_app_EXTRA_LIBS})
 
-add_subdirectory(containments)
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    add_subdirectory(containments)
+endif()
 
 install(TARGETS mycroft-gui-app ${INSTALL_TARGETS_DEFAULT_ARGS})
 add_subdirectory(import)
