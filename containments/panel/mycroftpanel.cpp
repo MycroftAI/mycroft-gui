@@ -46,3 +46,5 @@ void MycroftPanel::requestShowingDesktop()
 }
 
 K_EXPORT_PLASMA_APPLET_WITH_JSON(quicksettings, MycroftPanel, "metadata.json")
+
+#include "mycroftpanel.moc"
