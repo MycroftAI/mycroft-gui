@@ -6,6 +6,8 @@
         <file>HintsModel.qml</file>
         <file alias="Hand.qml">skills//time/Hand.qml</file>
         <file alias="ClockFace.qml">skills//time/ClockFace.qml</file>
+        <file alias="+android/Hand.qml">skills//time/+android/Hand.qml</file>
+        <file alias="+android/ClockFace.qml">skills//time/+android/ClockFace.qml</file>
         <file alias="background.png">data/background.png</file>
         <file alias="banner.png">data/banner.png</file>
         <file alias="alarm.png">data/images/alarm.png</file>
