@@ -43,16 +43,20 @@ Item {
         model: ObjectModel {
             ItemBase {
                 Kirigami.Heading {
-                    anchors.centerIn: parent
+                    anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    wrapMode: Text.WordWrap
                     text: "News item from a newspaper"
                 }
             }
             WeatherItem {}
             ItemBase {
                 Kirigami.Heading {
-                    anchors.centerIn: parent
+                    anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    wrapMode: Text.WordWrap
                     text: "You have an appointment today at 15:30"
                 }
             }
