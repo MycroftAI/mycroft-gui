@@ -27,6 +27,10 @@ Delegate {
     text: i18n("Home")
     onClicked: {
         Mycroft.MycroftController.sendRequest("mycroft.stop", {});
+        for(var i in plasmoid.nativeInterface) {
+            print(i+" "+plasmoid.nativeInterface[i]);
+        }
+        plasmoid.nativeInterface.requestShowingDesktop();
     }
 }
 

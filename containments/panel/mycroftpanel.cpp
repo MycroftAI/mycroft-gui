@@ -22,6 +22,8 @@
 #include <QDebug>
 #include <QProcess>
 
+#include <KWindowSystem>
+
 MycroftPanel::MycroftPanel(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args)
 {
@@ -36,6 +38,11 @@ void MycroftPanel::executeCommand(const QString &command)
 {
     qWarning()<<"Executing"<<command;
     QProcess::startDetached(command);
+}
+
+void MycroftPanel::requestShowingDesktop()
+{
+    KWindowSystem::setShowingDesktop(true);
 }
 
 K_EXPORT_PLASMA_APPLET_WITH_JSON(quicksettings, MycroftPanel, "metadata.json")

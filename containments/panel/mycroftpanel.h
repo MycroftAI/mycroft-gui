@@ -35,6 +35,7 @@ public:
 
 public Q_SLOTS:
     void executeCommand(const QString &command);
+    void requestShowingDesktop();
 
 private:
 
