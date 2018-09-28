@@ -39,5 +39,3 @@ void MycroftPanel::executeCommand(const QString &command)
 }
 
 K_EXPORT_PLASMA_APPLET_WITH_JSON(quicksettings, MycroftPanel, "metadata.json")
-
-#include "mycroftpanel.moc"

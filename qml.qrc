@@ -3,10 +3,20 @@
         <file>main.qml</file>
         <file>Idler.qml</file>
         <file>HintsPage.qml</file>
+        <file>HintsModel.qml</file>
         <file alias="Hand.qml">skills//time/Hand.qml</file>
         <file alias="ClockFace.qml">skills//time/ClockFace.qml</file>
         <file alias="background.png">data/background.png</file>
         <file alias="banner.png">data/banner.png</file>
+        <file alias="alarm.png">data/images/alarm.png</file>
+        <file alias="dateandtime.png">data/images/dateandtime.png</file>
+        <file alias="desktop.png">data/images/desktop.png</file>
+        <file alias="joke.png">data/images/joke.png</file>
+        <file alias="reminder.png">data/images/reminder.png</file>
+        <file alias="spell.png">data/images/spell.png</file>
+        <file alias="weather.png">data/images/weather.png</file>
+        <file alias="wikip.png">data/images/wikip.png</file>
+        <file alias="wolfram.png">data/images/wolfram.png</file>
 
         <file>containments/panel/package/contents/ui/SlidingPanel.qml</file>
         <file>containments/panel/package/contents/ui/quicksettings/Delegate.qml</file>
