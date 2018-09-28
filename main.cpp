@@ -33,8 +33,10 @@ int main(int argc, char *argv[])
     for (int a = 0; a < argc; ++a) {
         arguments << QString::fromLocal8Bit(argv[a]);
     }
-
+//FIXME: this should just go away on any platform
+#ifndef Q_OS_ANDROID
     qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
+#endif
 
     QCommandLineParser parser;
 
