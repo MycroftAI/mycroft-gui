@@ -21,7 +21,12 @@ set(CMAKE_AUTOMOC ON)
 
 #this is used for mycroft spawning. It's horrible and should not be needed, but mycroft packaging is questionable at best
 #in any sane world mycroft would install something in $PATH
-set(MYCROFT_CORE_DIR "/opt/mycroft")
+#the Android case is a temporary hack, adjust it to where and android app can find
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set(MYCROFT_CORE_DIR "./")
+else(MYCROFT_CORE_DIR "/opt/mycroft")
+    set(MYCROFT_CORE_DIR "/opt/mycroft")
+endif()
 
 configure_file(config-mycroft.h.in ${CMAKE_CURRENT_BINARY_DIR}/config-mycroft.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
