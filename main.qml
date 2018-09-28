@@ -24,8 +24,6 @@ import org.kde.kirigami 2.4 as Kirigami
 import QtQuick.Window 2.2
 import Mycroft 1.0 as Mycroft
 
-import "containments/panel/package/contents/ui" as Panel
-
 Kirigami.ApplicationWindow {
     id: root
     visible: true
@@ -40,6 +38,12 @@ Kirigami.ApplicationWindow {
     //HACK!! needs proper api in kirigami
     Component.onCompleted: {
         globalDrawer.handle.handleAnchor = handleAnchor;
+        
+        //HACK for the hacky top panel, on android will fail silently
+        var component = Qt.createComponent(Qt.resolvedUrl("containments/panel/package/contents/ui/SlidingPanel.qml"));
+        var panel = component.createObject(root);
+        panel.Kirigami.Theme.colorSet = Kirigami.Theme.Complementary;
+        panel.width = Qt.binding(function(){return root.width});
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -63,13 +67,7 @@ Kirigami.ApplicationWindow {
         ]
     }
 
-    //FIXME: this should be so much to be killed
-    Panel.SlidingPanel {
-        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-        //to change the color of the entire panel, uncomment this
-       // Kirigami.Theme.colorSet: Kirigami.Theme.Window
-        width: root.width
-    }
+
     pageStack.globalToolBar.style: pageStack.layers.depth == 1 ? Kirigami.ApplicationHeaderStyle.None : Kirigami.ApplicationHeaderStyle.Auto
 
     pageStack.initialPage: Image {
