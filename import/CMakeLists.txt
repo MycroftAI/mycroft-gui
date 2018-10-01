@@ -7,6 +7,7 @@ set(mycroftimport_SRCS
     mycroftcontroller.cpp
     skillloader.cpp
     intentwatcher.cpp
+    globalsettings.cpp
     )
 
     

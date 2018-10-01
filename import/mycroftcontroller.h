@@ -69,6 +69,7 @@ signals:
 
 public slots:
     void start();
+    void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
 private slots:

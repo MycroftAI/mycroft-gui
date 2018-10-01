@@ -75,7 +75,19 @@ Kirigami.ApplicationWindow {
                         pageStack.layers.push(Qt.resolvedUrl("HintsPage.qml"));
                     }
                 }
-            }
+            },
+            Kirigami.Action {
+                text: "Settings"
+                iconName: "help-hint"
+                checked: pageStack.layers.currentItem.objectName == "Settings"
+                onTriggered: {
+                    if (checked) {
+                        pageStack.layers.pop(pageStack.layers.initialItem);
+                    } else {
+                        pageStack.layers.push(Qt.resolvedUrl("SettingsPage.qml"));
+                    }
+                }
+            } 
         ]
     }
 

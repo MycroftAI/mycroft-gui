@@ -1,7 +1,8 @@
 /*
  *   Copyright 2018 by Marco Martin <mart@kde.org>
  *   Copyright 2018 David Edmundson <davidedmundson@kde.org>
- *
+ *   Copyright 2018 Aditya Mehra <aix.m@outlook.com>
+ * 
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
  *   published by the Free Software Foundation; either version 2, or
@@ -23,11 +24,19 @@
 #include "mycroftcontroller.h"
 #include "skillloader.h"
 #include "intentwatcher.h"
+#include "globalsettings.h"
 
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QQuickItem>
 
+static QObject *globalSettingsSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return new GlobalSettings;
+}
 
 static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -43,7 +52,7 @@ void MycroftPlugin::registerTypes(const char *uri)
     Q_ASSERT(uri == QLatin1String("Mycroft"));
 
     qmlRegisterSingletonType<MycroftController>(uri, 1, 0, "MycroftController", mycroftControllerSingletonProvider);
-
+    qmlRegisterSingletonType<GlobalSettings>(uri, 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
     qmlRegisterType<SkillLoader>(uri, 1, 0, "SkillLoader");
     qmlRegisterType<IntentWatcher>(uri, 1, 0, "IntentWatcher");
 

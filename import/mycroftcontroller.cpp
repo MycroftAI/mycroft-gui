@@ -19,6 +19,7 @@
  */
 
 #include "mycroftcontroller.h"
+#include "globalsettings.h"
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -41,13 +42,12 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
     connect(&m_webSocket, &QWebSocket::disconnected, this, &MycroftController::closed);
     connect(&m_webSocket, &QWebSocket::stateChanged, this, &MycroftController::onStatusChanged);
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onTextMessageReceived);
-
+    
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
-        QString socket = qgetenv("MYCROFT_SOCKET");
-        if (socket.isEmpty()) {
-            socket = "ws://0.0.0.0:8181/core";
-        }
+        auto appSettingObj = new GlobalSettings;
+        qDebug() << "WSADDRC++" << appSettingObj->_settings.fileName();
+        QString socket = appSettingObj->webSocketAddress();
         m_webSocket.open(QUrl(socket));
     });
 }
@@ -56,6 +56,14 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
 void MycroftController::start()
 {
     QProcess::startDetached("mycroft-gui-core-loader");
+    m_reconnectTimer.start();
+    emit socketStatusChanged();
+}
+
+void MycroftController::reconnect()
+{
+    qDebug() << "in reconnect";
+    m_webSocket.close();
     m_reconnectTimer.start();
     emit socketStatusChanged();
 }
