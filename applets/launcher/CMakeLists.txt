@@ -19,3 +19,6 @@ target_link_libraries(plasma_applet_mycroft_launcher
 install(TARGETS plasma_applet_mycroft_launcher DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 
 plasma_install_package(package org.kde.mycroft.launcher)
+
+install(FILES Mycroft.directory DESTINATION ${KDE_INSTALL_DESKTOPDIR})
+install(FILES mycroft.menu DESTINATION ${KDE_INSTALL_CONFDIR}/menus/applications-merged)
