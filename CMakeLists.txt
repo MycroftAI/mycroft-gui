@@ -48,6 +48,7 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS I18n)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
+    find_package(KF5KIO ${KF5_MIN_VERSION} REQUIRED) # FIXME look for "KIOWidgets" (KRun) explicitly
 endif()
 
 SET(mycroft_gui_app_SRC
@@ -70,6 +71,7 @@ add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
 target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick ${mycroft_gui_app_EXTRA_LIBS})
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    add_subdirectory(applets)
     add_subdirectory(containments)
 endif()
 
