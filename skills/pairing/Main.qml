@@ -29,6 +29,7 @@ Mycroft.DelegateBase {
     backgroundHorizontalAlignment: Image.AlignLeft
     property alias code: content.text
     property alias instructions: instruction.text
+    backgroundDim: 0.9
 
     ColumnLayout { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors {
