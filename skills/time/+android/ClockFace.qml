@@ -21,7 +21,7 @@
 import QtQuick 2.6
 import org.kde.kirigami 2.4 as Kirigami
 
-Rectangle {color: "red"
+Item {
     id: clock
     property date time: new Date();
     property bool showSecondsHand: false
@@ -52,6 +52,7 @@ Rectangle {color: "red"
         width: face.width/2.8
         height: width/10
         rotation: 180 + _hours * 30 + (_minutes/2)
+        z: 2
     }
 
     Hand {
@@ -59,6 +60,7 @@ Rectangle {color: "red"
         width: face.width/2.3
         height: width/15
         rotation: 180 + _minutes * 6
+        z: 2
     }
 
     Hand {
@@ -66,6 +68,7 @@ Rectangle {color: "red"
         width: face.width/2.2
         height: width/20
         rotation: 180 + _seconds * 6
+        z: 2
     }
 
     Rectangle {
@@ -89,7 +92,6 @@ Rectangle {color: "red"
             horizontalCenter: clock.horizontalCenter
         }
         color: "black"
-        z: 1000
     }
     Rectangle {
         width: face.width/15
@@ -101,7 +103,6 @@ Rectangle {color: "red"
             horizontalCenter: clock.horizontalCenter
         }
         color: "black"
-        z: 1000
     }
 
     Rectangle {
@@ -114,7 +115,6 @@ Rectangle {color: "red"
             verticalCenter: clock.verticalCenter
         }
         color: "black"
-        z: 1000
     }
     Rectangle {
         width: face.width/15
@@ -126,6 +126,5 @@ Rectangle {color: "red"
             verticalCenter: clock.verticalCenter
         }
         color: "black"
-        z: 1000
     }
 }
