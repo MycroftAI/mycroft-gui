@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/skills/ui">
+    <qresource prefix="/skills/ui/skills">
         <file alias="fallback/Main.qml">skills/fallback/Main.qml</file>
         <file alias="joking/Main.qml">skills/joking/Main.qml</file>
         <file alias="joking/background.jpg">skills/joking/background.jpg</file>
