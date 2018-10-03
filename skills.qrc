@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/skills">
+        <file alias="fallback/Main.qml">skills/fallback/Hand.qml</file>
+        <file alias="joking/Main.qml">skills/joking/Main.qml</file>
+        <file alias="joking/background.jpg">skills/joking/background.jpg</file>
+        <file alias="pairing/Main.qml">skills/pairing/Main.qml</file>
+    </qresource>
+</RCC>
