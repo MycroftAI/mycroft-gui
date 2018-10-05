@@ -32,10 +32,18 @@ StackView {
             return;
         }
 
-        mainStack.pop();
-        mycroftConnection.metadataType.pop();
-        popTimer.running = false;
-        countdownAnim.running = false;
+        //current item is paginated and can we go back?
+        if (mainStack.currentItem.hasOwnProperty("currentIndex") && mainStack.currentItem.currentIndex > 0) {
+            mainStack.currentItem.currentIndex--;
+            //reset the countdown
+            mainStack.currentItem.userInteractingChanged();
+        //otherwise pop
+        } else {
+            mainStack.pop();
+            mycroftConnection.metadataType.pop();
+            popTimer.running = false;
+            countdownAnim.running = false;
+        }
     }
 
     Component.onCompleted: {
