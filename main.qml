@@ -70,6 +70,8 @@ Kirigami.ApplicationWindow {
                 onTriggered: {
                     if (checked) {
                         pageStack.layers.pop(pageStack.layers.initialItem);
+                    } else if (pageStack.layers.depth > 1) {
+                        pageStack.layers.replace(Qt.resolvedUrl("HintsPage.qml"));
                     } else {
                         pageStack.layers.push(Qt.resolvedUrl("HintsPage.qml"));
                     }
@@ -77,11 +79,13 @@ Kirigami.ApplicationWindow {
             },
             Kirigami.Action {
                 text: "Settings"
-                iconName: "help-hint"
+                iconName: "configure"
                 checked: pageStack.layers.currentItem.objectName == "Settings"
                 onTriggered: {
                     if (checked) {
                         pageStack.layers.pop(pageStack.layers.initialItem);
+                    } else if (pageStack.layers.depth > 1) {
+                        pageStack.layers.replace(Qt.resolvedUrl("SettingsPage.qml"));
                     } else {
                         pageStack.layers.push(Qt.resolvedUrl("SettingsPage.qml"));
                     }
