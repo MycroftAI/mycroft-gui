@@ -99,6 +99,12 @@ Kirigami.ApplicationWindow {
         rightPadding: 0
         topPadding: 0
         bottomPadding: 0
+        onBackRequested: {
+            if (mainView.depth > 1) {
+                event.accepted = true;
+                mainView.goBack();
+            }
+        }
         Image {
             Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
             source: "background.png"

@@ -23,8 +23,20 @@ import QtQuick.Controls 2.4
 import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
+//FIXME: we probably want to wrap this in an Item or Control as we don't want to expose full StackView api
 StackView {
     id: mainStack
+
+    function goBack() {
+        if (mainStack.depth == 1) {
+            return;
+        }
+
+        mainStack.pop();
+        mycroftConnection.metadataType.pop();
+        popTimer.running = false;
+        countdownAnim.running = false;
+    }
 
     Component.onCompleted: {
         if (!mainStack.initialItem) {
@@ -104,12 +116,7 @@ StackView {
     }
     Connections {
         target: mainStack.currentItem
-        onBackRequested: {
-            mainStack.pop();
-            mycroftConnection.metadataType.pop();
-            popTimer.running = false;
-            countdownAnim.running = false;
-        }
+        onBackRequested: mainStack.goBack();
         onUserInteractingChanged: {
             if (mainStack.currentItem.userInteracting) {
                 popTimer.running = false;
