@@ -59,7 +59,6 @@ Kirigami.ApplicationWindow {
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
-        title: "Mycroft"
         bannerImageSource: "banner.png"
         handleVisible: !hideTextInput
 
