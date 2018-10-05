@@ -96,3 +96,8 @@ install( DIRECTORY skills DESTINATION ${MYCROFT_CORE_DIR}/skills/ui
 
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    find_package(KF5Kirigami2 REQUIRED)
+    kirigami_package_breeze_icons(ICONS help-hint configure)
+endif()
