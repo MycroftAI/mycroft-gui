@@ -36,7 +36,11 @@ class GlobalSettings : public QObject
     
 public:
     explicit GlobalSettings(QObject *parent=0);
+#ifndef Q_OS_ANDROID
     SettingPropertyKey(QString, webSocketAddress, setWebSocketAddress, webSocketChanged, "webSocketAddress", "ws://0.0.0.0:8181/core")
+#else
+    SettingPropertyKey(QString, webSocketAddress, setWebSocketAddress, webSocketChanged, "webSocketAddress", "ws://46.101.212.234:8181/core")
+#endif
     QSettings _settings;
     
 signals:
