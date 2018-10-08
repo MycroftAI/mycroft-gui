@@ -25,10 +25,19 @@
 #include "skillloader.h"
 #include "intentwatcher.h"
 #include "globalsettings.h"
+#include "filereader.h"
 
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QQuickItem>
+
+static QObject *fileReaderSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+    
+    return new FileReader;
+}
 
 static QObject *globalSettingsSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -53,6 +62,7 @@ void MycroftPlugin::registerTypes(const char *uri)
 
     qmlRegisterSingletonType<MycroftController>(uri, 1, 0, "MycroftController", mycroftControllerSingletonProvider);
     qmlRegisterSingletonType<GlobalSettings>(uri, 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
+    qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
     qmlRegisterType<SkillLoader>(uri, 1, 0, "SkillLoader");
     qmlRegisterType<IntentWatcher>(uri, 1, 0, "IntentWatcher");
 

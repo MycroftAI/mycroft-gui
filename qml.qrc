@@ -4,7 +4,6 @@
         <file>main.qml</file>
         <file>Idler.qml</file>
         <file>HintsPage.qml</file>
-        <file>HintsModel.qml</file>
         <file>SettingsPage.qml</file>
         <file alias="Hand.qml">skills//time/Hand.qml</file>
         <file alias="ClockFace.qml">skills//time/ClockFace.qml</file>

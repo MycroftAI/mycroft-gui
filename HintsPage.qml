@@ -21,17 +21,64 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2 as Controls
 import org.kde.kirigami 2.4 as Kirigami
+import QtGraphicalEffects 1.0
 import Mycroft 1.0 as Mycroft
 
 Kirigami.ScrollablePage {
     title: "Hints"
     objectName: "hints"
+    property var modelCreatedObject
+    
+    Component.onCompleted: {
+        createHintModel()
+    }
 
+    function createHintModel(){
+        var hintList = []
+        var defaultFold = '/opt/mycroft/skills'
+        var fileToFind = "README.md"
+        var getList = Mycroft.FileReader.checkForMeta(defaultFold, fileToFind)
+        for(var i=0; i < getList.length; i++){
+            var fileParse = Mycroft.FileReader.read(getList[i]+"/"+fileToFind);
+            var matchedRegex = getImgSrc(fileParse)
+            var matchedExamples = getExamples(fileParse)
+            var matchedCategory = getCategory(fileParse)
+            if(matchedRegex !== null && matchedRegex.length > 0 && matchedExamples !== null && matchedExamples.length > 0 && matchedCategory !== null && matchedCategory.length > 0) {
+                var metaFileObject = {
+                    imgSrc: matchedRegex[1],
+                    title: matchedRegex[2],
+                    category: matchedCategory[1],
+                    examples: matchedExamples
+                }
+                hintList.push(metaFileObject);
+            }
+        }
+        modelCreatedObject = hintList
+    }
+
+    function getImgSrc(fileText){
+        var re = new RegExp(/<img[^>]*src='([^']*)'.*\/>\s(.*)/g);
+        var match = re.exec(fileText);
+        return match;
+    }
+
+    function getExamples(fileText){
+        var re = new RegExp(/Examples \n.*"(.*)"\n\*\s"(.*)"/g);
+        var match = re.exec(fileText);
+        return match;
+    }
+
+    function getCategory(fileText){
+        var re = new RegExp(/## Category\n\*\*(.*)\*\*/g);
+        var match = re.exec(fileText);
+        return match;
+    }
+    
     Kirigami.CardsListView {
         id: skillslistmodelview
         anchors.fill: parent;
         clip: true;
-        model: HintsModel{}
+        model: modelCreatedObject
         delegate: Kirigami.AbstractCard {
             id: skillDelegate;
 
@@ -52,7 +99,7 @@ Kirigami.ScrollablePage {
                         Layout.fillWidth: true;
                         wrapMode: Text.WordWrap;
                         font.bold: true;
-                        text: qsTr(model.Skill);
+                        text: qsTr(modelData.title);
                         level: 3;
                         color: Kirigami.Theme.textColor;
                     }
@@ -64,12 +111,19 @@ Kirigami.ScrollablePage {
 
                         Image {
                             id: innerskImg
-                            source: model.Pic;
+                            source: modelData.imgSrc;
                             fillMode: PreserveAspectFit
                             Layout.preferredWidth: innerskImg.width
                             Layout.preferredHeight: innerskImg.height
                             width: Kirigami.Units.gridUnit * 2
                             height: Kirigami.Units.gridUnit * 2
+                        }
+                        
+                        ColorOverlay {
+                            id: colorOverlay
+                            anchors.fill: innerskImg
+                            source: innerskImg
+                            color: Kirigami.Theme.linkColor
                         }
 
                         ColumnLayout {
@@ -79,13 +133,13 @@ Kirigami.ScrollablePage {
                                 wrapMode: Text.WordWrap;
                                 width: skillDelegate.width;
                                 color: Kirigami.Theme.textColor;
-                                text: qsTr(model.CommandList.get(0).Commands);
+                                text: modelData.examples[1];
                             }
                             Controls.Label {
                                 wrapMode: Text.WordWrap;
                                 width: skillDelegate.width;
                                 color: Kirigami.Theme.textColor;
-                                text: qsTr(model.CommandList.get(1).Commands);
+                                text: modelData.examples[2];
                             }
                         }
                     }

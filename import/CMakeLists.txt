@@ -8,6 +8,7 @@ set(mycroftimport_SRCS
     skillloader.cpp
     intentwatcher.cpp
     globalsettings.cpp
+    filereader.cpp
     )
 
     
