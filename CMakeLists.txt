@@ -36,6 +36,7 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Core
     Qml
     Network
+    Svg
     WebSockets
 )
 
@@ -59,6 +60,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(mycroft_gui_app_EXTRA_LIBS
         Qt5::AndroidExtras
         Qt5::QuickControls2
+        #NOTE: qtsvg is needed for android packaging to work
+        Qt5::Svg
         Qt5::WebSockets
     )
 endif()
