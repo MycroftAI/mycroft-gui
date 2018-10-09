@@ -103,8 +103,8 @@ StackView {
             if (mainStack.depth > 1) {
                 popTimer.running = false;
                 countdownAnim.running = false;
-                mainStack.pop();
-                mycroftConnection.metadataType.pop();
+                mainStack.pop(get(0));
+                mycroftConnection.metadataType = [];
             }
             return;
         }
