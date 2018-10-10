@@ -74,6 +74,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     qt5_add_resources(mycroft_gui_app_SRC
         skills.qrc
     )
+    qt5_add_resources(mycroft_gui_app_SRC
+        skills-extra.qrc
+    )
 endif()
 
 add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})

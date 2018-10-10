@@ -22,6 +22,11 @@ done
 
 export package=mycroft-gui
 
+wget https://files.xenon.pangea.pub/android/skills.tar.gz -O /tmp/skills.tar.gz
+pushd $HOME/src/mycroft-gui
+tar xvf /tmp/skills.tar.gz
+popd
+
 # first we download the project and look for the manifest file
 manifestFile=`find $(pwd)/src/$package -name AndroidManifest.xml`
 
@@ -57,6 +62,7 @@ if [ -d /output ]
 then
     sudo chown user /output || true
     cp *_build_apk/build/outputs/apk/*.apk /output
+    rm -r $HOME/src/mycroft-gui/skills-extra/
 fi
 
 exit 0
