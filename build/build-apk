@@ -4,6 +4,8 @@ set -ex
 
 cd $HOME
 
+sudo chown -R user /home/user/src/mycroft-gui || true
+
 export PATH=/opt/helpers:$PATH
 export PERSIST=1
 
