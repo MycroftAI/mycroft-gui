@@ -22,6 +22,10 @@ done
 
 export package=mycroft-gui
 
+pushd $HOME
+/opt/helpers/build-openssl
+popd
+
 wget https://files.xenon.pangea.pub/android/skills.tar.gz -O /tmp/skills.tar.gz
 pushd $HOME/src/mycroft-gui
 tar xvf /tmp/skills.tar.gz

@@ -43,6 +43,7 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5QuickControls2 ${QT_MIN_VERSION} REQUIRED)
+    find_package(OpenSSL REQUIRED)
 endif()
 
 find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS I18n)
@@ -63,6 +64,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         #NOTE: qtsvg is needed for android packaging to work
         Qt5::Svg
         Qt5::WebSockets
+        OpenSSL::SSL
     )
 endif()
 
