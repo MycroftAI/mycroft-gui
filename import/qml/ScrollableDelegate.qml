@@ -28,6 +28,8 @@ DelegateBase {
     //this to make all items children of the scrollview item so everything will have paddings automagically
     default property alias data: main.contentData
 
+    readonly property bool userInteracting: main.contentItem.hasOwnProperty("moving") && main.contentItem.moving
+
     leftPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0)
     topPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.topPadding : 0)
     rightPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0)
