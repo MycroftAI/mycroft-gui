@@ -34,6 +34,8 @@ DelegateBase {
     bottomPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.bottomPadding : 0)
 
     Component.onCompleted: main.contentItem.clip = false
+    //clip the delegate and not the scrollview because we do want items to bleed over margins
+    clip: true
     contentItem: Controls.ScrollView {
         id: main
         contentWidth: width
