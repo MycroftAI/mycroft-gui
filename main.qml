@@ -20,6 +20,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtGraphicalEffects 1.0
 import org.kde.kirigami 2.4 as Kirigami
 import QtQuick.Window 2.2
 import Mycroft 1.0 as Mycroft
@@ -90,7 +91,7 @@ Kirigami.ApplicationWindow {
                         pageStack.layers.push(Qt.resolvedUrl("SettingsPage.qml"));
                     }
                 }
-            } 
+            }
         ]
     }
 
@@ -133,18 +134,50 @@ Kirigami.ApplicationWindow {
             }
         }
 
-        footer: RowLayout {
+        //Note: a custom control as ToolBar on Android has a funny color
+        footer: Control {
             visible: !hideTextInput
-            Item {
-                id: handleAnchor
-                Layout.fillHeight: true
-                Layout.preferredWidth: height
+            implicitHeight: contentItem.implicitHeight
+            contentItem: RowLayout {
+                Item {
+                    id: handleAnchor
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: height
+                }
+                TextField {
+                    Layout.fillWidth: true
+                    id: qinput
+                    onAccepted: {
+                        Mycroft.MycroftController.sendText(qinput.text)
+                    }
+                }
             }
-            TextField {
-                Layout.fillWidth: true
-                id: qinput
-                onAccepted: {
-                    Mycroft.MycroftController.sendText(qinput.text)
+            background: Rectangle {
+                color: Kirigami.Theme.backgroundColor
+                LinearGradient {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        bottom: parent.top
+                    }
+                    implicitHeight: Kirigami.Units.gridUnit/2
+
+                    start: Qt.point(0, height)
+                    end: Qt.point(0, 0)
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0.0
+                            color: Qt.rgba(0, 0, 0, 0.2)
+                        }
+                        GradientStop {
+                            position: 0.3
+                            color: Qt.rgba(0, 0, 0, 0.1)
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color:  "transparent"
+                        }
+                    }
                 }
             }
         }
