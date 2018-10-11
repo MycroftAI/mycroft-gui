@@ -24,9 +24,8 @@ done
 
 export package=mycroft-gui
 
-pushd $HOME
-/opt/helpers/build-openssl
-popd
+sudo apt install dos2unix
+$HOME/src/mycroft-gui/build/build-openssl1
 
 wget https://files.xenon.pangea.pub/android/skills.tar.gz -O /tmp/skills.tar.gz
 pushd $HOME/src/mycroft-gui
