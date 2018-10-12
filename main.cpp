@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     }
 //FIXME: this should just go away on any platform
 #ifndef Q_OS_ANDROID
-    //qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
+    qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
 #endif
 
     QCommandLineParser parser;
