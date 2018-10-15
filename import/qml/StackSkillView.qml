@@ -24,9 +24,10 @@ import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 //FIXME: we probably want to wrap this in an Item or Control as we don't want to expose full StackView api
-StackView {
+Kirigami.PageRow {
     id: mainStack
 
+    defaultColumnWidth: width
     function goBack() {
         if (mainStack.depth == 1) {
             return;
@@ -72,17 +73,25 @@ StackView {
                 return;
             }
 
-            if (mycroftConnection.metadataType[mycroftConnection.metadataType.length - 1] == type) {
-                var key;
-                for (key in data) {
-                    if (mainStack.currentItem.hasOwnProperty(key)) {
-                        mainStack.currentItem[key] = data[key];
+            var found = false;
+            for (var i = 0; i < mycroftConnection.metadataType.length; ++i) {
+                if (mycroftConnection.metadataType[i] == type) {
+                    var key;
+                    var page = mainStack.get(i+1);
+                    for (key in data) {
+                        if (page.hasOwnProperty(key)) {
+                            page[key] = data[key];
+                        }
                     }
+                    mainStack.currentIndex=i+1;
+                    found = true;
                 }
-            } else {
+            }
+            if (!found) {
                 mycroftConnection.metadataType.push(type);
                 mainStack.push(_url, data);
             }
+
 
             popTimer.running = false;
             countdownAnim.running = false;
@@ -139,7 +148,7 @@ StackView {
     Timer {
         id: popTimer
         interval: mainStack.currentItem.hasOwnProperty("graceTime") ? mainStack.currentItem.graceTime : 0
-        onTriggered: {
+        onTriggered: {return;
             if (mainStack.depth > 1) {
                 mainStack.pop(get(0));
                 mycroftConnection.metadataType = [];
