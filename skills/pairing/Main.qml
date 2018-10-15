@@ -30,6 +30,7 @@ Mycroft.DelegateBase {
     property alias code: content.text
     property alias instructions: instruction.text
     backgroundDim: 0.9
+    graceTime: 120000
 
     ColumnLayout { //maybe a flickable in case there's too much text instead of Eliding (Flickable delegate base?)
         anchors {
@@ -50,6 +51,13 @@ Mycroft.DelegateBase {
             wrapMode: Text.WordWrap
             elide: Text.ElideRight
             visible: text.length > 0
+        }
+        
+        Loader {
+            id: webViewLoader
+            source: "WebViewLoader.qml"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 }
