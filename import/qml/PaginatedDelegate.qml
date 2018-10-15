@@ -63,8 +63,8 @@ DelegateBase {
         id: layout
         anchors.fill: parent
 
-        property bool singleItem: columns < 2 && height < switchWidth
-        columns: width > switchHeight ? 2 : 1
+        property bool singleItem: columns < 2 && height < switchHeight
+        columns: width > switchWidth ? 2 : 1
 
         onSingleItemChanged: {
             if (singleItem) {

@@ -51,7 +51,7 @@ Controls.Control {
     readonly property bool userInteracting: main.pressed
 
     //To do some automatic responsive layouting
-    readonly property bool wideMode: Math.min(width, height) > Kirigami.Units.gridUnit * 18
+    readonly property bool wideMode: width > Kirigami.Units.gridUnit * 18
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
