@@ -117,7 +117,7 @@ Kirigami.ApplicationWindow {
             Mycroft.StackSkillView {
                 id: mainView
                 anchors.fill: parent
-                initialPage: Idler {}
+                initialItem: Idler {}
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 

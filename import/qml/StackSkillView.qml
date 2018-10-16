@@ -24,20 +24,29 @@ import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 //FIXME: we probably want to wrap this in an Item or Control as we don't want to expose full StackView api
-Kirigami.PageRow {
-    id: mainStack
+Item {
+    id: root
 
-    defaultColumnWidth: width
+    property alias initialItem: mainStack.initialItem
+
+    readonly property alias currentItem: mainRow.currentItem
+
     function goBack() {
+        //assume mainStack can only have a depth of 1 or 2
         if (mainStack.depth == 1) {
             return;
         }
 
         //current item is paginated and can we go back?
-        if (mainStack.currentItem.hasOwnProperty("currentIndex") && mainStack.currentItem.currentIndex > 0) {
-            mainStack.currentItem.currentIndex--;
+        if (mainRow.currentItem.hasOwnProperty("currentIndex") && mainRow.currentItem.currentIndex > 0) {
+            mainRow.currentItem.currentIndex--;
             //reset the countdown
-            mainStack.currentItem.userInteractingChanged();
+            mainRow.currentItem.userInteractingChanged();
+        //we're in pageRow, flick back
+        } else if (mainRow.currentIndex > 0) {
+            mainRow.currentIndex--;
+            //reset the countdown
+            mainRow.currentItem.userInteractingChanged();
         //otherwise pop
         } else {
             mainStack.pop();
@@ -45,6 +54,19 @@ Kirigami.PageRow {
             popTimer.running = false;
             countdownAnim.running = false;
         }
+    }
+
+    StackView {
+        id: mainStack
+        anchors.fill: parent
+
+    }
+
+    Kirigami.PageRow {
+        id: mainRow
+        visible: false
+        //disable columns
+        defaultColumnWidth: width
     }
 
     Component.onCompleted: {
@@ -73,25 +95,34 @@ Kirigami.PageRow {
                 return;
             }
 
+            //put in a row only stuff from the same skill, clear the old stuff otherwise
+            if (metadataType.length > 0 && type.split("/")[0] != metadataType[0].split("/")[0]) {
+                mainRow.clear();
+                metadataType = [];
+            }
+
             var found = false;
             for (var i = 0; i < mycroftConnection.metadataType.length; ++i) {
                 if (mycroftConnection.metadataType[i] == type) {
                     var key;
-                    var page = mainStack.get(i+1);
+                    var page = mainRow.get(i);
                     for (key in data) {
                         if (page.hasOwnProperty(key)) {
                             page[key] = data[key];
                         }
                     }
-                    mainStack.currentIndex=i+1;
+                    mainRow.currentIndex = i;
                     found = true;
                 }
             }
             if (!found) {
                 mycroftConnection.metadataType.push(type);
-                mainStack.push(_url, data);
+                mainRow.push(_url, data);
             }
 
+            if (mainStack.depth < 2) {
+                mainStack.push(mainRow);
+            }
 
             popTimer.running = false;
             countdownAnim.running = false;
@@ -112,9 +143,10 @@ Kirigami.PageRow {
             if (mainStack.depth > 1) {
                 popTimer.running = false;
                 countdownAnim.running = false;
-                mainStack.pop(get(0));
+                mainStack.pop(mainStack.initialItem);
                 mycroftConnection.metadataType = [];
             }
+            mainRow.clear();
             return;
         }
 
@@ -124,7 +156,7 @@ Kirigami.PageRow {
 
         onSpeakingChanged: {
             if (!Mycroft.MycroftController.speaking) {
-                if (mainStack.depth > 1 && (!mainStack.currentItem.hasOwnProperty("graceTime") || (mainStack.currentItem.graceTime != Infinity && mainStack.currentItem.graceTime > 0))) {
+                if (mainRow.depth > 1 && (!mainRow.currentItem.hasOwnProperty("graceTime") || (mainRow.currentItem.graceTime != Infinity && mainRow.currentItem.graceTime > 0))) {
                     popTimer.restart();
                     countdownAnim.restart();
                 }
@@ -132,13 +164,13 @@ Kirigami.PageRow {
         }
     }
     Connections {
-        target: mainStack.currentItem
-        onBackRequested: mainStack.goBack();
+        target: mainRow.currentItem
+        onBackRequested: root.goBack();
         onUserInteractingChanged: {
-            if (mainStack.currentItem.userInteracting) {
+            if (mainRow.currentItem.userInteracting) {
                 popTimer.running = false;
                 countdownAnim.running = false;
-            } else if (!Mycroft.MycroftController.speaking && (!mainStack.currentItem.hasOwnProperty("graceTime") || (mainStack.currentItem.graceTime != Infinity && mainStack.currentItem.graceTime > 0))) {
+            } else if (!Mycroft.MycroftController.speaking && (!mainRow.currentItem.hasOwnProperty("graceTime") || (mainRow.currentItem.graceTime != Infinity && mainRow.currentItem.graceTime > 0))) {
                 popTimer.restart();
                 countdownAnim.restart();
             }
@@ -147,12 +179,13 @@ Kirigami.PageRow {
 
     Timer {
         id: popTimer
-        interval: mainStack.currentItem.hasOwnProperty("graceTime") ? mainStack.currentItem.graceTime : 0
-        onTriggered: {return;
+        interval: mainRow.currentItem.hasOwnProperty("graceTime") ? mainRow.currentItem.graceTime : 0
+        onTriggered: {
             if (mainStack.depth > 1) {
-                mainStack.pop(get(0));
+                mainStack.pop(mainStack.initialItem);
                 mycroftConnection.metadataType = [];
             }
+            mainRow.clear();
         }
     }
 
