@@ -67,6 +67,7 @@ Item {
         visible: false
         //disable columns
         defaultColumnWidth: width
+        onDepthChanged: mycroftConnection.metadataType = mycroftConnection.metadataType.slice(0, depth)
     }
 
     Component.onCompleted: {
@@ -103,18 +104,21 @@ Item {
 
             var found = false;
             for (var i = 0; i < mycroftConnection.metadataType.length; ++i) {
-                if (mycroftConnection.metadataType[i] == type) {
-                    var key;
-                    var page = mainRow.get(i);
-                    for (key in data) {
-                        if (page.hasOwnProperty(key)) {
-                            page[key] = data[key];
-                        }
+                var page = mainRow.get(i);
+                var key;
+
+                for (key in data) {print("AAA"+type+" "+data[key])
+                    if (page.hasOwnProperty(key)) {
+                        page[key] = data[key];
                     }
+                }
+
+                if (mycroftConnection.metadataType[i] == type) {
                     mainRow.currentIndex = i;
                     found = true;
                 }
             }
+
             if (!found) {
                 mycroftConnection.metadataType.push(type);
                 mainRow.push(_url, data);
@@ -179,7 +183,7 @@ Item {
 
     Timer {
         id: popTimer
-        interval: mainRow.currentItem.hasOwnProperty("graceTime") ? mainRow.currentItem.graceTime : 0
+        interval: mainRow.currentItem && mainRow.currentItem.hasOwnProperty("graceTime") ? mainRow.currentItem.graceTime : 0
         onTriggered: {
             if (mainStack.depth > 1) {
                 mainStack.pop(mainStack.initialItem);

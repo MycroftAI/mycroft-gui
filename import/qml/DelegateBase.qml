@@ -32,6 +32,7 @@ Controls.Control {
     property alias backgroundVerticalAlignment: img.verticalAlignment
     property alias backgroundDim: rect.opacity
 
+
     signal backRequested
 
     property Component controlBar: Controls.RoundButton {
