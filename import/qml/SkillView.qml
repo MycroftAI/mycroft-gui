@@ -65,7 +65,8 @@ Item {
             mycroftConnection.currentRow.currentItem.userInteractingChanged();
         //otherwise pop
         } else {
-            mainStack.pop();
+            mainStack.pop(mainStack.initialItem);
+            mycroftConnection.metadataType = [];
             popTimer.running = false;
             countdownAnim.running = false;
         }
