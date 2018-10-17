@@ -194,7 +194,7 @@ Item {
         }
     }
 
-    Mycroft.StackSkillView {
+    Mycroft.SkillView {
         id: mainStack
         anchors.fill: parent
 

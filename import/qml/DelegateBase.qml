@@ -32,6 +32,7 @@ Controls.Control {
     property alias backgroundVerticalAlignment: img.verticalAlignment
     property alias backgroundDim: rect.opacity
 
+
     signal backRequested
 
     property Component controlBar: Controls.RoundButton {
@@ -55,10 +56,10 @@ Controls.Control {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    leftPadding: (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0) + Kirigami.Units.largeSpacing
-    topPadding: (Controls.StackView.view ? Controls.StackView.view.topPadding : 0) + Kirigami.Units.largeSpacing
-    rightPadding: (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0) + Kirigami.Units.largeSpacing
-    bottomPadding: (Controls.StackView.view ? Controls.StackView.view.bottomPadding : 0) + Kirigami.Units.largeSpacing
+    leftPadding: (typeof view  !== "undefined" && view() ?view().leftPadding : 0) + Kirigami.Units.largeSpacing
+    topPadding: (typeof view  !== "undefined" && view() ?view().topPadding : 0) + Kirigami.Units.largeSpacing
+    rightPadding: (typeof view  !== "undefined" && view() ?view().rightPadding : 0) + Kirigami.Units.largeSpacing
+    bottomPadding: (typeof view  !== "undefined" && view() ?view().bottomPadding : 0) + Kirigami.Units.largeSpacing
 
     //this to make all items children of contentItem so everything will have paddings automagically
     default property alias data: main.data

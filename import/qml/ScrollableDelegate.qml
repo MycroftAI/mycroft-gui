@@ -30,10 +30,10 @@ DelegateBase {
 
     readonly property bool userInteracting: main.contentItem.hasOwnProperty("moving") && main.contentItem.moving
 
-    leftPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.leftPadding : 0)
-    topPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.topPadding : 0)
-    rightPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.rightPadding : 0)
-    bottomPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (Controls.StackView.view ? Controls.StackView.view.bottomPadding : 0)
+    leftPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (typeof view  !== "undefined" && view() ? view().leftPadding : 0)
+    topPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (typeof view  !== "undefined" && view() ? view().topPadding : 0)
+    rightPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (typeof view  !== "undefined" && view() ? view().rightPadding : 0)
+    bottomPadding: (main.mainItem.hasOwnProperty("contentHeight") ? 0 : Kirigami.Units.largeSpacing) + (typeof view  !== "undefined" && view() ? view().bottomPadding : 0)
 
     Component.onCompleted: main.contentItem.clip = false
     //clip the delegate and not the scrollview because we do want items to bleed over margins
