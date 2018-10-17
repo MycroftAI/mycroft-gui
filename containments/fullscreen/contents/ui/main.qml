@@ -222,7 +222,7 @@ Item {
                 }
                 YAnimator {
                     from: 0
-                    to: height/2
+                    to: height/4
                     duration: Kirigami.Units.longDuration
                     easing.type: Easing.InCubic
                 }
@@ -238,7 +238,7 @@ Item {
                     easing.type: Easing.InOutCubic
                 }
                 YAnimator {
-                    from: height
+                    from: height/4
                     to: 0
                     duration: Kirigami.Units.longDuration
                     easing.type: Easing.OutCubic 
@@ -255,24 +255,35 @@ Item {
             }
         }
         replaceEnter: Transition {
-            OpacityAnimator {
-                from: 0
-                to: 1
-                duration: Kirigami.Units.longDuration * 2
-                easing.type: Easing.InOutCubic
+            ParallelAnimation {
+                OpacityAnimator {
+                    from: 0
+                    to: 1
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InOutCubic
+                }
+                YAnimator {
+                    from: height/4
+                    to: 0
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.OutCubic 
+                }
             }
         }
 
         replaceExit: Transition {
-            SequentialAnimation {
-                PauseAnimation {
-                    duration: Kirigami.Units.longDuration * 2
-                }
+            ParallelAnimation {
                 OpacityAnimator {
                     from: 1
                     to: 0
                     duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InCubic 
+                    easing.type: Easing.InOutCubic
+                }
+                YAnimator {
+                    from: 0
+                    to: -height/4
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InCubic
                 }
             }
         }
