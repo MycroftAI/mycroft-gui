@@ -114,7 +114,7 @@ Kirigami.ApplicationWindow {
             source: "background.png"
             anchors.fill: parent
 
-            Mycroft.StackSkillView {
+            Mycroft.SkillView {
                 id: mainView
                 anchors.fill: parent
                 initialItem: Idler {}
