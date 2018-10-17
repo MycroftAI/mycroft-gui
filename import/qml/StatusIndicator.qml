@@ -93,6 +93,7 @@ Item {
         onListeningChanged: {
             if (Mycroft.MycroftController.listening) {
                 root.state = "waiting";
+                fadeTimer.running = false;
             } else {
                 fadeTimer.restart();
             }
@@ -103,6 +104,28 @@ Item {
                 root.state = "ok";
             }
         }
+        onStatusChanged: {
+            switch (Mycroft.MycroftController.status) {
+            case Mycroft.MycroftController.Open:
+                root.state = "ok";
+                break;
+            case Mycroft.MycroftController.Connecting:
+                root.state = "waiting";
+                break;
+            case Mycroft.MycroftController.Error:
+            default:
+                root.state = "error";
+                break;
+            }
+            fadeTimer.restart();
+        }
+        onCurrentSkillChanged: {
+            if (Mycroft.MycroftController.currentSkill.length == 0) {
+                root.state = "idle";
+            } else {
+                root.state = "waiting";
+            }
+        }
     }
     onStateChanged: {
         outerCircleRotation.running = true;
@@ -110,6 +133,8 @@ Item {
         case "ok":
         case "error":
             fadeTimer.restart();
+        default:
+            fadeTimer.running = false;
         }
     }
 
@@ -185,6 +210,7 @@ Item {
                 direction: RotationAnimator.Counterclockwise
                 duration: innerCircle.animationLength
                 easing.type: Easing.InOutCubic
+                loops: root.state == "waiting" ? Animation.Infinite : 1
             }
         }
     }
@@ -225,6 +251,7 @@ Item {
             direction: RotationAnimator.Clockwise
             duration: innerCircle.animationLength
             easing.type: Easing.InOutCubic
+            loops: root.state == "waiting" ? Animation.Infinite : 1
         }
     }
     Timer {

@@ -122,6 +122,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
 
     if (type == "mycroft.skill.handler.start") {
         m_currentSkill = doc["data"]["name"].toString();
+        qDebug() << "Current skill:" << m_currentSkill;
         emit currentSkillChanged();
     } else if (type == "mycroft.skill.handler.complete") {
         m_currentSkill = QString();

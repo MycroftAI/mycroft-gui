@@ -86,6 +86,15 @@ Item {
         Mycroft.MycroftController.start();
     }
 
+    Timer {
+        interval: 10000
+        running: Mycroft.MycroftController.status != Mycroft.MycroftController.Open
+        onTriggered: {
+            print("Trying to connect to Mycroft");
+            Mycroft.MycroftController.start();
+        }
+    }
+
     Containment.onAppletAdded: {
         addApplet(applet, x, y);
         LayoutManager.save();
