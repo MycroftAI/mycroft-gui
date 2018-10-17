@@ -29,7 +29,7 @@ Item {
 
     property alias initialItem: mainStack.initialItem
 
-    readonly property alias currentItem: mainRow.currentItem
+    readonly property Item currentItem: mycroftConnection.currentRow.currentItem
 
     function goBack() {
         //assume mainStack can only have a depth of 1 or 2
@@ -38,15 +38,15 @@ Item {
         }
 
         //current item is paginated and can we go back?
-        if (mainRow.currentItem.hasOwnProperty("currentIndex") && mainRow.currentItem.currentIndex > 0) {
-            mainRow.currentItem.currentIndex--;
+        if (mycroftConnection.currentRow.currentItem.hasOwnProperty("currentIndex") && mycroftConnection.currentRow.currentItem.currentIndex > 0) {
+            mycroftConnection.currentRow.currentItem.currentIndex--;
             //reset the countdown
-            mainRow.currentItem.userInteractingChanged();
+            mycroftConnection.currentRow.currentItem.userInteractingChanged();
         //we're in pageRow, flick back
-        } else if (mainRow.currentIndex > 0) {
-            mainRow.currentIndex--;
+        } else if (mycroftConnection.currentRow.currentIndex > 0) {
+            mycroftConnection.currentRow.currentIndex--;
             //reset the countdown
-            mainRow.currentItem.userInteractingChanged();
+            mycroftConnection.currentRow.currentItem.userInteractingChanged();
         //otherwise pop
         } else {
             mainStack.pop();
@@ -59,16 +59,33 @@ Item {
         id: mainStack
         anchors.fill: parent
         onBusyChanged: {
-            if (!busy && depth < 2) {
-                mainRow.clear();
-                mycroftConnection.metadataType = [];
+            if (busy) {
+                return;
             }
+
+            if (currentItem != row1) {
+                row1.clear();
+            }
+            if (currentItem != row2) {
+                row2.clear();
+            }
+            //if (depth < 2) {
+            //    mycroftConnection.metadataType = [];
+            //}
         }
 
     }
 
+    //two copies to animate between them
     Kirigami.PageRow {
-        id: mainRow
+        id: row1
+        visible: false
+        //disable columns
+        defaultColumnWidth: width
+    }
+
+    Kirigami.PageRow {
+        id: row2
         visible: false
         //disable columns
         defaultColumnWidth: width
@@ -92,6 +109,7 @@ Item {
     Connections {
         id: mycroftConnection
         property var metadataType: []
+        property Kirigami.PageRow currentRow: row1
         target: Mycroft.MycroftController
 
         function openSkillUi(type, data) {
@@ -106,13 +124,14 @@ Item {
             if (metadataType.length > 0 &&
                 (type.split("/")[0] != metadataType[0].split("/")[0]
                  || data.resetWorkflow)) {
-                mainRow.clear();
+                mycroftConnection.currentRow = mycroftConnection.currentRow == row1 ? row2 : row1;
+                mainStack.replace(mycroftConnection.currentRow);
                 metadataType = [];
             }
 
             var found = false;
             for (var i = 0; i < mycroftConnection.metadataType.length; ++i) {
-                var page = mainRow.get(i);
+                var page = mycroftConnection.currentRow.get(i);
                 var key;
 
                 for (key in data) {
@@ -122,19 +141,19 @@ Item {
                 }
 
                 if (mycroftConnection.metadataType[i] == type) {
-                    mainRow.currentIndex = i;
+                    mycroftConnection.currentRow.currentIndex = i;
                     found = true;
                 }
             }
 
             if (!found) {
                 mycroftConnection.metadataType.push(type);
-                mainRow.currentIndex = mainRow.depth - 1;
-                mainRow.push(_url, data);
+                mycroftConnection.currentRow.currentIndex = mycroftConnection.currentRow.depth - 1;
+                mycroftConnection.currentRow.push(_url, data);
             }
 
             if (mainStack.depth < 2) {
-                mainStack.push(mainRow);
+                mainStack.push(mycroftConnection.currentRow);
             }
 
             popTimer.running = false;
@@ -158,7 +177,7 @@ Item {
                 countdownAnim.running = false;
                 mainStack.pop(mainStack.initialItem);
             }
-            mainRow.clear();
+            mycroftConnection.currentRow.clear();
             return;
         }
 
@@ -168,7 +187,7 @@ Item {
 
         onSpeakingChanged: {
             if (!Mycroft.MycroftController.speaking) {
-                if (mainRow.depth > 1 && (!mainRow.currentItem.hasOwnProperty("graceTime") || (mainRow.currentItem.graceTime != Infinity && mainRow.currentItem.graceTime > 0))) {
+                if (mycroftConnection.currentRow.depth > 1 && (!mycroftConnection.currentRow.currentItem.hasOwnProperty("graceTime") || (mycroftConnection.currentRow.currentItem.graceTime != Infinity && mycroftConnection.currentRow.currentItem.graceTime > 0))) {
                     popTimer.restart();
                     countdownAnim.restart();
                 }
@@ -176,13 +195,13 @@ Item {
         }
     }
     Connections {
-        target: mainRow.currentItem
+        target: mycroftConnection.currentRow.currentItem
         onBackRequested: root.goBack();
         onUserInteractingChanged: {
-            if (mainRow.currentItem.userInteracting) {
+            if (mycroftConnection.currentRow.currentItem.userInteracting) {
                 popTimer.running = false;
                 countdownAnim.running = false;
-            } else if (!Mycroft.MycroftController.speaking && (!mainRow.currentItem.hasOwnProperty("graceTime") || (mainRow.currentItem.graceTime != Infinity && mainRow.currentItem.graceTime > 0))) {
+            } else if (!Mycroft.MycroftController.speaking && (!mycroftConnection.currentRow.currentItem.hasOwnProperty("graceTime") || (mycroftConnection.currentRow.currentItem.graceTime != Infinity && mycroftConnection.currentRow.currentItem.graceTime > 0))) {
                 popTimer.restart();
                 countdownAnim.restart();
             }
@@ -191,12 +210,12 @@ Item {
 
     Timer {
         id: popTimer
-        interval: mainRow.currentItem && mainRow.currentItem.hasOwnProperty("graceTime") ? mainRow.currentItem.graceTime : 0
+        interval: mycroftConnection.currentRow.currentItem && mycroftConnection.currentRow.currentItem.hasOwnProperty("graceTime") ? mycroftConnection.currentRow.currentItem.graceTime : 0
         onTriggered: {
             if (mainStack.depth > 1) {
                 mainStack.pop(mainStack.initialItem);
             }
-            mainRow.clear();
+            mycroftConnection.currentRow.clear();
         }
     }
 
