@@ -28,6 +28,17 @@ Item {
     id: root
 
     property alias initialItem: mainStack.initialItem
+    property alias pushEnter: mainStack.pushEnter
+    property alias pushExit: mainStack.pushExit
+    property alias popEnter: mainStack.popEnter
+    property alias popExit: mainStack.popExit
+    property alias replaceEnter: mainStack.replaceEnter
+    property alias replaceExit: mainStack.replaceExit
+
+    property alias rightPadding: mainStack.rightPadding
+    property alias topPadding: mainStack.topPadding
+    property alias leftPadding: mainStack.leftPadding
+    property alias bottomPadding: mainStack.bottomPadding
 
     readonly property Item currentItem: mycroftConnection.currentRow.currentItem
 
@@ -125,7 +136,11 @@ Item {
                 (type.split("/")[0] != metadataType[0].split("/")[0]
                  || data.resetWorkflow)) {
                 mycroftConnection.currentRow = mycroftConnection.currentRow == row1 ? row2 : row1;
-                mainStack.replace(mycroftConnection.currentRow);
+                if (mainStack.depth > 1) {
+                    mainStack.replace(mycroftConnection.currentRow);
+                } else {
+                    mainStack.push(mycroftConnection.currentRow);
+                }
                 metadataType = [];
             }
 
@@ -176,8 +191,8 @@ Item {
                 popTimer.running = false;
                 countdownAnim.running = false;
                 mainStack.pop(mainStack.initialItem);
+                mainStack.metadataType = [];
             }
-            mycroftConnection.currentRow.clear();
             return;
         }
 
@@ -187,7 +202,7 @@ Item {
 
         onSpeakingChanged: {
             if (!Mycroft.MycroftController.speaking) {
-                if (mycroftConnection.currentRow.depth > 1 && (!mycroftConnection.currentRow.currentItem.hasOwnProperty("graceTime") || (mycroftConnection.currentRow.currentItem.graceTime != Infinity && mycroftConnection.currentRow.currentItem.graceTime > 0))) {
+                if (mycroftConnection.currentRow.depth > 0 && (!mycroftConnection.currentRow.currentItem.hasOwnProperty("graceTime") || (mycroftConnection.currentRow.currentItem.graceTime != Infinity && mycroftConnection.currentRow.currentItem.graceTime > 0))) {
                     popTimer.restart();
                     countdownAnim.restart();
                 }
@@ -214,8 +229,8 @@ Item {
         onTriggered: {
             if (mainStack.depth > 1) {
                 mainStack.pop(mainStack.initialItem);
+                mycroftConnection.metadataType = [];
             }
-            mycroftConnection.currentRow.clear();
         }
     }
 
