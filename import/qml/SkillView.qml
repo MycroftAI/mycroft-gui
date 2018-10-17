@@ -35,12 +35,17 @@ Item {
     property alias replaceEnter: mainStack.replaceEnter
     property alias replaceExit: mainStack.replaceExit
 
-    property alias rightPadding: mainStack.rightPadding
-    property alias topPadding: mainStack.topPadding
-    property alias leftPadding: mainStack.leftPadding
-    property alias bottomPadding: mainStack.bottomPadding
+    property int rightPadding: 0
+    property int topPadding: 0
+    property int leftPadding: 0
+    property int bottomPadding: 0
 
     readonly property Item currentItem: mycroftConnection.currentRow.currentItem
+
+    //for delegates to access the view... eventually this could be come an attache dproperty
+    function view() {
+        return root;
+    }
 
     function goBack() {
         //assume mainStack can only have a depth of 1 or 2
