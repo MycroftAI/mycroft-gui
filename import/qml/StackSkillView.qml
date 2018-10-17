@@ -50,7 +50,6 @@ Item {
         //otherwise pop
         } else {
             mainStack.pop();
-            mycroftConnection.metadataType.pop();
             popTimer.running = false;
             countdownAnim.running = false;
         }
@@ -59,6 +58,12 @@ Item {
     StackView {
         id: mainStack
         anchors.fill: parent
+        onBusyChanged: {
+            if (!busy && depth < 2) {
+                mainRow.clear();
+                mycroftConnection.metadataType = [];
+            }
+        }
 
     }
 
@@ -67,7 +72,6 @@ Item {
         visible: false
         //disable columns
         defaultColumnWidth: width
-        onDepthChanged: mycroftConnection.metadataType = mycroftConnection.metadataType.slice(0, depth)
     }
 
     Component.onCompleted: {
@@ -96,8 +100,12 @@ Item {
                 return;
             }
 
-            //put in a row only stuff from the same skill, clear the old stuff otherwise
-            if (metadataType.length > 0 && type.split("/")[0] != metadataType[0].split("/")[0]) {
+            // put in a row only stuff from the same skill, 
+            // clear the old stuff otherwise
+            // clear also if the skills requests so with "resetWorkflow"
+            if (metadataType.length > 0 &&
+                (type.split("/")[0] != metadataType[0].split("/")[0]
+                 || data.resetWorkflow)) {
                 mainRow.clear();
                 metadataType = [];
             }
@@ -107,7 +115,7 @@ Item {
                 var page = mainRow.get(i);
                 var key;
 
-                for (key in data) {print("AAA"+type+" "+data[key])
+                for (key in data) {
                     if (page.hasOwnProperty(key)) {
                         page[key] = data[key];
                     }
@@ -121,6 +129,7 @@ Item {
 
             if (!found) {
                 mycroftConnection.metadataType.push(type);
+                mainRow.currentIndex = mainRow.depth - 1;
                 mainRow.push(_url, data);
             }
 
@@ -148,7 +157,6 @@ Item {
                 popTimer.running = false;
                 countdownAnim.running = false;
                 mainStack.pop(mainStack.initialItem);
-                mycroftConnection.metadataType = [];
             }
             mainRow.clear();
             return;
@@ -187,7 +195,6 @@ Item {
         onTriggered: {
             if (mainStack.depth > 1) {
                 mainStack.pop(mainStack.initialItem);
-                mycroftConnection.metadataType = [];
             }
             mainRow.clear();
         }
