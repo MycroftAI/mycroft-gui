@@ -22,6 +22,10 @@ Row {
             onClicked: indicator.state = "waiting"
         }
         Controls.Button {
+            text: "Loading"
+            onClicked: indicator.state = "loading"
+        }
+        Controls.Button {
             text: "Idle"
             onClicked: indicator.state = "idle"
         }

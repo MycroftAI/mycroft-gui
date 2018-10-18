@@ -35,8 +35,6 @@ Item {
             name: "idle"
             PropertyChanges {
                 target: innerCircle
-                //this to make sure it will always do a complete loop when going to waiting
-                rotation: 359
                 graphicsColor: Kirigami.Theme.highlightedTextColor
                 backgroundColor: Kirigami.Theme.highlightColor
             }
@@ -44,12 +42,22 @@ Item {
                 target: root
                 opacity: 0
             }
+            StateChangeScript {
+                script: {
+                    innerCircleRotation.running = false;
+                    innerCircleRotation.to = 0;
+                    innerCircleRotation.loops = 1;
+                    innerCircleRotation.running = true;
+
+                    outerCircleRotation.loops = 1;
+                    outerCircleRotation.restart();
+                }
+            }
         },
         State {
             name: "waiting"
             PropertyChanges {
                 target: innerCircle
-                rotation: 0
                 graphicsColor: Kirigami.Theme.highlightedTextColor
                 backgroundColor: Kirigami.Theme.highlightColor
             }
@@ -57,13 +65,49 @@ Item {
                 target: root
                 opacity: 1
             }
+            StateChangeScript {
+                script: {
+                    innerCircleRotation.running = false;
+                    innerCircleRotation.to = -360;
+                    innerCircleRotation.loops = 1;
+                    innerCircleRotation.running = true;
+
+                    outerCircleRotation.loops = 1;
+                    outerCircleRotation.restart();
+                }
+            }
+        },
+        State {
+            name: "loading"
+            PropertyChanges {
+                target: innerCircle
+                targetRotation: 0
+                graphicsColor: Kirigami.Theme.highlightedTextColor
+                backgroundColor: Kirigami.Theme.highlightColor
+            }
+            PropertyChanges {
+                target: root
+                opacity: 1
+            }
+
+            StateChangeScript {
+                script: {
+                    innerCircleRotation.running = false;
+                    innerCircleRotation.to = innerCircle.rotation - 360;
+                    innerCircleRotation.loops = Animation.Infinite;
+                    innerCircleRotation.running = true;
+
+                    outerCircleRotation.loops = Animation.Infinite;
+                    outerCircleRotation.restart();
+                }
+            }
         },
         State {
             name: "ok"
             PropertyChanges {
                 target: innerCircle
                 explicit: true
-                rotation: -90
+                targetRotation: -90
                 graphicsColor: Kirigami.Theme.positiveTextColor
                 backgroundColor: Qt.tint(Kirigami.Theme.backgroundColor, Qt.rgba(Kirigami.Theme.positiveTextColor.r, Kirigami.Theme.positiveTextColor.g, Kirigami.Theme.positiveTextColor.b, 0.4))
             }
@@ -71,19 +115,40 @@ Item {
                 target: root
                 opacity: 1
             }
+            StateChangeScript {
+                script: {
+                    innerCircleRotation.running = false;
+                    innerCircleRotation.to = -90;
+                    innerCircleRotation.loops = 1;
+                    innerCircleRotation.running = true;
+
+                    outerCircleRotation.loops = 1;
+                    outerCircleRotation.restart();
+                }
+            }
         },
         State {
             name: "error"
             PropertyChanges {
                 target: innerCircle
                 explicit: true
-                rotation: +90
                 graphicsColor: Kirigami.Theme.negativeTextColor
                 backgroundColor: Qt.tint(Kirigami.Theme.backgroundColor, Qt.rgba(Kirigami.Theme.negativeTextColor.r, Kirigami.Theme.negativeTextColor.g, Kirigami.Theme.negativeTextColor.b, 0.4))
             }
             PropertyChanges {
                 target: root
                 opacity: 1
+            }
+            StateChangeScript {
+                script: {
+                    innerCircleRotation.running = false;
+                    innerCircleRotation.to = 90;
+                    innerCircleRotation.loops = 1;
+                    innerCircleRotation.running = true;
+
+                    outerCircleRotation.loops = 1;
+                    outerCircleRotation.restart();
+                }
             }
         }
     ]
@@ -110,7 +175,7 @@ Item {
                 root.state = "ok";
                 break;
             case Mycroft.MycroftController.Connecting:
-                root.state = "waiting";
+                root.state = "loading";
                 break;
             case Mycroft.MycroftController.Error:
             default:
@@ -123,18 +188,8 @@ Item {
             if (Mycroft.MycroftController.currentSkill.length == 0) {
                 root.state = "idle";
             } else {
-                root.state = "waiting";
+                root.state = "loading";
             }
-        }
-    }
-    onStateChanged: {
-        outerCircleRotation.running = true;
-        switch (root.state) {
-        case "ok":
-        case "error":
-            fadeTimer.restart();
-        default:
-            fadeTimer.running = false;
         }
     }
 
@@ -190,6 +245,7 @@ Item {
         property color graphicsColor
         property color backgroundColor
         property int animationLength: 1000
+        property int targetRotation: 0
         Behavior on graphicsColor {
             ColorAnimation {
                 duration: innerCircle.animationLength
@@ -205,13 +261,15 @@ Item {
         anchors.fill: innerCircleGraphics
         source: innerCircleGraphics
         maskSource: innerCircleMask
-        Behavior on rotation {
-            RotationAnimator {
-                direction: RotationAnimator.Counterclockwise
-                duration: innerCircle.animationLength
-                easing.type: Easing.InOutCubic
-                loops: root.state == "waiting" ? Animation.Infinite : 1
-            }
+
+        RotationAnimator {
+            id: innerCircleRotation
+            target: innerCircle
+            from: innerCircle.rotation
+            to: 0
+            direction: RotationAnimator.Counterclockwise
+            duration: innerCircle.animationLength
+            easing.type: Easing.InOutCubic
         }
     }
 
@@ -245,19 +303,17 @@ Item {
         RotationAnimator {
             id: outerCircleRotation
             target: outerCircle
-            from: 0
-            to: 360
-            alwaysRunToEnd: true
+            from: outerCircle.rotation
+            to: outerCircle.rotation + 360 - (outerCircle.rotation + 360) % 360
             direction: RotationAnimator.Clockwise
             duration: innerCircle.animationLength
             easing.type: Easing.InOutCubic
-            loops: root.state == "waiting" ? Animation.Infinite : 1
         }
     }
     Timer {
         id: fadeTimer
         interval: 3000
         repeat: false
-        onTriggered: root.state = "idle"
+        //onTriggered: root.state = "idle"
     }
 }
