@@ -110,27 +110,27 @@ Kirigami.ApplicationWindow {
             }
         }
         Image {
-            Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
             source: "background.png"
             anchors.fill: parent
 
             Mycroft.SkillView {
                 id: mainView
+                Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
                 anchors.fill: parent
                 initialItem: Idler {}
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+            }
 
-                Mycroft.StatusIndicator {
-                    id: si
-                    visible: true
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        bottom: parent.bottom
-                        bottomMargin: Kirigami.Units.largeSpacing
-                    }
-                    z: 999
+            Mycroft.StatusIndicator {
+                id: si
+                visible: true
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom
+                    bottomMargin: Kirigami.Units.largeSpacing
                 }
+                z: 999
             }
         }
 
