@@ -51,6 +51,8 @@ Item {
 
                     outerCircleRotation.loops = 1;
                     outerCircleRotation.restart();
+
+                    fadeTimer.running = false;
                 }
             }
         },
@@ -74,6 +76,8 @@ Item {
 
                     outerCircleRotation.loops = 1;
                     outerCircleRotation.restart();
+
+                    fadeTimer.running = false;
                 }
             }
         },
@@ -99,6 +103,8 @@ Item {
 
                     outerCircleRotation.loops = Animation.Infinite;
                     outerCircleRotation.restart();
+
+                    fadeTimer.running = false;
                 }
             }
         },
@@ -124,6 +130,8 @@ Item {
 
                     outerCircleRotation.loops = 1;
                     outerCircleRotation.restart();
+
+                    fadeTimer.restart();
                 }
             }
         },
@@ -148,6 +156,8 @@ Item {
 
                     outerCircleRotation.loops = 1;
                     outerCircleRotation.restart();
+
+                    fadeTimer.restart();
                 }
             }
         }
@@ -158,7 +168,6 @@ Item {
         onListeningChanged: {
             if (Mycroft.MycroftController.listening) {
                 root.state = "waiting";
-                fadeTimer.running = false;
             } else {
                 fadeTimer.restart();
             }
@@ -182,7 +191,6 @@ Item {
                 root.state = "error";
                 break;
             }
-            fadeTimer.restart();
         }
         onCurrentSkillChanged: {
             if (Mycroft.MycroftController.currentSkill.length == 0) {
@@ -314,6 +322,6 @@ Item {
         id: fadeTimer
         interval: 3000
         repeat: false
-        //onTriggered: root.state = "idle"
+        onTriggered: root.state = "idle"
     }
 }
