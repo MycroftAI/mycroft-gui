@@ -172,7 +172,9 @@ Item {
                 fadeTimer.restart();
             }
         }
-        onNotUnderstood: root.state = "error";
+        onNotUnderstood: {print("AAAAAAAAAAAAAAAA")
+            root.state = "idle"
+            root.state = "error";}
         onFallbackTextRecieved: {
             if (skill.length > 0) {
                 root.state = "ok";
@@ -194,7 +196,9 @@ Item {
         }
         onCurrentSkillChanged: {
             if (Mycroft.MycroftController.currentSkill.length == 0) {
-                root.state = "idle";
+                if (root.state == "loading") {
+                    root.state = "idle";
+                }
             } else {
                 root.state = "loading";
             }
