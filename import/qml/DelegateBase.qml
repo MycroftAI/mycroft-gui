@@ -49,7 +49,7 @@ Controls.Control {
 
     readonly property Item controlBarItem: controlBar.createObject(control);
 
-    readonly property bool userInteracting: main.pressed
+    readonly property bool userInteracting: main ?main.pressed : false
 
     //To do some automatic responsive layouting
     readonly property bool wideMode: width > Kirigami.Units.gridUnit * 18
@@ -70,6 +70,13 @@ Controls.Control {
             id: img
             anchors.fill: parent
             fillMode: Image.PreserveAspectCrop
+            opacity: status == Image.Ready
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: Kirigami.Units.longDuration * 2
+                    easing.type: Easing.InOutCubic
+                }
+            }
         }
         Rectangle {
             id: rect
