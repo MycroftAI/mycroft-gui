@@ -31,6 +31,8 @@ Rectangle {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
+    property bool wideMode: width > Kirigami.Units.gridUnit * 30
+
     property int hours: 6
     property string time: "6:59"
 
@@ -43,15 +45,70 @@ Rectangle {
             root.state = "ringing"
         }
     }
+
+
+    ColumnLayout {
+        id: timeLayout
+        anchors {
+            centerIn: wideMode ? undefined : parent
+            left: wideMode ? parent.left : undefined
+            top: wideMode ? parent.top : undefined
+            margins: Kirigami.Units.gridUnit * 5
+        }
+        spacing: 0
+
+        Behavior on opacity {
+            OpacityAnimator {
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutCubic
+            }
+        }
+
+        Kirigami.Heading {//HACK ON SIZE
+            font.pointSize: 50
+            text: time
+            Layout.preferredHeight: Kirigami.Units.gridUnit * 3
+        }
+        RowLayout {
+            Layout.alignment: Qt.AlignRight
+            Kirigami.Icon {
+                id: alarmIconPlaceHolder
+                Layout.fillHeight: true
+                Layout.preferredWidth: height*0.8
+                opacity: 0.5
+
+                source: "alarm-symbolic"
+            }
+            Controls.Label {
+                font.pointSize: 20
+                Layout.preferredHeight: paintedHeight
+                Layout.alignment: Qt.AlignRight
+                verticalAlignment: Text.AlignTop
+                text: "AM"
+                color: root.state == "ringing" ? Kirigami.Theme.textColor : Kirigami.Theme.highlightColor
+                Behavior on color {
+                    ColorAnimation {
+                        duration: Kirigami.Units.longDuration*3
+                        easing.type: Easing.InOutCubic
+                    }
+                }
+            }
+        }
+    }
+
     Rectangle {
         id: mainRect
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            margins: wideMode ? Kirigami.Units.gridUnit : 0
+        }
         radius: Kirigami.Units.gridUnit
-        color: Kirigami.Theme.backgroundColor
+        color: "#fffadb"
+        clip: true
 
-        Behavior on color {
-            ColorAnimation {
-                duration: Kirigami.Units.longDuration*3
+        Behavior on opacity {
+            OpacityAnimator {
+                duration: Kirigami.Units.longDuration*5
                 easing.type: Easing.InOutCubic
             }
         }
@@ -61,7 +118,7 @@ Rectangle {
             anchors.centerIn: parent
             opacity: 0
             scale: 0
-            width: Math.min(parent.width, parent.height) * 1.5
+            width: Math.round (Math.max(parent.width, parent.height) * 0.8)
             height: width
             radius: root.width
             color: "gold"
@@ -79,68 +136,30 @@ Rectangle {
                     easing.type: Easing.InOutCubic
                 }
             }
-        }
 
-        ColumnLayout {
-            id: timeLayout
-            x: parent.width/2 - width/2
-            y: x
-            spacing: 0
-            Kirigami.Heading {//HACK ON SIZE
-                font.pointSize: 50
-                text: time
-                Layout.preferredHeight: Kirigami.Units.gridUnit * 3
-            }
-            RowLayout {
-                Layout.alignment: Qt.AlignRight
-                Controls.Label {
-                    font.pointSize: 20
-                    Layout.preferredHeight: paintedHeight
-                    verticalAlignment: Text.AlignTop
-                    text: "AM"
-                    color: root.state == "ringing" ? Kirigami.Theme.textColor : Kirigami.Theme.highlightColor
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: Kirigami.Units.longDuration*3
-                            easing.type: Easing.InOutCubic
-                        }
-                    }
-                }
-            }
-            Behavior on y {
-                SpringAnimation {
-                    velocity: 3000
-                    spring: 5
-                    mass: 1
-                    damping: 0.08
-                }
-            }
-        }
 
-        Kirigami.Icon {
-            id: alarmIcon
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                bottom: parent.bottom
-                bottomMargin: x
+            Kirigami.Heading {
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: parent.height/4
+                text: time + "am"
+                //Layout.alignment: Qt.AlignBottom
+                verticalAlignment: Text.AlignBottom
+                font.pointSize: 40
+                font.capitalization: Font.SmallCaps
             }
-            smooth: true
-            width: Kirigami.Units.iconSizes.huge
-            height: width
-            source: "alarm-symbolic"
-            Behavior on scale {
-                SpringAnimation {
-                    velocity: 20
-                    spring: 5
-                    mass: 1
-                    damping: 0.08
+
+            Kirigami.Icon {
+                id: alarmIcon
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom
+                    bottomMargin: parent.height/4
                 }
-            }
-            Behavior on opacity {
-                OpacityAnimator {
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InOutCubic
-                }
+
+                smooth: true
+                width: Kirigami.Units.iconSizes.huge
+                height: width
+                source: "alarm-symbolic"
             }
         }
     }
@@ -157,17 +176,12 @@ Rectangle {
         State {
             name: "idle"
             PropertyChanges {
-                target: mainRect
-                color: "black"
-            }
-            PropertyChanges {
                 target: timeLayout
-                y: mainRect.height/2 - timeLayout.height/2
+                opacity: 1
             }
             PropertyChanges {
-                target: alarmIcon
-                scale: 0.4
-                opacity: 0.5
+                target: mainRect
+                opacity: 0
             }
             PropertyChanges {
                 target: alarmRectangle
@@ -178,22 +192,17 @@ Rectangle {
         State {
             name: "ringing"
             PropertyChanges {
+                target: timeLayout
+                opacity: 0
+            }
+            PropertyChanges {
                 target: mainRect
-                color: "#fffadb"
+                opacity: 1
             }
             PropertyChanges {
                 target: alarmRectangle
                 scale: 1
                 opacity: 1
-            }
-            PropertyChanges {
-                target: alarmIcon
-                scale: 1
-                opacity: 1
-            }
-            PropertyChanges {
-                target: timeLayout
-                y: timeLayout.x
             }
         }
     ]
