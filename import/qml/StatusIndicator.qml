@@ -172,7 +172,7 @@ Item {
                 fadeTimer.restart();
             }
         }
-        onNotUnderstood: {print("AAAAAAAAAAAAAAAA")
+        onNotUnderstood: {
             root.state = "idle"
             root.state = "error";}
         onFallbackTextRecieved: {
