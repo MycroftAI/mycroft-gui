@@ -28,6 +28,8 @@ Item {
     id: root
 
     property alias initialItem: mainStack.initialItem
+    property bool displaysFallbackItems: true
+
     property alias pushEnter: mainStack.pushEnter
     property alias pushExit: mainStack.pushExit
     property alias popEnter: mainStack.popEnter
@@ -40,7 +42,7 @@ Item {
     property int leftPadding: 0
     property int bottomPadding: 0
 
-    readonly property Item currentItem: mycroftConnection.currentRow.currentItem
+    readonly property Item currentItem: mycroftConnection.currentRow.currentItem || mainStack.initialItem
 
     //for delegates to access the view... eventually this could be come an attache dproperty
     function view() {
@@ -183,6 +185,10 @@ Item {
 
         //These few lines are a cludge to make existing skills work that don't have metadata (yet)
         onFallbackTextRecieved: {
+            if (!root.displaysFallbackItems) {
+                return;
+            }
+
             console.log("Fallback", skill);
             var regex = /(.*)Skill*/;
             var found = skill.match(regex);
