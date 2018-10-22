@@ -43,6 +43,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5QuickControls2 ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5Svg ${QT_MIN_VERSION} REQUIRED)
+    find_package(Qt5TextToSpeech ${QT_MIN_VERSION} REQUIRED)
     find_package(OpenSSL REQUIRED)
 endif()
 

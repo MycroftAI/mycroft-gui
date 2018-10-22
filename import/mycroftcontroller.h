@@ -22,6 +22,11 @@
 
 #include <QObject>
 #include <QWebSocket>
+
+#ifdef Q_OS_ANDROID
+#include <QTextToSpeech>
+#endif
+
 #include <QTimer>
 
 class MycroftController : public QObject
@@ -83,6 +88,10 @@ private:
     QTimer m_reconnectTimer;
 
     QString m_currentSkill;
+#ifdef Q_OS_ANDROID
+    QTextToSpeech *m_speech;
+#endif
+
     bool m_isSpeaking = false;
     bool m_isListening = false;
 };

@@ -16,10 +16,16 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set(mycroftplugin_EXTRA_LIBS
+        Qt5::TextToSpeech
+    )
+endif()
 
 target_link_libraries(mycroftplugin
         PUBLIC
             Qt5::Core
+            ${mycroftplugin_EXTRA_LIBS}
         PRIVATE
             Qt5::Qml
             Qt5::Quick

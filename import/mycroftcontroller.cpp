@@ -46,10 +46,11 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
         auto appSettingObj = new GlobalSettings;
-        qDebug() << "WSADDRC++" << appSettingObj->_settings.fileName();
         QString socket = appSettingObj->webSocketAddress();
         m_webSocket.open(QUrl(socket));
     });
+
+    m_speech = new QTextToSpeech(this);
 }
 
 
@@ -88,6 +89,12 @@ void MycroftController::onTextMessageReceived(const QString &message)
     qDebug() << "type" << type;
 
     emit intentRecevied(type, doc["data"].toVariant().toMap());
+
+#ifdef Q_OS_ANDROID
+    if (type == "speak") {
+        m_speech->say(doc["data"]["utterance"].toString());
+    }
+#endif
 
     if (type == QLatin1String("intent_failure")) {
         m_isListening = false;
