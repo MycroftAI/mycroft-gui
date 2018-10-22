@@ -127,9 +127,6 @@
 
         <file alias="mycroft-wiki/Main.qml">skills-extra/mycroft-wiki/Main.qml</file>
         <file alias="mycroft-wiki/disambiguate/Main.qml">skills-extra/mycroft-wiki/disambiguate/Main.qml</file>
-        <file alias="mycroft-wiki/disambiguate/test.qml">skills-extra/mycroft-wiki/disambiguate/test.qml</file>
-        <file alias="mycroft-wiki/test.qml">skills-extra/mycroft-wiki/test.qml</file>
-        <file alias="mycroft-wiki/test2.qml">skills-extra/mycroft-wiki/test2.qml</file>
 
         <file alias="youtube-skill/Main.qml">skills-extra/youtube-skill/Main.qml</file>
         <file alias="youtube-skill/SeekControl.qml">skills-extra/youtube-skill/SeekControl.qml</file>
@@ -142,7 +139,6 @@
         <file alias="youtube-skill/images/media-repeat-track.svg">skills-extra/youtube-skill/images/media-repeat-track.svg</file>
         <file alias="youtube-skill/images/media-skip-backward.svg">skills-extra/youtube-skill/images/media-skip-backward.svg</file>
         <file alias="youtube-skill/images/media-skip-forward.svg">skills-extra/youtube-skill/images/media-skip-forward.svg</file>
-        <file alias="youtube-skill/test.qml">skills-extra/youtube-skill/test.qml</file>
 
     </qresource>
 </RCC>
