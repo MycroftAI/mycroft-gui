@@ -139,10 +139,10 @@ Item {
 
             // put in a row only stuff from the same skill, 
             // clear the old stuff otherwise
-            // clear also if the skills requests so with "resetWorkflow"
+            // clear also if the skills requests so with "resetWorkflowToStep"
             if (metadataType.length > 0 &&
                 (type.split("/")[0] != metadataType[0].split("/")[0]
-                 || data.resetWorkflow)) {
+                 || (typeof data.resetWorkflowToStep != "undefined" && parseInt(data.resetWorkflowToStep) <= 0))) {
                 mycroftConnection.currentRow = mycroftConnection.currentRow == row1 ? row2 : row1;
                 if (mainStack.depth > 1) {
                     mainStack.replace(mycroftConnection.currentRow);
@@ -152,7 +152,28 @@ Item {
                 metadataType = [];
             }
 
+            if (typeof data.resetWorkflowToStep != "undefined" && parseInt(data.resetWorkflowToStep) > 0) {
+                //mycroftConnection.currentRow.currentIndex = mycroftConnection.currentRow.depth - 1;
+                while (mycroftConnection.currentRow.depth > data.resetWorkflowToStep) {
+                    metadataType.pop();
+                    mycroftConnection.currentRow.pop();
+                }
+            }
+
+            var secondaryTypes
+            switch(typeof data.secondaryTypes) {
+            case "undefined":
+                secondaryTypes = [];
+                break;
+            case "string":
+                secondaryTypes = [data.secondaryTypes];
+                break;
+            default:
+                secondaryTypes = data.secondaryTypes;
+            }
+
             var found = false;
+            var typeIndex = -1;
             for (var i = 0; i < mycroftConnection.metadataType.length; ++i) {
                 var page = mycroftConnection.currentRow.get(i);
                 var key;
@@ -164,8 +185,13 @@ Item {
                 }
 
                 if (mycroftConnection.metadataType[i] == type) {
-                    mycroftConnection.currentRow.currentIndex = i;
+                    typeIndex = i;
                     found = true;
+                }
+
+                var secondaryTypesIndex = secondaryTypes.indexOf(mycroftConnection.metadataType[i]);
+                if (secondaryTypesIndex !== -1) {
+                    secondaryTypes.splice(secondaryTypesIndex, 1);
                 }
             }
 
@@ -173,6 +199,23 @@ Item {
                 mycroftConnection.metadataType.push(type);
                 mycroftConnection.currentRow.currentIndex = mycroftConnection.currentRow.depth - 1;
                 mycroftConnection.currentRow.push(_url, data);
+                typeIndex = mycroftConnection.currentRow.depth - 1;
+            }
+
+            for (var i in secondaryTypes) {
+                var extraUrl = skillLoader.uiForMetadataType(secondaryTypes[i]);
+                if (!extraUrl) {
+                    print("could not find ui for secondary type " + secondaryTypes[i]);
+                    continue;
+                }
+
+                mycroftConnection.metadataType.push(secondaryTypes[i]);
+                mycroftConnection.currentRow.currentIndex = mycroftConnection.currentRow.depth - 1;
+                mycroftConnection.currentRow.push(extraUrl, data);
+            }
+
+            if (typeIndex >= 0) {
+                mycroftConnection.currentRow.currentIndex = typeIndex;
             }
 
             if (mainStack.depth < 2) {
