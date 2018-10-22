@@ -50,7 +50,9 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
         m_webSocket.open(QUrl(socket));
     });
 
+#ifdef Q_OS_ANDROID
     m_speech = new QTextToSpeech(this);
+#endif
 }
 
 
