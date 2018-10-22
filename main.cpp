@@ -25,6 +25,8 @@
 #include <QtQml>
 #include <QDebug>
 
+#include "speechintent.h"
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -61,6 +63,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("deviceWidth", width);
     engine.rootContext()->setContextProperty("deviceHeight", height);
     engine.rootContext()->setContextProperty("hideTextInput", parser.isSet(hideTextInputOption));
+
+    qmlRegisterType<SpeechIntent>("org.kde.private.mycroftgui", 1, 0, "SpeechIntent");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

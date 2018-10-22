@@ -55,6 +55,7 @@ endif()
 
 SET(mycroft_gui_app_SRC
     main.cpp
+    speechintent.cpp
 )
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")

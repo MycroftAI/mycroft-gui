@@ -24,6 +24,7 @@ import QtGraphicalEffects 1.0
 import org.kde.kirigami 2.4 as Kirigami
 import QtQuick.Window 2.2
 import Mycroft 1.0 as Mycroft
+import org.kde.private.mycroftgui 1.0 as MycroftGui
 
 Kirigami.ApplicationWindow {
     id: root
@@ -45,6 +46,18 @@ Kirigami.ApplicationWindow {
         var panel = component.createObject(root);
         panel.Kirigami.Theme.colorSet = Kirigami.Theme.Complementary;
         panel.width = Qt.binding(function(){return root.width});
+    }
+
+    // Uses Android's voice popup for speech recognition
+    MycroftGui.SpeechIntent {
+        id: speechIntent
+        title: "Say something to Mycroft" // TODO i18n
+        onSpeechRecognized: {
+            Mycroft.MycroftController.sendText(text)
+        }
+        //onRecognitionFailed: console.log("SPEECH FAILED")
+        //onRecognitionCanceled: console.log("SPEECH CANCELED")
+        //onNothingRecognized: console.log("SPEECH NOTHING")
     }
 
     //HACK
@@ -150,6 +163,16 @@ Kirigami.ApplicationWindow {
                     onAccepted: {
                         Mycroft.MycroftController.sendText(qinput.text)
                     }
+
+                    Connections {
+                        target: speechIntent
+                        onSpeechRecognized: qinput.text = text
+                    }
+                }
+                Button {
+                    text: "Speak" // TODO generic microphone icon
+                    onClicked: speechIntent.start()
+                    visible: speechIntent.supported
                 }
             }
             background: Rectangle {
