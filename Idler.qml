@@ -33,11 +33,6 @@ Item {
         onClicked: Mycroft.MycroftController.start();
     }
 
-    BusyIndicator {
-        anchors.centerIn: parent
-        visible: Mycroft.MycroftController.status == Mycroft.MycroftController.Connecting
-    }
-
     ClockFace {
         id: face
         anchors.centerIn: parent

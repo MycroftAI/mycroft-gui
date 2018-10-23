@@ -25,6 +25,10 @@
 #include <QtQml>
 #include <QDebug>
 
+#ifdef Q_OS_ANDROID
+#include <QtWebView/QtWebView>
+#endif
+
 #include "speechintent.h"
 
 int main(int argc, char *argv[])
@@ -53,6 +57,9 @@ int main(int argc, char *argv[])
     qputenv("QT_WAYLAND_FORCE_DPI", parser.value(dpiOption).toLatin1());
 
     QGuiApplication app(argc, argv);
+#ifdef Q_OS_ANDROID
+    QtWebView::initialize();
+#endif
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);

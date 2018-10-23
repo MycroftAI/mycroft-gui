@@ -174,7 +174,8 @@ Item {
         }
         onNotUnderstood: {
             root.state = "idle"
-            root.state = "error";}
+            root.state = "error";
+        }
         onFallbackTextRecieved: {
             if (skill.length > 0) {
                 root.state = "ok";

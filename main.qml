@@ -168,6 +168,11 @@ Kirigami.ApplicationWindow {
                         target: speechIntent
                         onSpeechRecognized: qinput.text = text
                     }
+                    onFocusChanged: {
+                        if (focus) {
+                            selectAll();
+                        }
+                    }
                 }
                 Button {
                     text: "Speak" // TODO generic microphone icon

@@ -37,6 +37,7 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Qml
     Network
     WebSockets
+    WebView
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
@@ -67,6 +68,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         Qt5::Svg
         Qt5::WebSockets
         OpenSSL::SSL
+        Qt5::WebView
     )
 endif()
 
