@@ -117,7 +117,7 @@ Kirigami.ApplicationWindow {
         topPadding: 0
         bottomPadding: 0
         onBackRequested: {
-            if (mainView.depth > 1) {
+            if (mainView.active) {
                 event.accepted = true;
                 mainView.goBack();
             }

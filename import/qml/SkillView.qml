@@ -43,6 +43,7 @@ Item {
     property int bottomPadding: 0
 
     readonly property Item currentItem: mycroftConnection.currentRow.currentItem || mainStack.initialItem
+    readonly property bool active: mainStack.depth > 1
 
     //for delegates to access the view... eventually this could be come an attache dproperty
     function view() {
