@@ -17,7 +17,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QGuiApplication>
 #include <QQuickView>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -26,7 +25,10 @@
 #include <QDebug>
 
 #ifdef Q_OS_ANDROID
+#include <QGuiApplication>
 #include <QtWebView/QtWebView>
+#else
+#include <QApplication>
 #endif
 
 #include "speechintent.h"
@@ -41,7 +43,9 @@ int main(int argc, char *argv[])
     }
 //FIXME: this should just go away on any platform
 #ifndef Q_OS_ANDROID
-    qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
+    if (!qEnvironmentVariableIsSet("QT_QUICK_CONTROLS_STYLE")) {
+        qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
+    }
 #endif
 
     QCommandLineParser parser;
@@ -56,9 +60,11 @@ int main(int argc, char *argv[])
 
     qputenv("QT_WAYLAND_FORCE_DPI", parser.value(dpiOption).toLatin1());
 
-    QGuiApplication app(argc, argv);
 #ifdef Q_OS_ANDROID
+    QGuiApplication app(argc, argv);
     QtWebView::initialize();
+#else
+    QApplication app(argc, argv);
 #endif
 
     QQuickView view;

@@ -37,11 +37,11 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Qml
     Network
     WebSockets
-    WebView
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
+    find_package(Qt5WebView ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5QuickControls2 ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5Svg ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5TextToSpeech ${QT_MIN_VERSION} REQUIRED)
@@ -51,6 +51,7 @@ endif()
 find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS I18n)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    find_package(Qt5Widgets ${QT_MIN_VERSION} REQUIRED)
     find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
     find_package(KF5KIO ${KF5_MIN_VERSION} REQUIRED) # FIXME look for "KIOWidgets" (KRun) explicitly
 endif()
@@ -69,6 +70,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         Qt5::WebSockets
         OpenSSL::SSL
         Qt5::WebView
+    )
+else()
+set(mycroft_gui_app_EXTRA_LIBS
+        Qt5::Widgets
     )
 endif()
 
