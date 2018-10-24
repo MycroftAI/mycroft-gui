@@ -63,7 +63,7 @@ DelegateBase {
         id: layout
         anchors.fill: parent
 
-        property bool singleItem: columns < 2 && height < switchHeight
+        property bool singleItem: columns < 2 && height <= switchHeight
         columns: width > switchWidth ? 2 : 1
 
         onSingleItemChanged: {
@@ -107,11 +107,11 @@ DelegateBase {
     LinearGradient {
         anchors {
             left: parent.left
-            top: bottomBar.top
             right: parent.right
             bottom: parent.bottom
         }
-        visible: bottomBar.visible
+        height: root.controlBarItem.height
+        visible: root.controlBarItem.visible
         start: Qt.point(0, 0)
         end: Qt.point(0, height)
         gradient: Gradient {
@@ -121,7 +121,6 @@ DelegateBase {
     }
 
     controlBar: Item {
-        id: bottomBar
         height: childrenRect.height
         anchors {
             bottom: parent.bottom
