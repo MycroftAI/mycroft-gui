@@ -62,10 +62,11 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_ANDROID
     QGuiApplication app(argc, argv);
-    QtWebView::initialize();
 #else
     QApplication app(argc, argv);
 #endif
+
+    QtWebView::initialize();
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
