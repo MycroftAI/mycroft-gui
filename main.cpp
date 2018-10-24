@@ -26,8 +26,8 @@
 
 #ifdef Q_OS_ANDROID
 #include <QGuiApplication>
-#include <QtWebView/QtWebView>
 #else
+#include <QtWebView/QtWebView>
 #include <QApplication>
 #endif
 
