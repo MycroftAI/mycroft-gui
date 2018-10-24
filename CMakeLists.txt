@@ -37,11 +37,11 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Qml
     Network
     WebSockets
+    WebView
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
-    find_package(Qt5WebView ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5QuickControls2 ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5Svg ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5TextToSpeech ${QT_MIN_VERSION} REQUIRED)
@@ -69,7 +69,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         Qt5::Svg
         Qt5::WebSockets
         OpenSSL::SSL
-        Qt5::WebView
     )
 else()
 set(mycroft_gui_app_EXTRA_LIBS
@@ -91,7 +90,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif()
 
 add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
-target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick ${mycroft_gui_app_EXTRA_LIBS})
+target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebView ${mycroft_gui_app_EXTRA_LIBS})
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     add_subdirectory(applets)
