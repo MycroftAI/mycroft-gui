@@ -133,6 +133,10 @@ Item {
         target: Mycroft.MycroftController
 
         function openSkillUi(type, data) {
+            //this loads only main pages but not dashboard ones
+            if (type.indexOf("dashboard") !== -1) {
+                return;
+            }
             var _url = skillLoader.uiForMetadataType(type);
             if (!_url) {
                 return;

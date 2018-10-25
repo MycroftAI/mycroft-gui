@@ -23,21 +23,10 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import QtGraphicalEffects 1.0
 
 import org.kde.kirigami 2.5 as Kirigami
+import Mycroft 1.0 as Mycroft
 
 ItemBase {
     id: root
-
-    property var weatherData
-
-    PlasmaCore.DataSource {
-        id: geoDataSource
-        dataEngine: "geolocation"
-        connectedSources: sources
-
-        onNewData: {
-            fetchDashWeather();
-        }
-    }
 
     Component.onCompleted: fetchDashWeather()
 
@@ -49,74 +38,48 @@ ItemBase {
         onTriggered: fetchDashWeather();
     }
     function fetchDashWeather() {
+        Mycroft.MycroftController.sendRequest("mycroftai.mycroft-weather.weather_dashboard", {});
+    }
 
-        var doc = new XMLHttpRequest()
-        var url = 'https://api.openweathermap.org/data/2.5/forecast?' +
-        'lat=' + geoDataSource.data["location"].latitude + '&lon=' + geoDataSource.data["location"].longitude + '&units=' + "metric" + '&cnt=3' +
-        '&APPID=' + "7af5277aee7a659fc98322c4517d3df7";
+    Mycroft.SkillLoader {
+        id: skillLoader
+    }
 
-        doc.open("GET", url, true);
-        doc.send();
+    Connections {
+        id: mycroftConnection
+        target: Mycroft.MycroftController
+        onStatusChanged: {
+            if (Mycroft.MycroftController.status == Mycroft.MycroftController.Open) {
+                fetchDashWeather();
+            }
+        }
+        onSkillDataRecieved: {
+            if (data["type"] !== "mycroft-weather/dashboard") {
+                return;
+            }
 
-        doc.onreadystatechange = function() {
-            if (doc.readyState === XMLHttpRequest.DONE) {
-                root.weatherData = JSON.parse(doc.responseText);
+            var _url = skillLoader.uiForMetadataType("mycroft-weather");
+            if (!_url) {
+                return;
+            }
+            //HACK TODO: dashboard from skillLoader
+            _url = _url.replace("Main", "Dashboard");
+            if (loader.item) {
+                for (key in data) {
+                    if (loader.item.hasOwnProperty(key)) {
+                        loader.item[key] = data[key];
+                    }
+                }
+            } else {
+                loader.setSource(_url, data);
             }
         }
     }
-
-    RowLayout {
-        Kirigami.Icon {
-            Layout.preferredWidth: Kirigami.Units.iconSizes.enormous
-            Layout.preferredHeight: Layout.preferredWidth
-            source: {
-                if (!weatherData) {
-                    return;
-                }
-
-                switch (weatherData.list[0].weather[0].icon) {
-                case "01d":
-                    return "weather-clear";
-                case "02d":
-                    return "weather-few-clouds";
-                case "03d":
-                    return "weather-clouds";
-                case "04d":
-                    return "weather-many-clouds";
-                case "09d":
-                    return "weather-showers";
-                case "10d":
-                    return "weather-showers-day";
-                case "11d":
-                    return "weather-storm-day";
-                case "13d":
-                    return "weather-snow-scattered-day";
-                case "50d":
-                    return "weather-fog";
-                
-                case "01n":
-                    return "weather-clear-night";
-                case "02n":
-                    return "weather-few-clouds-night";
-                case "03n":
-                    return "weather-clouds-night";
-                case "04n":
-                    return "weather-many-clouds";
-                case "09n":
-                    return "weather-showers";
-                case "10n":
-                    return "weather-showers-night";
-                case "11n":
-                    return "weather-storm-night";
-                case "13n":
-                    return "weather-snow-scattered-night";
-                case "50n":
-                    return "weather-fog";
-                }
-            }
-        }
-        Kirigami.Heading {
-            text: weatherData ? i18n("%1°C, %2", Math.round(weatherData.list[0].main.temp), weatherData.list[0].weather[0].description) : ""
+    Loader {
+        id: loader
+        anchors {
+            fill: parent
+            margins: Kirigami.Units.largeSpacing
         }
     }
 }
