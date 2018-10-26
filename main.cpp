@@ -24,10 +24,11 @@
 #include <QtQml>
 #include <QDebug>
 
+#include <QtWebView/QtWebView>
+
 #ifdef Q_OS_ANDROID
 #include <QGuiApplication>
 #else
-#include <QtWebView/QtWebView>
 #include <QApplication>
 #endif
 
