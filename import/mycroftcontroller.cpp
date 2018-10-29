@@ -68,7 +68,7 @@ void MycroftController::start()
         m_reconnectTimer.start();
         emit socketStatusChanged();
     });*/
-    connect(&m_webSocket, SIGNAL(error()), this, SLOT(doStart()));
+    connect(&m_webSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(doStart()));
 
     emit socketStatusChanged();
 }
