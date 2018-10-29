@@ -29,6 +29,8 @@
 
 #include <QTimer>
 
+class GlobalSettings;
+
 class MycroftController : public QObject
 {
     Q_OBJECT
@@ -52,7 +54,8 @@ public:
     bool isListening() const;
     Status status() const;
     QString currentSkill() const;
-
+private Q_SLOTS:
+    void doStart();
 signals:
     //socket stuff
     void socketStatusChanged();
@@ -86,6 +89,7 @@ private:
 
     QWebSocket m_webSocket;
     QTimer m_reconnectTimer;
+    GlobalSettings *m_appSettingObj;
 
     QString m_currentSkill;
 #ifdef Q_OS_ANDROID

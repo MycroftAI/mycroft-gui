@@ -36,17 +36,18 @@ MycroftController *MycroftController::instance()
 }
 
 
-MycroftController::MycroftController(QObject *parent): QObject(parent)
+MycroftController::MycroftController(QObject *parent)
+    : QObject(parent),
+      m_appSettingObj(new GlobalSettings)
 {
     connect(&m_webSocket, &QWebSocket::connected, this, &MycroftController::onConnected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &MycroftController::closed);
     connect(&m_webSocket, &QWebSocket::stateChanged, this, &MycroftController::onStatusChanged);
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onTextMessageReceived);
-    
+
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
-        auto appSettingObj = new GlobalSettings;
-        QString socket = appSettingObj->webSocketAddress();
+        QString socket = m_appSettingObj->webSocketAddress();
         m_webSocket.open(QUrl(socket));
     });
 
@@ -57,6 +58,22 @@ MycroftController::MycroftController(QObject *parent): QObject(parent)
 
 
 void MycroftController::start()
+{
+    auto appSettingObj = new GlobalSettings;
+    QString socket = m_appSettingObj->webSocketAddress();
+    m_webSocket.open(QUrl(socket));
+    /*connect(&m_webSocket, &QWebSocket::error,
+            this, [this] {
+        QProcess::startDetached("mycroft-gui-core-loader");
+        m_reconnectTimer.start();
+        emit socketStatusChanged();
+    });*/
+    connect(&m_webSocket, SIGNAL(error()), this, SLOT(doStart()));
+
+    emit socketStatusChanged();
+}
+
+void MycroftController::doStart()
 {
     QProcess::startDetached("mycroft-gui-core-loader");
     m_reconnectTimer.start();
