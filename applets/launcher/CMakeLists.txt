@@ -1,4 +1,8 @@
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+
 add_definitions(-DTRANSLATION_DOMAIN=\"plasma_applet_org.kde.mycroft.launcher\")
+
+plasma_install_package(package org.kde.mycroft.launcher)
 
 set(launcherapplet_SRCS
     launcherapplet.cpp
@@ -17,8 +21,6 @@ target_link_libraries(plasma_applet_mycroft_launcher
                       KF5::Plasma)
 
 install(TARGETS plasma_applet_mycroft_launcher DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
-
-plasma_install_package(package org.kde.mycroft.launcher)
 
 install(FILES Mycroft.directory DESTINATION ${KDE_INSTALL_DESKTOPDIR})
 install(FILES mycroft.menu DESTINATION ${KDE_INSTALL_CONFDIR}/menus/applications-merged)

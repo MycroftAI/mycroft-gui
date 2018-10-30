@@ -1,3 +1,5 @@
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+
 set(mycroftpanel_SRCS
     mycroftpanel.cpp
 )
