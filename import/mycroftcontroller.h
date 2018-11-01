@@ -37,9 +37,13 @@ class MycroftController : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Status status READ status NOTIFY socketStatusChanged)
+    //FIXME: make those two enums?
     Q_PROPERTY(bool speaking READ isSpeaking NOTIFY isSpeakingChanged)
     Q_PROPERTY(bool listening READ isListening NOTIFY isListeningChanged)
+    //FIXME: to remove
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
+
+    Q_PROPERTY(QStandardItemModel *activeSkills READ activeSkills CONSTANT)
 
     Q_ENUMS(Status)
 public:
@@ -56,6 +60,8 @@ public:
     bool isListening() const;
     Status status() const;
     QString currentSkill() const;
+    QStandardItemModel *activeSkills() const;
+
 private Q_SLOTS:
     void doStart();
 signals:

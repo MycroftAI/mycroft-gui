@@ -42,6 +42,8 @@ MycroftController::MycroftController(QObject *parent)
     : QObject(parent),
       m_appSettingObj(new GlobalSettings)
 {
+    m_activeSkillsModel = new QStandardItemModel(this);
+
     connect(&m_webSocket, &QWebSocket::connected, this, &MycroftController::onConnected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &MycroftController::closed);
     connect(&m_webSocket, &QWebSocket::stateChanged, this, &MycroftController::onStatusChanged);
@@ -169,7 +171,12 @@ void MycroftController::onTextMessageReceived(const QString &message)
     } else if (type == "mycroft.session.new_data") {
         QVariantMap data = doc["data"].toVariant().toMap();
 
-        QQmlPropertyMap *map = m_skillData[doc["skill_id"].toString()];
+        QQmlPropertyMap *map;
+        if (m_skillData.contains(doc["skill_id"].toString())) {
+            map = m_skillData[doc["skill_id"].toString()];
+        } else {
+            m_skillData[doc["skill_id"].toString()] = new QQmlPropertyMap(this);
+        }
 
         QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
@@ -215,6 +222,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
                 break;
             }
         }
+        //TODO: remove all the data for the removed skill
 
     // Active skill moved
     } else if (type == "mycroft.active_skills.moved") {
@@ -272,9 +280,15 @@ MycroftController::Status MycroftController::status() const
     }
 }
 
+//FIXME: remove
 QString MycroftController::currentSkill() const
 {
     return m_currentSkill;
+}
+
+QStandardItemModel *MycroftController::activeSkills() const
+{
+    return m_activeSkillsModel;
 }
 
 bool MycroftController::isSpeaking() const
