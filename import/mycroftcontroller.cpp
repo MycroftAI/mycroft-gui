@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QQmlPropertyMap>
+#include <QStandardItemModel>
 
 MycroftController *MycroftController::instance()
 {
@@ -162,6 +163,9 @@ void MycroftController::onTextMessageReceived(const QString &message)
     } else if (type == "metadata") {
         emit skillDataRecieved(doc["data"].toVariant().toMap());
 
+
+
+    // The SkillData was updated by the server
     } else if (type == "mycroft.session.new_data") {
         QVariantMap data = doc["data"].toVariant().toMap();
 
@@ -172,9 +176,49 @@ void MycroftController::onTextMessageReceived(const QString &message)
             map->insert(i.key(), i.value());
         }
 
+    // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
         emit skillGuiRequested(doc["gui_url"].toString(), m_skillData[doc["skill_id"].toString()]);
-        //alternative, instantiate the qml right from here, so a skill has no trivial ways to know anything about the data of other skills
+        //NOTE: alternative, instantiate the qml right from here, so a skill has no trivial ways to know anything about the data of other skills
+
+    // New full list of active skills
+    } else if (type == "mycroft.active_skills.list") {
+        m_activeSkillsModel->clear();
+        QVariantList list = doc["list"].toVariant().toList();
+
+        QList<QStandardItem *> items;
+        for (const auto &item : list) {
+            items << new QStandardItem(item.toString());
+        }
+        m_activeSkillsModel->appendRow(items);
+
+    // New active skill
+    } else if (type == "mycroft.active_skills.new") {
+        //TODO: always append?
+        bool found = false;
+        for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
+            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["skill"].toString()) {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            m_activeSkillsModel->appendRow(new QStandardItem(doc["skill"].toString()));
+        }
+
+    // Active skill removed
+    } else if (type == "mycroft.active_skills.removed") {
+        //FIXME: OR: instead of the skill string, directly the row number
+        for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
+            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["skill"].toString()) {
+                m_activeSkillsModel->removeRow(i);
+                break;
+            }
+        }
+
+    // Active skill moved
+    } else if (type == "mycroft.active_skills.moved") {
+        m_activeSkillsModel->moveRows(QModelIndex(), doc["from"].toInt(), 1, QModelIndex(), doc["to"].toInt());
     }
 }
 

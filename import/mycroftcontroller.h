@@ -31,6 +31,7 @@
 
 class GlobalSettings;
 class QQmlPropertyMap;
+class QStandardItemModel;
 
 class MycroftController : public QObject
 {
@@ -96,6 +97,7 @@ private:
 
     QString m_currentSkill;
 
+    QStandardItemModel *m_activeSkillsModel;
     QHash<QString, QQmlPropertyMap*> m_skillData;
 
 #ifdef Q_OS_ANDROID
