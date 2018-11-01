@@ -66,21 +66,13 @@ void MycroftController::start()
     auto appSettingObj = new GlobalSettings;
     QString socket = m_appSettingObj->webSocketAddress();
     m_webSocket.open(QUrl(socket));
-    /*connect(&m_webSocket, &QWebSocket::error,
+    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             this, [this] {
         QProcess::startDetached("mycroft-gui-core-loader");
         m_reconnectTimer.start();
         emit socketStatusChanged();
-    });*/
-    connect(&m_webSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(doStart()));
+    });
 
-    emit socketStatusChanged();
-}
-
-void MycroftController::doStart()
-{
-    QProcess::startDetached("mycroft-gui-core-loader");
-    m_reconnectTimer.start();
     emit socketStatusChanged();
 }
 

@@ -62,9 +62,7 @@ public:
     QString currentSkill() const;
     QStandardItemModel *activeSkills() const;
 
-private Q_SLOTS:
-    void doStart();
-signals:
+Q_SIGNALS:
     //socket stuff
     void socketStatusChanged();
     void closed();
@@ -87,16 +85,18 @@ signals:
     void skillGuiRequested(const QUrl &url, QQmlPropertyMap *skillData);
     void actionTriggered(const QString &actionString, const QVariantMap &parameters);
 
-public slots:
+public Q_SLOTS:
     void start();
     void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
     void triggerAction(const QString &actionId, const QVariantMap &parameters);
-private slots:
+
+private Q_SLOTS:
     void onConnected();
     void onTextMessageReceived(const QString &message);
     void onStatusChanged(QAbstractSocket::SocketState state);
+
 private:
     explicit MycroftController(QObject *parent = nullptr);
 
