@@ -83,13 +83,16 @@ signals:
     //type utterances, type is the current skill
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
+    //NEW API:
     void skillGuiRequested(const QUrl &url, QQmlPropertyMap *skillData);
+    void actionTriggered(const QString &actionString, const QVariantMap &parameters);
 
 public slots:
     void start();
     void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
+    void triggerAction(const QString &actionId, const QVariantMap &parameters);
 private slots:
     void onConnected();
     void onTextMessageReceived(const QString &message);

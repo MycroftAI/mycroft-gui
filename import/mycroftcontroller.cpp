@@ -166,7 +166,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
         emit skillDataRecieved(doc["data"].toVariant().toMap());
 
 
-
+///////////////SKILLDATA
     // The SkillData was updated by the server
     } else if (type == "mycroft.session.new_data") {
         QVariantMap data = doc["data"].toVariant().toMap();
@@ -191,6 +191,8 @@ void MycroftController::onTextMessageReceived(const QString &message)
         emit skillGuiRequested(doc["gui_url"].toString(), m_skillData[doc["skill_id"].toString()]);
         //NOTE: alternative, instantiate the qml right from here, so a skill has no trivial ways to know anything about the data of other skills
 
+
+/////////////ACTIVESKILLS
     // New full list of active skills
     } else if (type == "mycroft.active_skills.list") {
         m_activeSkillsModel->clear();
@@ -226,7 +228,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
                 break;
             }
         }
-        //TODO: remove all the data for the removed skill
+
         auto i = m_skillData.find(skillId);
         if (i != m_skillData.end()) {
             i.value()->deleteLater();
@@ -236,6 +238,14 @@ void MycroftController::onTextMessageReceived(const QString &message)
     // Active skill moved
     } else if (type == "mycroft.active_skills.moved") {
         m_activeSkillsModel->moveRows(QModelIndex(), doc["from"].toInt(), 1, QModelIndex(), doc["to"].toInt());
+
+
+
+//////ACTIONS
+    // Action triggered from the server
+    } else if (type == "mycroft.actions.triggered") {
+        //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?
+        emit actionTriggered(doc["actionId"].toString(), doc["parameters"].toVariant().toMap());
     }
 }
 
@@ -259,6 +269,12 @@ void MycroftController::sendText(const QString &message)
     sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{"utterances", QStringList({message})}}));
 }
 
+void MycroftController::triggerAction(const QString &actionId, const QVariantMap &parameters)
+{
+    sendRequest(QStringLiteral("mycroft.actions.trigger"),
+                QVariantMap({{"actionId", actionId}, {"parameters", parameters}})
+    );
+}
 
 void MycroftController::onStatusChanged(QAbstractSocket::SocketState state)
 {
