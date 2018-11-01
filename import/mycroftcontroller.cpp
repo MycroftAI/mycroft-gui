@@ -175,8 +175,11 @@ void MycroftController::onTextMessageReceived(const QString &message)
         if (m_skillData.contains(doc["skill_id"].toString())) {
             map = m_skillData[doc["skill_id"].toString()];
         } else {
-            m_skillData[doc["skill_id"].toString()] = new QQmlPropertyMap(this);
+            map = new QQmlPropertyMap(this);
         }
+
+        m_skillData[doc["skill_id"].toString()] = map;
+
 
         QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
@@ -215,14 +218,20 @@ void MycroftController::onTextMessageReceived(const QString &message)
 
     // Active skill removed
     } else if (type == "mycroft.active_skills.removed") {
+        const QString skillId = doc["skill"].toString();
         //FIXME: OR: instead of the skill string, directly the row number
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
-            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["skill"].toString()) {
+            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == skillId) {
                 m_activeSkillsModel->removeRow(i);
                 break;
             }
         }
         //TODO: remove all the data for the removed skill
+        auto i = m_skillData.find(skillId);
+        if (i != m_skillData.end()) {
+            i.value()->deleteLater();
+            m_skillData.erase(i);
+        }
 
     // Active skill moved
     } else if (type == "mycroft.active_skills.moved") {
