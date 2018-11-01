@@ -25,6 +25,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 #include <QProcess>
+#include <QQmlPropertyMap>
 
 MycroftController *MycroftController::instance()
 {
@@ -157,9 +158,23 @@ void MycroftController::onTextMessageReceived(const QString &message)
         emit fallbackTextRecieved(m_currentSkill, doc["data"].toVariant().toMap());
     } else if (type == QLatin1String("mycroft.stop.handled") || type == QLatin1String("mycroft.stop")) {
         emit stopped();
-    }
-    else if (type == "metadata") {
+    //TODO: remove
+    } else if (type == "metadata") {
         emit skillDataRecieved(doc["data"].toVariant().toMap());
+
+    } else if (type == "mycroft.session.new_data") {
+        QVariantMap data = doc["data"].toVariant().toMap();
+
+        QQmlPropertyMap *map = m_skillData[doc["skill_id"].toString()];
+
+        QVariantMap::const_iterator i;
+        for (i = data.constBegin(); i != data.constEnd(); ++i) {
+            map->insert(i.key(), i.value());
+        }
+
+    } else if (type == "mycroft.gui.show") {
+        emit skillGuiRequested(doc["gui_url"].toString(), m_skillData[doc["skill_id"].toString()]);
+        //alternative, instantiate the qml right from here, so a skill has no trivial ways to know anything about the data of other skills
     }
 }
 

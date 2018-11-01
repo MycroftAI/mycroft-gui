@@ -30,6 +30,7 @@
 #include <QTimer>
 
 class GlobalSettings;
+class QQmlPropertyMap;
 
 class MycroftController : public QObject
 {
@@ -75,6 +76,8 @@ signals:
     //type utterances, type is the current skill
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
+    void skillGuiRequested(const QUrl &url, QQmlPropertyMap *skillData);
+
 public slots:
     void start();
     void reconnect();
@@ -92,6 +95,9 @@ private:
     GlobalSettings *m_appSettingObj;
 
     QString m_currentSkill;
+
+    QHash<QString, QQmlPropertyMap*> m_skillData;
+
 #ifdef Q_OS_ANDROID
     QTextToSpeech *m_speech;
 #endif
