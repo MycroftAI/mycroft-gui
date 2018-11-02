@@ -1,0 +1,72 @@
+= EVENTS =
+{
+    "type": "mycroft.events.triggered",  OR "mycroft.events.eventname" where eventname is like "next" "previous" etc
+    "namespace": "weather.mycroft"
+    "event_name": "system.pick",
+    "parameters": {"item": 3}
+}
+
+* event names that start with "system." are available to all skills, like previous/next/pick. the skill author can have as many custom events as he wants
+* same message format goes both ways python->gui and gui->python
+
+= SKILL DATA =
+To synchronize the data dict, 2 approaches can be used: minimal messages or fat messages: the fat messages would minimize roundtrips, but would need for the enclosure architecture to use asynchronous timers.
+The slim messages approach is a well tested protocol approach used for instance in Wayland.
+
+{
+    "type": "mycroft.session.set",
+    "namespace": "weather.mycroft"
+    "data": {
+        "temperature": "28",
+        "icon": "cloudy",
+        "forecast": [{...},...] //if it's a list a model gets created, or resetted if it was already existing
+    }
+}
+
+{
+    "type": "mycroft.session.delete",
+    "namespace": "weather.mycroft"
+    "property": "temperature"
+}
+
+* all properties already in the dictionary need to be sent as soon as a new client connects to the web socket
+* the exact message format would be in both direction both server->gui and gui->server
+
+
+= SHOW GUI =
+{
+    "type": "mycroft.gui.show",
+    "namespace": "weather.mycroft"
+    "gui_url": "file:///opt/mycroft/weather.mycroft/ui/currentweather.qml"
+}
+* the skill author to have that would just call a functin like self.show_gui("currentweather.qml") everyhint else done behind the scenes
+
+
+
+= MODELS =
+Models are for both data and active skills, distinction is just between "namespace": "mycroft.system.active_skills" and "namespace": "mycroft.weather"
+
+{
+    "type": "mycroft.session.insert",
+    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "position": 2
+    "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...]
+}
+Values is an ordered dict, for a shopping cart it would need multiple roles like product name, price, image
+
+
+{
+    "type": "mycroft.session.property.list.remove",
+    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "property": "forecast" //in the future this can become a path if we want lists of lists
+    "position": 2
+    "items_number": 5 //optional in case we want to get rid a big chunk of list at once
+}
+{
+    "type": "mycroft.session.property.list.move",
+    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "property": "forecast"
+    "from": 2
+    "to": 5
+    "items_number": 2 //optional in case we want to move a big chunk of list at once
+}
