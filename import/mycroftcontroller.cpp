@@ -202,6 +202,12 @@ void MycroftController::onTextMessageReceived(const QString &message)
     } else if (type == "mycroft.gui.show") {
         emit skillGuiRequested(doc["gui_url"].toString(), m_skillData[doc["skill_id"].toString()]);
         //NOTE: alternative, instantiate the qml right from here, so a skill has no trivial ways to know anything about the data of other skills
+        if (QFile(url)::exists()) {
+            QQmlComponent guiComponent(url);
+            guiComponent.createObject(this, {"sessionData": m_skillData[skillId]})
+            if (not a delegate) {
+                delete
+            }
 
 
 /////////////ACTIVESKILLS
