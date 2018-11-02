@@ -178,6 +178,26 @@ void MycroftController::onTextMessageReceived(const QString &message)
             map->insert(i.key(), i.value());
         }
 
+    //ALTERNATIVE: property value
+    } else if (type == "mycroft.session.property") {
+        QVariantMap data = doc["data"].toVariant().toMap();
+        if (!data.contains("property") || !data.contains("value") || !data.contains("skill_id")) {
+            return;
+        }
+        const QString skillId = doc["skill_id"].toString();
+
+        QQmlPropertyMap *map;
+        if (m_skillData.contains(doc["skill_id"].toString())) {
+            map = m_skillData[doc["skill_id"].toString()];
+        } else {
+            map = new QQmlPropertyMap(this);
+        }
+
+        m_skillData[skillId] = map;
+
+        map->insert(data["property"].toString(), data["value"]);
+
+//////SHOWGUI
     // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
         emit skillGuiRequested(doc["gui_url"].toString(), m_skillData[doc["skill_id"].toString()]);
@@ -201,18 +221,18 @@ void MycroftController::onTextMessageReceived(const QString &message)
         //TODO: always append?
         bool found = false;
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
-            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["skill"].toString()) {
+            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["skill_id"].toString()) {
                 found = true;
             }
         }
 
         if (!found) {
-            m_activeSkillsModel->appendRow(new QStandardItem(doc["skill"].toString()));
+            m_activeSkillsModel->appendRow(new QStandardItem(doc["skill_id"].toString()));
         }
 
     // Active skill removed
     } else if (type == "mycroft.active_skills.removed") {
-        const QString skillId = doc["skill"].toString();
+        const QString skillId = doc["skill_id"].toString();
         //FIXME: OR: instead of the skill string, directly the row number
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
             if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == skillId) {
@@ -237,7 +257,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
     // Action triggered from the server
     } else if (type == "mycroft.actions.triggered") {
         //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?
-        emit actionTriggered(doc["actionId"].toString(), doc["parameters"].toVariant().toMap());
+        emit actionTriggered(doc["action_id"].toString(), doc["parameters"].toVariant().toMap());
     }
 }
 
