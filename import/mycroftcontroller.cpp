@@ -95,6 +95,8 @@ void MycroftController::onConnected()
 
 QQmlPropertyMap *MycroftController::sessionDataForSkill(const QString &skillId)
 {
+    QQmlPropertyMap *map;
+
     if (m_skillData.contains(skillId)) {
         map = m_skillData[skillId];
     } else {
@@ -233,7 +235,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
             guiObject->deleteLater();
         }
         delegate->setSessionData(sessionDataForSkill(skillId));
-        delegate->completeCreate();
+        guiComponent.completeCreate();
         emit skillGuiCreated(delegate);
 
 
@@ -290,7 +292,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
     // Action triggered from the server
     } else if (type == "mycroft.events.triggered") {
         //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?
-        emit actionTriggered(doc["event_id"].toString(), doc["parameters"].toVariant().toMap());
+        emit eventTriggered(doc["event_id"].toString(), doc["parameters"].toVariant().toMap());
     }
 }
 
