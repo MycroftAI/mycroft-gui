@@ -20,6 +20,7 @@
 
 #include "mycroftcontroller.h"
 #include "globalsettings.h"
+#include "delegate.h"
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -27,6 +28,8 @@
 #include <QProcess>
 #include <QQmlPropertyMap>
 #include <QStandardItemModel>
+#include <QQmlEngine>
+#include <QQmlContext>
 
 MycroftController *MycroftController::instance()
 {
@@ -88,6 +91,18 @@ void MycroftController::onConnected()
 {
     m_reconnectTimer.stop();
     emit socketStatusChanged();
+}
+
+QQmlPropertyMap *MycroftController::sessionDataForSkill(const QString &skillId)
+{
+    if (m_skillData.contains(skillId)) {
+        map = m_skillData[skillId];
+    } else {
+        map = new QQmlPropertyMap(this);
+        m_skillData[skillId] = map;
+    }
+
+    return map;
 }
 
 void MycroftController::onTextMessageReceived(const QString &message)
@@ -164,11 +179,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
         QVariantMap data = doc["data"].toVariant().toMap();
 
         QQmlPropertyMap *map;
-        if (m_skillData.contains(doc["skill_id"].toString())) {
-            map = m_skillData[doc["skill_id"].toString()];
-        } else {
-            map = new QQmlPropertyMap(this);
-        }
+        sessionDataForSkill(doc["skill_id"].toString());
 
         m_skillData[doc["skill_id"].toString()] = map;
 
@@ -200,14 +211,30 @@ void MycroftController::onTextMessageReceived(const QString &message)
 //////SHOWGUI
     // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
-        emit skillGuiRequested(doc["gui_url"].toString(), m_skillData[doc["skill_id"].toString()]);
-        //NOTE: alternative, instantiate the qml right from here, so a skill has no trivial ways to know anything about the data of other skills
-        if (QFile(url)::exists()) {
-            QQmlComponent guiComponent(url);
-            guiComponent.createObject(this, {"sessionData": m_skillData[skillId]})
-            if (not a delegate) {
-                delete
-            }
+        const QString skillId = doc["skill_id"].toString();
+        const QUrl guiUrl = doc["gui_url"].toString();
+
+        if (skillId.isEmpty()) {
+            qWarning() << "Invalid mycroft.gui.show arrived with empty skill_id";
+            return;
+        }
+        if (guiUrl.isEmpty()) {
+            qWarning() << "Invalid mycroft.gui.show arrived with empty gui_url";
+            return;
+        }
+
+
+        QQmlComponent guiComponent(qmlEngine(this), guiUrl, this);
+        //TODO: async components for http urls
+        QObject * guiObject = guiComponent.beginCreate(QQmlEngine::contextForObject(this));
+        Delegate *delegate = qobject_cast<Delegate *>(guiObject);
+        if (!delegate) {
+            qWarning()<<"ERROR: QML gui not a Mycroft.Delegate instance";
+            guiObject->deleteLater();
+        }
+        delegate->setSessionData(sessionDataForSkill(skillId));
+        delegate->completeCreate();
+        emit skillGuiCreated(delegate);
 
 
 /////////////ACTIVESKILLS
@@ -261,9 +288,9 @@ void MycroftController::onTextMessageReceived(const QString &message)
 
 //////ACTIONS
     // Action triggered from the server
-    } else if (type == "mycroft.actions.triggered") {
+    } else if (type == "mycroft.events.triggered") {
         //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?
-        emit actionTriggered(doc["action_id"].toString(), doc["parameters"].toVariant().toMap());
+        emit actionTriggered(doc["event_id"].toString(), doc["parameters"].toVariant().toMap());
     }
 }
 

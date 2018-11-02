@@ -32,6 +32,7 @@
 class GlobalSettings;
 class QQmlPropertyMap;
 class QStandardItemModel;
+class Delegate;
 
 class MycroftController : public QObject
 {
@@ -82,15 +83,15 @@ Q_SIGNALS:
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
     //NEW API:
-    void skillGuiRequested(const QUrl &url, QQmlPropertyMap *skillData);
-    void actionTriggered(const QString &actionString, const QVariantMap &parameters);
+    void skillGuiCreated(Delegate *gui);
+    void eventTriggered(const QString &eventString, const QVariantMap &parameters);
 
 public Q_SLOTS:
     void start();
     void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
-    void triggerAction(const QString &actionId, const QVariantMap &parameters);
+    void triggerAction(const QString &eventId, const QVariantMap &parameters);
 
 private Q_SLOTS:
     void onConnected();
@@ -99,6 +100,7 @@ private Q_SLOTS:
 
 private:
     explicit MycroftController(QObject *parent = nullptr);
+    QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
 
     QWebSocket m_webSocket;
     QTimer m_reconnectTimer;
