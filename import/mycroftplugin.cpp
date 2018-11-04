@@ -26,6 +26,7 @@
 #include "intentwatcher.h"
 #include "globalsettings.h"
 #include "filereader.h"
+#include "delegate.h"
 
 #include <QQmlEngine>
 #include <QQmlContext>
@@ -65,6 +66,7 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
     qmlRegisterType<SkillLoader>(uri, 1, 0, "SkillLoader");
     qmlRegisterType<IntentWatcher>(uri, 1, 0, "IntentWatcher");
+    qmlRegisterType<Delegate>(uri, 1, 0, "Delegate");
 
     //use this only when all qml files are registered by the plugin
    // qmlProtectModule(uri, 1);

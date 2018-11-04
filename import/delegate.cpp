@@ -22,7 +22,7 @@
 
 #include "mycroftcontroller.h"
 
-Delegate::Delegate(QObject *parent)
+Delegate::Delegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
     
@@ -34,7 +34,9 @@ Delegate::~Delegate()
 
 void Delegate::setSessionData(QQmlPropertyMap *data)
 {
-    
+//     if (!m_data) {
+//         m_data = data;
+//     }
 }
 
 

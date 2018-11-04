@@ -20,12 +20,15 @@
 #pragma once
 
 #include <QQuickItem>
+#include <QQmlPropertyMap>
+
+class QQmlPropertyMap;
 
 class Delegate: public QQuickItem
 {
     Q_OBJECT
 public:
-    Delegate(QObject *parent = nullptr);
+    Delegate(QQuickItem *parent = nullptr);
     ~Delegate();
 
     void setSessionData(QQmlPropertyMap *data);
