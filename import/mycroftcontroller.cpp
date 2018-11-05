@@ -113,7 +113,6 @@ void MycroftController::onTextMessageReceived(const QString &message)
 
     auto type = doc["type"].toString();
 
-
     //filter out the noise so we can print debug stuff later without drowning in noise
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
         return;
@@ -177,47 +176,25 @@ void MycroftController::onTextMessageReceived(const QString &message)
 
 ///////////////SKILLDATA
     // The SkillData was updated by the server
-    } else if (type == "mycroft.session.new_data") {
+    } else if (type == "mycroft.session.set") {
         QVariantMap data = doc["data"].toVariant().toMap();
-
-        QQmlPropertyMap *map;
-        sessionDataForSkill(doc["skill_id"].toString());
-
-        m_skillData[doc["skill_id"].toString()] = map;
-
+//FIXME: remove "data"
+        QQmlPropertyMap *map = sessionDataForSkill(doc["data"]["namespace"].toString());
 
         QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
             map->insert(i.key(), i.value());
         }
 
-    //ALTERNATIVE: property value
-    } else if (type == "mycroft.session.property") {
-        QVariantMap data = doc["data"].toVariant().toMap();
-        if (!data.contains("property") || !data.contains("value") || !data.contains("skill_id")) {
-            return;
-        }
-        const QString skillId = doc["skill_id"].toString();
-
-        QQmlPropertyMap *map;
-        if (m_skillData.contains(doc["skill_id"].toString())) {
-            map = m_skillData[doc["skill_id"].toString()];
-        } else {
-            map = new QQmlPropertyMap(this);
-        }
-
-        m_skillData[skillId] = map;
-
-        map->insert(data["property"].toString(), data["value"]);
-
 //////SHOWGUI
     // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
-        const QString skillId = doc["skill_id"].toString();
-        const QUrl guiUrl = doc["gui_url"].toString();
+        //FOXME: KILL "data"
+        const QString skillId = doc["data"]["namespace"].toString();
+        const QUrl guiUrl = doc["data"]["gui_url"].toString();
 
         if (skillId.isEmpty()) {
-            qWarning() << "Invalid mycroft.gui.show arrived with empty skill_id";
+            qWarning() << "Invalid mycroft.gui.show arrived with empty namespace";
             return;
         }
         if (guiUrl.isEmpty()) {
@@ -225,17 +202,35 @@ void MycroftController::onTextMessageReceived(const QString &message)
             return;
         }
 
+        Delegate *delegate = nullptr;
 
-        QQmlComponent guiComponent(qmlEngine(this), guiUrl, this);
-        //TODO: async components for http urls
-        QObject * guiObject = guiComponent.beginCreate(QQmlEngine::contextForObject(this));
-        Delegate *delegate = qobject_cast<Delegate *>(guiObject);
-        if (!delegate) {
-            qWarning()<<"ERROR: QML gui not a Mycroft.Delegate instance";
-            guiObject->deleteLater();
+        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, Delegate*> &h) noexcept {
+            return h.contains(guiUrl);
+        });
+        if (it != m_guis.constEnd()) {
+            delegate = it.value().value(guiUrl);
+        //initialize a new delegate
+        } else {
+            QQmlComponent guiComponent(qmlEngine(m_gui), guiUrl, this);
+            //TODO: async components for http urls
+            QObject * guiObject = guiComponent.beginCreate(QQmlEngine::contextForObject(m_gui));
+            delegate = qobject_cast<Delegate *>(guiObject);
+            if (guiComponent.isError()) {
+                for (auto err : guiComponent.errors()) {
+                    qWarning() << err.toString();
+                }
+                return;
+            }
+            if (!delegate) {
+                qWarning()<<"ERROR: QML gui not a Mycroft.Delegate instance";
+                guiObject->deleteLater();
+                return;
+            }
+            delegate->setSessionData(sessionDataForSkill(skillId));
+            guiComponent.completeCreate();
         }
-        delegate->setSessionData(sessionDataForSkill(skillId));
-        guiComponent.completeCreate();
+
+        m_guis[skillId].insert(guiUrl, delegate);
         emit skillGuiCreated(delegate);
 
 
@@ -256,18 +251,18 @@ void MycroftController::onTextMessageReceived(const QString &message)
         //TODO: always append?
         bool found = false;
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
-            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["skill_id"].toString()) {
+            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["namespace"].toString()) {
                 found = true;
             }
         }
 
         if (!found) {
-            m_activeSkillsModel->appendRow(new QStandardItem(doc["skill_id"].toString()));
+            m_activeSkillsModel->appendRow(new QStandardItem(doc["namespace"].toString()));
         }
 
     // Active skill removed
-    } else if (type == "mycroft.active_skills.removed") {
-        const QString skillId = doc["skill_id"].toString();
+    } else if (type == "mycroft.active_skills.remove") {
+        const QString skillId = doc["namespace"].toString();
         //FIXME: OR: instead of the skill string, directly the row number
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
             if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == skillId) {
@@ -276,10 +271,22 @@ void MycroftController::onTextMessageReceived(const QString &message)
             }
         }
 
-        auto i = m_skillData.find(skillId);
-        if (i != m_skillData.end()) {
-            i.value()->deleteLater();
-            m_skillData.erase(i);
+        //TODO: do this after an animation
+        {
+            auto i = m_skillData.find(skillId);
+            if (i != m_skillData.end()) {
+                i.value()->deleteLater();
+                m_skillData.erase(i);
+            }
+        }
+        {
+            auto i = m_guis.find(skillId);
+            if (i != m_guis.end()) {
+                for (auto d : i.value().values()) {
+                    d->deleteLater();
+                }
+                m_guis.erase(i);
+            }
         }
 
     // Active skill moved
@@ -314,6 +321,12 @@ void MycroftController::sendRequest(const QString &type, const QVariantMap &data
 void MycroftController::sendText(const QString &message)
 {
     sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{"utterances", QStringList({message})}}));
+}
+
+void MycroftController::registerGui(QQuickItem *gui)
+{
+    //TODO: support more than one
+    m_gui = gui;
 }
 
 void MycroftController::triggerAction(const QString &actionId, const QVariantMap &parameters)

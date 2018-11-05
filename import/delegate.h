@@ -20,17 +20,24 @@
 #pragma once
 
 #include <QQuickItem>
-#include <QQmlPropertyMap>
 
-class QQmlPropertyMap;
+#include <QQmlPropertyMap>
+#include <QPointer>
 
 class Delegate: public QQuickItem
 {
     Q_OBJECT
+    Q_PROPERTY(QQmlPropertyMap *sessionData READ sessionData CONSTANT)
+
 public:
     Delegate(QQuickItem *parent = nullptr);
     ~Delegate();
 
+    //API used only by the controller, /NOT/ QML
     void setSessionData(QQmlPropertyMap *data);
+    QQmlPropertyMap *sessionData() const;
+
+private:
+    QPointer<QQmlPropertyMap> m_data;
 };
 

@@ -19,13 +19,11 @@
  */
 
 #include "delegate.h"
-
 #include "mycroftcontroller.h"
 
 Delegate::Delegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
-    
 }
 
 Delegate::~Delegate()
@@ -34,10 +32,14 @@ Delegate::~Delegate()
 
 void Delegate::setSessionData(QQmlPropertyMap *data)
 {
-//     if (!m_data) {
-//         m_data = data;
-//     }
+    if (!m_data) {
+        m_data = data;
+    }
 }
 
+QQmlPropertyMap *Delegate::sessionData() const
+{
+    return m_data;
+}
 
 #include "moc_delegate.cpp"

@@ -22,6 +22,8 @@
 
 #include <QObject>
 #include <QWebSocket>
+#include <QPointer>
+#include <QQuickItem>
 
 #ifdef Q_OS_ANDROID
 #include <QTextToSpeech>
@@ -92,6 +94,7 @@ public Q_SLOTS:
     void sendRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
     void triggerAction(const QString &eventId, const QVariantMap &parameters);
+    void registerGui(QQuickItem *gui);
 
 private Q_SLOTS:
     void onConnected();
@@ -110,6 +113,8 @@ private:
 
     QStandardItemModel *m_activeSkillsModel;
     QHash<QString, QQmlPropertyMap*> m_skillData;
+    QHash<QString, QHash<QUrl, Delegate *> > m_guis;
+    QPointer<QQuickItem> m_gui;
 
 #ifdef Q_OS_ANDROID
     QTextToSpeech *m_speech;
