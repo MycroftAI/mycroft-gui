@@ -5,6 +5,7 @@ project(mycroftimport)
 set(mycroftimport_SRCS
     mycroftplugin.cpp
     mycroftcontroller.cpp
+    activeskillsmodel.cpp
     delegate.cpp
     skillloader.cpp
     intentwatcher.cpp

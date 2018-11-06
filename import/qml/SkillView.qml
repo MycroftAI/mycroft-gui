@@ -77,17 +77,16 @@ Item {
         }
 
         onSpeakingChanged: {
-            
+            //starting the timeout of the delegate
         }
     }
 
-    Repeater {
+    Repeater {//TODO: the model will have models of gui instances, much simpler
         id: repeater
         function swipeViewForSkill(skillId) {
             var item;
             for (var i = 0; i < count; ++i) {
                 item = itemAt(i);
-                print("FGGGGGG"+item+"/"+item.skillId +".."+ skillId )
                 //TODO
                 if (1||item.skillId == skillId) {
                     return item;
