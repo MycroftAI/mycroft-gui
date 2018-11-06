@@ -92,6 +92,7 @@ public Q_SLOTS:
     void start();
     void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
+    void sendGuiRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
     void triggerAction(const QString &eventId, const QVariantMap &parameters);
     void registerGui(QQuickItem *gui);
@@ -99,6 +100,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void onConnected();
     void onTextMessageReceived(const QString &message);
+    void onGuiMessageReceived(const QString &message);
     void onStatusChanged(QAbstractSocket::SocketState state);
 
 private:
@@ -106,10 +108,13 @@ private:
     QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
 
     QWebSocket m_webSocket;
+    QWebSocket m_webGuiSocket;
     QTimer m_reconnectTimer;
     GlobalSettings *m_appSettingObj;
 
+    //TODO: remove
     QString m_currentSkill;
+    QString m_guiId;
 
     QStandardItemModel *m_activeSkillsModel;
     QHash<QString, QQmlPropertyMap*> m_skillData;

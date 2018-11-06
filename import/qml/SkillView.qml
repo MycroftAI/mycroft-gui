@@ -93,7 +93,7 @@ Item {
                 }
             }
         }
-        model: Mycroft.MycroftController.activeSkills
+        model: 2//Mycroft.MycroftController.activeSkills
         delegate: Controls.SwipeView {
             id: swipeView
             anchors.fill: parent

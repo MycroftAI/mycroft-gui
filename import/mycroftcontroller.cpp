@@ -30,6 +30,7 @@
 #include <QStandardItemModel>
 #include <QQmlEngine>
 #include <QQmlContext>
+#include <QUuid>
 
 MycroftController *MycroftController::instance()
 {
@@ -43,7 +44,8 @@ MycroftController *MycroftController::instance()
 
 MycroftController::MycroftController(QObject *parent)
     : QObject(parent),
-      m_appSettingObj(new GlobalSettings)
+      m_appSettingObj(new GlobalSettings),
+      m_guiId(QUuid::createUuid().toString())
 {
     m_activeSkillsModel = new QStandardItemModel(this);
     qmlRegisterType<QStandardItemModel>();
@@ -54,9 +56,14 @@ MycroftController::MycroftController(QObject *parent)
     connect(&m_webSocket, &QWebSocket::stateChanged, this, &MycroftController::onStatusChanged);
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onTextMessageReceived);
 
+    connect(&m_webGuiSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onGuiMessageReceived);
+    connect(&m_webGuiSocket, &QWebSocket::stateChanged, this, [this](QAbstractSocket::SocketState socketState){
+        qWarning()<<"GUI SOCKET STATE:"<<socketState;
+    });
+
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
-        QString socket = m_appSettingObj->webSocketAddress();
+        QString socket = m_appSettingObj->webSocketAddress() + ":8181/core";
         m_webSocket.open(QUrl(socket));
     });
 
@@ -69,7 +76,7 @@ MycroftController::MycroftController(QObject *parent)
 void MycroftController::start()
 {
     auto appSettingObj = new GlobalSettings;
-    QString socket = m_appSettingObj->webSocketAddress();
+    QString socket = m_appSettingObj->webSocketAddress() + ":8181/core";
     m_webSocket.open(QUrl(socket));
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             this, [this] {
@@ -174,14 +181,43 @@ void MycroftController::onTextMessageReceived(const QString &message)
     //TODO: remove
     } else if (type == "metadata") {
         emit skillDataRecieved(doc["data"].toVariant().toMap());
+    } else if (type == "mycroft.gui.port") {
+        qWarning()<<message<<doc.toVariant();
+        const int port = doc["data"]["port"].toInt();
+        const QString guiId = doc["data"]["gui_id"].toString();
+       /* if (port < 0) {
+            return;
+        }*/
+       qWarning()<<"BBBBBB"<<port<<guiId<<m_guiId<<doc["data"];
+        if (guiId != m_guiId) {
+            qWarning()<<"Wrong guiId";
+            return;
+        }
+        QUrl url(QString("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
+        url.setPort(port);
+        m_webGuiSocket.open(url);
+        qWarning()<<"AAAAA"<<url;
+    }
+}
 
+void MycroftController::onGuiMessageReceived(const QString &message)
+{
+    auto doc = QJsonDocument::fromJson(message.toLatin1());
+
+    auto type = doc["type"].toString();
+qWarning()<<message;
+    //filter out the noise so we can print debug stuff later without drowning in noise
+    if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
+        return;
+    }
+    qDebug() << "gui message type" << type;
 
 ///////////////SKILLDATA
     // The SkillData was updated by the server
-    } else if (type == "mycroft.session.set") {
+    if (type == "mycroft.session.set") {
         QVariantMap data = doc["data"].toVariant().toMap();
 //FIXME: remove "data"
-        QQmlPropertyMap *map = sessionDataForSkill(doc["data"]["namespace"].toString());
+        QQmlPropertyMap *map = sessionDataForSkill(doc["namespace"].toString());
 
         QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
@@ -191,8 +227,8 @@ void MycroftController::onTextMessageReceived(const QString &message)
     // The SkillData was updated by the server
     } else if (type == "mycroft.session.delete") {
 //FIXME: remove "data"
-        const QString skillId = doc["data"]["namespace"].toString();
-        const QString property = doc["data"]["property"].toString();
+        const QString skillId = doc["namespace"].toString();
+        const QString property = doc["property"].toString();
         if (skillId.isEmpty()) {
             qWarning() << "No skill id provided";
             return;
@@ -209,8 +245,8 @@ void MycroftController::onTextMessageReceived(const QString &message)
     // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
         //FIXME: KILL "data"
-        const QString skillId = doc["data"]["namespace"].toString();
-        const QUrl guiUrl = doc["data"]["gui_url"].toString();
+        const QString skillId = doc["namespace"].toString();
+        const QUrl guiUrl = doc["gui_url"].toString();
 
         if (skillId.isEmpty()) {
             qWarning() << "Invalid mycroft.gui.show arrived with empty namespace";
@@ -247,6 +283,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
             }
             delegate->setSessionData(sessionDataForSkill(skillId));
             guiComponent.completeCreate();
+            qWarning()<<"AAAAAAA"<<delegate;
             m_guis[skillId].insert(guiUrl, delegate);
         }
 
@@ -362,6 +399,21 @@ void MycroftController::sendRequest(const QString &type, const QVariantMap &data
     m_webSocket.sendTextMessage(doc.toJson());
 }
 
+void MycroftController::sendGuiRequest(const QString &type, const QVariantMap &data)
+{
+    if (m_webGuiSocket.state() != QAbstractSocket::ConnectedState) {
+        qWarning() << "mycroft connection not open!";
+        return;
+    }
+    QJsonObject root;
+
+    root["type"] = type;
+    root["data"] = QJsonObject::fromVariantMap(data);
+
+    QJsonDocument doc(root);
+    m_webGuiSocket.sendTextMessage(doc.toJson());
+}
+
 void MycroftController::sendText(const QString &message)
 {
     sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{"utterances", QStringList({message})}}));
@@ -383,6 +435,11 @@ void MycroftController::triggerAction(const QString &actionId, const QVariantMap
 void MycroftController::onStatusChanged(QAbstractSocket::SocketState state)
 {
     emit socketStatusChanged();
+    //TODO: use proper uuids
+    if (state == QAbstractSocket::ConnectedState) {
+        sendRequest(QStringLiteral("mycroft.gui.connected"),
+                    QVariantMap({{"gui_id", m_guiId}}));
+    }
     //qDebug() << "State changed to " << status();
 }
 
