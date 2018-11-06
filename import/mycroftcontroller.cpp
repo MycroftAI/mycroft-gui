@@ -46,6 +46,8 @@ MycroftController::MycroftController(QObject *parent)
       m_appSettingObj(new GlobalSettings)
 {
     m_activeSkillsModel = new QStandardItemModel(this);
+    qmlRegisterType<QStandardItemModel>();
+
 
     connect(&m_webSocket, &QWebSocket::connected, this, &MycroftController::onConnected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &MycroftController::closed);
@@ -231,7 +233,7 @@ void MycroftController::onTextMessageReceived(const QString &message)
         }
 
         m_guis[skillId].insert(guiUrl, delegate);
-        emit skillGuiCreated(delegate);
+        emit skillGuiCreated(skillId, delegate);
 
 
 /////////////ACTIVESKILLS
@@ -247,19 +249,20 @@ void MycroftController::onTextMessageReceived(const QString &message)
         m_activeSkillsModel->appendRow(items);
 
     // New active skill
-    } else if (type == "mycroft.active_skills.new") {
+    //TODO: remove data
+    } else if (type == "mycroft.session.insert" && doc["data"]["namespace"].toString() == "mycroft.system.active_skills") {
         //TODO: always append?
         bool found = false;
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
-            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["namespace"].toString()) {
+            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["data"]["skill_id"].toString()) {
                 found = true;
             }
         }
 
         if (!found) {
-            m_activeSkillsModel->appendRow(new QStandardItem(doc["namespace"].toString()));
+            m_activeSkillsModel->appendRow(new QStandardItem(doc["data"]["skill_id"].toString()));
         }
-
+qWarning()<<m_activeSkillsModel->rowCount();
     // Active skill removed
     } else if (type == "mycroft.active_skills.remove") {
         const QString skillId = doc["namespace"].toString();

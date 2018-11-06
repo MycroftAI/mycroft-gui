@@ -85,7 +85,7 @@ Q_SIGNALS:
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
     //NEW API:
-    void skillGuiCreated(Delegate *gui);
+    void skillGuiCreated(const QString &skillId, Delegate *gui);
     void eventTriggered(const QString &eventString, const QVariantMap &parameters);
 
 public Q_SLOTS:

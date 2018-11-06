@@ -28,7 +28,9 @@ Item {
     id: root
 
     property Item initialItem: null
-    onInitialItemChanged: swipeView.addItem(initialItem)
+    onInitialItemChanged: {
+        initialItem. parent = root
+    }
 
 
     property int rightPadding: 0
@@ -57,7 +59,11 @@ Item {
         target: Mycroft.MycroftController
 
         onSkillGuiCreated: {
+            var swipeView = repeater.swipeViewForSkill(skillId);
             gui.parent = swipeView;
+            for (var i = 0; i < swipeView.contentChildren.length; ++i) {
+                swipeView.contentChildren[i];
+            }
             swipeView.addItem(gui)
             swipeView.incrementCurrentIndex()
         }
@@ -74,8 +80,25 @@ Item {
             
         }
     }
-    Controls.SwipeView {
-        id: swipeView
-        anchors.fill: parent
+
+    Repeater {
+        id: repeater
+        function swipeViewForSkill(skillId) {
+            var item;
+            for (var i = 0; i < count; ++i) {
+                item = itemAt(i);
+                print("FGGGGGG"+item+"/"+item.skillId +".."+ skillId )
+                //TODO
+                if (1||item.skillId == skillId) {
+                    return item;
+                }
+            }
+        }
+        model: Mycroft.MycroftController.activeSkills
+        delegate: Controls.SwipeView {
+            id: swipeView
+            anchors.fill: parent
+            property string skillId: model.display
+        }
     }
 }
