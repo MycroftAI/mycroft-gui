@@ -188,10 +188,27 @@ void MycroftController::onTextMessageReceived(const QString &message)
             map->insert(i.key(), i.value());
         }
 
+    // The SkillData was updated by the server
+    } else if (type == "mycroft.session.delete") {
+//FIXME: remove "data"
+        const QString skillId = doc["data"]["namespace"].toString();
+        const QString property = doc["data"]["property"].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill id provided";
+            return;
+        }
+        if (property.isEmpty()) {
+            qWarning() << "No property provided";
+            return;
+        }
+        QQmlPropertyMap *map = sessionDataForSkill(skillId);
+        map->clear(property);
+
+
 //////SHOWGUI
     // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
-        //FOXME: KILL "data"
+        //FIXME: KILL "data"
         const QString skillId = doc["data"]["namespace"].toString();
         const QUrl guiUrl = doc["data"]["gui_url"].toString();
 
@@ -230,75 +247,99 @@ void MycroftController::onTextMessageReceived(const QString &message)
             }
             delegate->setSessionData(sessionDataForSkill(skillId));
             guiComponent.completeCreate();
+            m_guis[skillId].insert(guiUrl, delegate);
         }
 
-        m_guis[skillId].insert(guiUrl, delegate);
+        //TODO: change it to invoking a method on the gui object, to hide it from other skills
         emit skillGuiCreated(skillId, delegate);
 
 
 /////////////ACTIVESKILLS
-    // New full list of active skills
-    } else if (type == "mycroft.active_skills.list") {
-        m_activeSkillsModel->clear();
-        QVariantList list = doc["list"].toVariant().toList();
 
-        QList<QStandardItem *> items;
-        for (const auto &item : list) {
-            items << new QStandardItem(item.toString());
-        }
-        m_activeSkillsModel->appendRow(items);
-
-    // New active skill
+    // Insert new active skill
     //TODO: remove data
     } else if (type == "mycroft.session.insert" && doc["data"]["namespace"].toString() == "mycroft.system.active_skills") {
-        //TODO: always append?
+        const int position = doc["data"]["position"].toInt();
+
+        const QString skillId = doc["data"]["skill_id"].toString();
+        if (position < 0 || position > m_activeSkillsModel->rowCount()) {
+            qWarning() << "Invalid position";
+            return;
+        }
+
+        //search for duplicates
         bool found = false;
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
-            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == doc["data"]["skill_id"].toString()) {
+            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == skillId) {
                 found = true;
             }
         }
 
         if (!found) {
-            m_activeSkillsModel->appendRow(new QStandardItem(doc["data"]["skill_id"].toString()));
-        }
-qWarning()<<m_activeSkillsModel->rowCount();
-    // Active skill removed
-    } else if (type == "mycroft.active_skills.remove") {
-        const QString skillId = doc["namespace"].toString();
-        //FIXME: OR: instead of the skill string, directly the row number
-        for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
-            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == skillId) {
-                m_activeSkillsModel->removeRow(i);
-                break;
-            }
+            m_activeSkillsModel->insertRow(position, new QStandardItem(doc["data"]["skill_id"].toString()));
         }
 
-        //TODO: do this after an animation
-        {
-            auto i = m_skillData.find(skillId);
-            if (i != m_skillData.end()) {
-                i.value()->deleteLater();
-                m_skillData.erase(i);
-            }
+    // Active skill removed
+    } else if (type == "mycroft.session.remove" && doc["data"]["namespace"].toString() == "mycroft.system.active_skills") {
+        const int position = doc["data"]["position"].toInt();
+        const int itemsNumber = doc["data"]["items_number"].toInt();
+
+        if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
+            qWarning() << "Invalid position";
+            return;
         }
-        {
-            auto i = m_guis.find(skillId);
-            if (i != m_guis.end()) {
-                for (auto d : i.value().values()) {
-                    d->deleteLater();
+        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->rowCount() - position - 1) {
+            qWarning() << "Invalid items_number";
+            return;
+        }
+
+        for (int i = 0; i < itemsNumber; ++i) {
+
+            const QString skillId = m_activeSkillsModel->data(m_activeSkillsModel->index(position+i, 0)).toString();
+
+            //TODO: do this after an animation
+            {
+                auto i = m_skillData.find(skillId);
+                if (i != m_skillData.end()) {
+                    i.value()->deleteLater();
+                    m_skillData.erase(i);
                 }
-                m_guis.erase(i);
+            }
+            {
+                auto i = m_guis.find(skillId);
+                if (i != m_guis.end()) {
+                    for (auto d : i.value().values()) {
+                        d->deleteLater();
+                    }
+                    m_guis.erase(i);
+                }
             }
         }
+        m_activeSkillsModel->removeRows(position, itemsNumber);
 
     // Active skill moved
     } else if (type == "mycroft.active_skills.moved") {
-        m_activeSkillsModel->moveRows(QModelIndex(), doc["from"].toInt(), 1, QModelIndex(), doc["to"].toInt());
+        const int from = doc["data"]["from"].toInt();
+        const int to = doc["data"]["from"].toInt();
+        const int itemsNumber = doc["data"]["items_number"].toInt();
+
+        if (from < 0 || from > m_activeSkillsModel->rowCount() - 1) {
+            qWarning() << "Invalid from position";
+            return;
+        }
+        if (to < 0 || to > m_activeSkillsModel->rowCount() - 1) {
+            qWarning() << "Invalid to position";
+            return;
+        }
+        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->rowCount() - from - 1) {
+            qWarning() << "Invalid items_number";
+            return;
+        }
+        m_activeSkillsModel->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
 
 
 
-//////ACTIONS
+//////EVENTS
     // Action triggered from the server
     } else if (type == "mycroft.events.triggered") {
         //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?

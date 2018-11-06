@@ -21,7 +21,9 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.2 as Controls
 import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
 
+//TODO: this muct become a Delegate subclass
 DelegateBase {
     id: control
 

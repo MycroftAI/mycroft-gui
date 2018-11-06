@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
+//DEPRECATED if we want to manage swiping only as separate QML files
 import QtQuick 2.5
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.4 as Controls

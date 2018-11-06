@@ -56,14 +56,14 @@ Values is an ordered dict, for a shopping cart it would need multiple roles like
 
 
 {
-    "type": "mycroft.session.property.list.remove",
+    "type": "mycroft.session.remove",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
     "property": "forecast" //in the future this can become a path if we want lists of lists
     "position": 2
     "items_number": 5 //optional in case we want to get rid a big chunk of list at once
 }
 {
-    "type": "mycroft.session.property.list.move",
+    "type": "mycroft.session.move",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
     "property": "forecast"
     "from": 2
