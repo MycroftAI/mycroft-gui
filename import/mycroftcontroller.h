@@ -55,7 +55,7 @@ public:
     Status status() const;
     QString currentSkill() const;
 private Q_SLOTS:
-    void doStart();
+    void doStart(QAbstractSocket::SocketError error = QAbstractSocket::UnknownSocketError);
 signals:
     //socket stuff
     void socketStatusChanged();
