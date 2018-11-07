@@ -73,8 +73,12 @@ void MycroftController::start()
     emit socketStatusChanged();
 }
 
-void MycroftController::doStart()
+void MycroftController::doStart(QAbstractSocket::SocketError error)
 {
+    if (error != QAbstractSocket::HostNotFoundError) {
+        qWarning("Mycroft is running but the connection failed for some reason. Kill Mycroft manually.");
+    }
+
     QProcess::startDetached("mycroft-gui-core-loader");
     m_reconnectTimer.start();
     emit socketStatusChanged();
