@@ -25,6 +25,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 #include <QProcess>
+#include <QWebSocket>
 
 MycroftController *MycroftController::instance()
 {
@@ -68,14 +69,17 @@ void MycroftController::start()
         m_reconnectTimer.start();
         emit socketStatusChanged();
     });*/
-    connect(&m_webSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(doStart()));
+    QObject::connect(&m_webSocket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
+        this, &MycroftController::doStart);
 
     emit socketStatusChanged();
 }
 
 void MycroftController::doStart(QAbstractSocket::SocketError error)
 {
-    if (error != QAbstractSocket::HostNotFoundError) {
+    qDebug() << error;
+
+    if (error != QAbstractSocket::HostNotFoundError && error != QAbstractSocket::ConnectionRefusedError) {
         qWarning("Mycroft is running but the connection failed for some reason. Kill Mycroft manually.");
 
         return;
