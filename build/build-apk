@@ -16,7 +16,7 @@ git clone kde:sysadmin/repo-metadata || true
 git clone kde:kde-build-metadata || true
 popd
 
-for i in kconfig kcoreaddons kguiaddons ki18n kirigami; do
+for i in extra-cmake-modules kconfig kcoreaddons kguiaddons ki18n kirigami; do
 	# we figure out the dependencies
 	arguments=$(python3 ci-tooling/helpers/getsetting.py --project $i --product Frameworks --platform AndroidQt5.11 --key cmake-options)
 	build-cmake $i kde:$i $arguments -DBUILD_TESTING=OFF -GNinja $EXTRA
