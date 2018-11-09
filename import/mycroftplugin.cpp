@@ -66,7 +66,7 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
     qmlRegisterType<SkillLoader>(uri, 1, 0, "SkillLoader");
     qmlRegisterType<IntentWatcher>(uri, 1, 0, "IntentWatcher");
-    qmlRegisterType<Delegate>(uri, 1, 0, "Delegate");
+    qmlRegisterUncreatableType<Delegate>(uri, 1, 0, "Delegate", "Objects of type Delegate cannot be instantiated.");
 
     //use this only when all qml files are registered by the plugin
    // qmlProtectModule(uri, 1);

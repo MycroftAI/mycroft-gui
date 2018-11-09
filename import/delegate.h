@@ -26,18 +26,14 @@
 
 class MycroftController;
 
-class Delegate: public QQuickItem
+class Delegate: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlPropertyMap *sessionData READ sessionData CONSTANT)
     Q_PROPERTY(int timeout MEMBER m_timeout NOTIFY timeoutChanged)
     //TODO: api for background? would like to avoid
-    Q_PROPERTY(int leftPadding MEMBER m_leftPadding NOTIFY leftPaddingChanged)
-    Q_PROPERTY(int rightPadding MEMBER m_rightPadding NOTIFY rightPaddingChanged)
-    Q_PROPERTY(int topPadding MEMBER m_topPadding NOTIFY topPaddingChanged)
-    Q_PROPERTY(int bottomPadding MEMBER m_bottomPadding NOTIFY bottomPaddingChanged)
 public:
-    Delegate(QQuickItem *parent = nullptr);
+    Delegate(QObject *parent = nullptr);
     ~Delegate();
 
     //API used only by MycroftController, *NOT* QML
@@ -57,10 +53,5 @@ private:
     QPointer<QQmlPropertyMap> m_data;
 
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
-
-    int m_leftPadding = 0; //FIXME: how to bind to kirigami units from c++?
-    int m_rightPadding = 0;
-    int m_topPadding = 0;
-    int m_bottomPadding = 0;
 };
 
