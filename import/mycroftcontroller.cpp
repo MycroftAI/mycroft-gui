@@ -81,7 +81,7 @@ void MycroftController::start()
     QString socket = m_appSettingObj->webSocketAddress() + ":8181/core";
     m_webSocket.open(QUrl(socket));
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
-            this, [this] {
+            this, [this] (const QAbstractSocket::SocketError &error) {
         qDebug() << error;
 
         if (error != QAbstractSocket::HostNotFoundError && error != QAbstractSocket::ConnectionRefusedError) {
