@@ -31,6 +31,8 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QUuid>
+#include <QWebSocket>
+
 
 MycroftController *MycroftController::instance()
 {
@@ -80,6 +82,14 @@ void MycroftController::start()
     m_webSocket.open(QUrl(socket));
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             this, [this] {
+        qDebug() << error;
+
+        if (error != QAbstractSocket::HostNotFoundError && error != QAbstractSocket::ConnectionRefusedError) {
+            qWarning("Mycroft is running but the connection failed for some reason. Kill Mycroft manually.");
+
+            return;
+        }
+
         QProcess::startDetached("mycroft-gui-core-loader");
         m_reconnectTimer.start();
         emit socketStatusChanged();

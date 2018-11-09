@@ -63,6 +63,7 @@ public:
     bool isListening() const;
     Status status() const;
     QString currentSkill() const;
+
     QStandardItemModel *activeSkills() const;
 
 Q_SIGNALS:
