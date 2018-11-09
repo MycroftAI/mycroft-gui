@@ -29,7 +29,8 @@ Item {
 
     property Item initialItem: null
     onInitialItemChanged: {
-        initialItem. parent = root
+        initialItem.parent = restFaceParent;
+        initialItem.anchors.fill = restFaceParent;
     }
 
 
@@ -65,7 +66,8 @@ Item {
                 swipeView.contentChildren[i];
             }
             swipeView.addItem(gui)
-            swipeView.incrementCurrentIndex()
+            swipeView.incrementCurrentIndex();
+            restFaceSwipeView.currentIndex = 1;
         }
 
         onStopped: {
@@ -81,6 +83,16 @@ Item {
         }
     }
 
+    Controls.SwipeView {
+        id: restFaceSwipeView
+        anchors.fill: parent
+        Item {
+            id: restFaceParent
+        }
+        Controls.StackView {
+            id: skillsStack
+        }
+    }
     Repeater {//TODO: the model will have models of gui instances, much simpler
         id: repeater
         function swipeViewForSkill(skillId) {
@@ -93,11 +105,12 @@ Item {
                 }
             }
         }
-        model: 2//Mycroft.MycroftController.activeSkills
+        model: 1//Mycroft.MycroftController.activeSkills
         delegate: Controls.SwipeView {
             id: swipeView
             anchors.fill: parent
             property string skillId: model.display
+            Component.onCompleted: skillsStack.push(swipeView)
         }
     }
 }

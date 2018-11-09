@@ -43,7 +43,7 @@ class MycroftController : public QObject
     //FIXME: make those two enums?
     Q_PROPERTY(bool speaking READ isSpeaking NOTIFY isSpeakingChanged)
     Q_PROPERTY(bool listening READ isListening NOTIFY isListeningChanged)
-    //FIXME: to remove
+    //FIXME: to remove?
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
 
     Q_PROPERTY(QStandardItemModel *activeSkills READ activeSkills CONSTANT)
@@ -79,13 +79,15 @@ Q_SIGNALS:
     void currentSkillChanged();
 
     //signal with nearly all data
+    //TODO: remove?
     void intentRecevied(const QString &type, const QVariantMap &data);
-    //type == metadata
-    void skillDataRecieved(const QVariantMap &data);
+
     //type utterances, type is the current skill
+    //TODO: remove?
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
     //NEW API:
+    //TODO: remove the signal, make the gui part of the gui model
     void skillGuiCreated(const QString &skillId, Delegate *gui);
     void eventTriggered(const QString &eventString, const QVariantMap &parameters);
 
@@ -95,21 +97,19 @@ public Q_SLOTS:
     void sendRequest(const QString &type, const QVariantMap &data);
     void sendGuiRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
-    void triggerAction(const QString &eventId, const QVariantMap &parameters);
+    void triggerEvent(const QString &eventId, const QVariantMap &parameters);
     void registerGui(QQuickItem *gui);
-
-private Q_SLOTS:
-    void onConnected();
-    void onTextMessageReceived(const QString &message);
-    void onGuiMessageReceived(const QString &message);
-    void onStatusChanged(QAbstractSocket::SocketState state);
 
 private:
     explicit MycroftController(QObject *parent = nullptr);
     QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
+    void onMainSocketMessageReceived(const QString &message);
+    void onGuiSocketMessageReceived(const QString &message);
 
-    QWebSocket m_webSocket;
-    QWebSocket m_webGuiSocket;
+
+    QWebSocket m_mainWebSocket;
+    QWebSocket m_guiWebSocket;
+
     QTimer m_reconnectTimer;
     GlobalSettings *m_appSettingObj;
 
@@ -119,7 +119,9 @@ private:
 
     QStandardItemModel *m_activeSkillsModel;
     QHash<QString, QQmlPropertyMap*> m_skillData;
+    //TODO: move it in activeskillsmodel
     QHash<QString, QHash<QUrl, Delegate *> > m_guis;
+    
     QPointer<QQuickItem> m_gui;
 
 #ifdef Q_OS_ANDROID

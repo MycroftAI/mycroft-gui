@@ -24,6 +24,8 @@
 #include <QQmlPropertyMap>
 #include <QPointer>
 
+class MycroftController;
+
 class Delegate: public QQuickItem
 {
     Q_OBJECT
@@ -39,6 +41,8 @@ public:
     ~Delegate();
 
     //API used only by MycroftController, *NOT* QML
+    //void setController(MycroftController *controller);
+    //void setSkillId();
     void setSessionData(QQmlPropertyMap *data);
     QQmlPropertyMap *sessionData() const;
 
