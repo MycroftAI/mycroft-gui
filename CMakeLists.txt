@@ -117,3 +117,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(KF5Kirigami2 REQUIRED)
     kirigami_package_breeze_icons(ICONS help-hint configure)
 endif()
+
+if (BUILD_TESTING)
+    add_subdirectory(autotests)
+endif()
+
