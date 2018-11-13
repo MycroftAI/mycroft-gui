@@ -380,9 +380,9 @@ qWarning()<<message;
         m_activeSkillsModel->removeRows(position, itemsNumber);
 
     // Active skill moved
-    } else if (type == "mycroft.active_skills.moved") {
+    } else if (type == "mycroft.session.move") {
         const int from = doc["data"]["from"].toInt();
-        const int to = doc["data"]["from"].toInt();
+        const int to = doc["data"]["to"].toInt();
         const int itemsNumber = doc["data"]["items_number"].toInt();
 
         if (from < 0 || from > m_activeSkillsModel->rowCount() - 1) {

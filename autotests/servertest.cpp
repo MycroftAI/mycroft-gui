@@ -21,6 +21,8 @@
 #include <QtTest>
 #include <QWebSocket>
 #include <QWebSocketServer>
+#include <QAbstractItemModel>
+#include <QStandardItemModel>
 #include "../import/mycroftcontroller.h"
 #include "../import/delegate.h"
 #include "../import/activeskillsmodel.h"
@@ -33,7 +35,8 @@ public Q_SLOTS:
     void initTestCase();
 
 private Q_SLOTS:
-    void testConnection();
+    void testGuiConnection();
+    void testActiveSkills();
 
 private:
     //Client
@@ -42,6 +45,9 @@ private:
     //Server
     QWebSocketServer *m_mainServerSocket;
     QWebSocketServer *m_guiServerSocket;
+
+    QWebSocket *m_mainWebSocket;
+    QWebSocket *m_guiWebSocket;
 };
 
 
@@ -56,7 +62,7 @@ void ServerTest::initTestCase()
     m_controller = MycroftController::instance();
 }
 
-void ServerTest::testConnection()
+void ServerTest::testGuiConnection()
 {
     QSignalSpy newConnectionSpy(m_mainServerSocket, &QWebSocketServer::newConnection);
     QSignalSpy controllerSocketStatusChangedSpy(m_controller, &MycroftController::socketStatusChanged);
@@ -66,9 +72,9 @@ void ServerTest::testConnection()
     //wait the server received a connection and the client got connected state
     newConnectionSpy.wait();
 
-    QWebSocket *mainSocket = m_mainServerSocket->nextPendingConnection();
-    QSignalSpy textFromMainSpy(mainSocket, &QWebSocket::textMessageReceived);
-    QVERIFY(mainSocket);
+    m_mainWebSocket = m_mainServerSocket->nextPendingConnection();
+    QSignalSpy textFromMainSpy(m_mainWebSocket, &QWebSocket::textMessageReceived);
+    QVERIFY(m_mainWebSocket);
 
     controllerSocketStatusChangedSpy.wait();
     QCOMPARE(m_controller->status(), MycroftController::Open);
@@ -83,10 +89,45 @@ void ServerTest::testConnection()
 
     //Now, connect the gui
     QSignalSpy newGuiConnectionSpy(m_guiServerSocket, &QWebSocketServer::newConnection);
-    mainSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.port\", \"data\": {\"gui_id\": \"%1\", \"port\": 1818}}").arg(guiId));
+    m_mainWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.port\", \"data\": {\"gui_id\": \"%1\", \"port\": 1818}}").arg(guiId));
     newGuiConnectionSpy.wait();
+    m_guiWebSocket = m_guiServerSocket->nextPendingConnection();
+    QVERIFY(m_guiWebSocket);
+}
 
-    
+void ServerTest::testActiveSkills()
+{
+    QSignalSpy m_skillInsertedSpy(m_controller->activeSkills(), &QStandardItemModel::rowsInserted);
+    QSignalSpy m_skillMovedSpy(m_controller->activeSkills(), &QStandardItemModel::rowsMoved);
+
+    //Add weather skill
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.insert\", \"data\": {\"namespace\": \"mycroft.system.active_skills\", \"position\": 0, \"skill_id\": \"mycroft.weather\"}}"));
+
+    m_skillInsertedSpy.wait();
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(0,0)), QStringLiteral("mycroft.weather"));
+
+    //Add food-wizard skill, before weather
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.insert\", \"data\": {\"namespace\": \"mycroft.system.active_skills\", \"position\": 0, \"skill_id\": \"aiix.food-wizard\"}}"));
+
+    m_skillInsertedSpy.wait();
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(0,0)), QStringLiteral("aiix.food-wizard"));
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(1,0)), QStringLiteral("mycroft.weather"));
+
+    //Add timer skill, between food-wizard and weather
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.insert\", \"data\": {\"namespace\": \"mycroft.system.active_skills\", \"position\": 1, \"skill_id\": \"mycroft.timer\"}}"));
+
+    m_skillInsertedSpy.wait();
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(0,0)), QStringLiteral("aiix.food-wizard"));
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(1,0)), QStringLiteral("mycroft.timer"));
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(2,0)), QStringLiteral("mycroft.weather"));
+
+    //Move weather in first position
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.move\", \"data\": {\"namespace\": \"mycroft.system.active_skills\", \"from\": 2, \"to\": 0}}"));
+
+    m_skillMovedSpy.wait();
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(0,0)), QStringLiteral("mycroft.weather"));
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(1,0)), QStringLiteral("aiix.food-wizard"));
+    QCOMPARE(m_controller->activeSkills()->data(m_controller->activeSkills()->index(2,0)), QStringLiteral("mycroft.timer"));
 }
 
 
