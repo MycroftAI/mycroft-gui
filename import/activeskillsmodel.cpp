@@ -33,10 +33,27 @@ ActiveSkillsModel::~ActiveSkillsModel()
     //TODO: delete everything
 }
 
-void ActiveSkillsModel::insertSkill(int position, const QString &skillId)
+void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
 {
-    beginInsertRows(QModelIndex(), qMax(0, position), qMin(m_skills.count(), position));
-    m_skills.insert(position, skillId);
+    QStringList filteredList;
+
+    std::copy_if(skillList.begin(), skillList.end(),
+                 std::back_inserter(filteredList),
+                 [this](const QString &val)
+                 {
+                     return !m_skills.contains(val);
+                 });
+
+    if (filteredList.isEmpty()) {
+        return;
+    }
+
+    beginInsertRows(QModelIndex(), qMax(0, position), qMin(m_skills.count(), position+ filteredList.count() - 1));
+    int i = 0;
+    for (const auto &skillId : filteredList) {
+        m_skills.insert(position + i, skillId);
+        ++i;
+    }
     endInsertRows();
 }
 

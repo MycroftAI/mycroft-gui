@@ -133,6 +133,70 @@ QQmlPropertyMap *MycroftController::sessionDataForSkill(const QString &skillId)
     return map;
 }
 
+QList<QVariantMap> jsonModelToOrderedMap(const QJsonValue &data)
+{
+    QList<QVariantMap> ordMap;
+
+    if (!data.isArray()) {
+        qWarning() << "Error: Model data is not an Array" << data;
+        return ordMap;
+    }
+
+    QStringList roleNames;
+
+    const auto &array = data.toArray();
+    for (const auto &item : array) {
+        if (!item.isObject()) {
+            qWarning() << "Error: Array data structure currupted: " << data;
+            ordMap.clear();
+            return ordMap;
+        }
+        const auto &obj = item.toObject();
+        if (roleNames.isEmpty()) {
+            roleNames = obj.keys();
+        } else if (roleNames != obj.keys()) {
+            qWarning() << "Error: Item with a wrong set of roles encountered, expected: " << roleNames << "Encountered: " << obj.keys();
+            ordMap.clear();
+            return ordMap;
+        }
+        ordMap << obj.toVariantMap();
+    }
+
+    return ordMap;
+}
+
+QStringList jsonModelToStringList(const QString &key, const QJsonValue &data)
+{
+    QStringList items;
+
+    if (!data.isArray()) {
+        qWarning() << "Error: Model data is not an Array" << data;
+        return items;
+    }
+
+    const auto &array = data.toArray();
+    for (const auto &item : array) {
+        if (!item.isObject()) {
+            qWarning() << "Error: Array data structure currupted: " << data;
+            items.clear();
+            return items;
+        }
+        const auto &obj = item.toObject();
+        if (obj.keys().length() != 1 || !obj.contains(key)) {
+            qWarning() << "Error: Item with a wrong key encountered, expected: " << key << "Encountered: " << obj.keys();
+            items.clear();
+            return items;
+        }
+        const auto &value = obj.value(key);
+        if (!value.isString()) {
+            qWarning() << "Error: item in model not a string" << value;
+        }
+        items << value.toString();
+    }
+
+    return items;
+}
+
 void MycroftController::onMainSocketMessageReceived(const QString &message)
 {
     auto doc = QJsonDocument::fromJson(message.toLatin1());
@@ -321,31 +385,36 @@ qWarning()<<message;
 
     // Insert new active skill
     //TODO: remove data
-    } else if (type == "mycroft.session.insert" && doc["data"]["namespace"].toString() == "mycroft.system.active_skills") {
-        const int position = doc["data"]["position"].toInt();
+    } else if (type == "mycroft.session.insert" && doc["namespace"].toString() == "mycroft.system.active_skills") {
+        const int position = doc["position"].toInt();
 
-        const QString skillId = doc["data"]["skill_id"].toString();
         if (position < 0 || position > m_activeSkillsModel->rowCount()) {
-            qWarning() << "Invalid position";
+            qWarning() << "Invalid position in mycroft.session.insert";
+            return;
+        }
+
+        const QStringList skillList = jsonModelToStringList(QStringLiteral("skill_id"), doc["data"]);
+
+        if (skillList.isEmpty()) {
+            qWarning() << "Error: no valid skills received in mycroft.session.insert";
             return;
         }
 
         //search for duplicates
-        bool found = false;
+       /* bool found = false;
         for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
             if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == skillId) {
                 found = true;
             }
-        }
+        }*/
 
-        if (!found) {
-            m_activeSkillsModel->insertSkill(position, doc["data"]["skill_id"].toString());
-        }
+        m_activeSkillsModel->insertSkills(position, skillList);
+
 
     // Active skill removed
-    } else if (type == "mycroft.session.remove" && doc["data"]["namespace"].toString() == "mycroft.system.active_skills") {
-        const int position = doc["data"]["position"].toInt();
-        const int itemsNumber = doc["data"]["items_number"].toInt();
+    } else if (type == "mycroft.session.remove" && doc["namespace"].toString() == "mycroft.system.active_skills") {
+        const int position = doc["position"].toInt();
+        const int itemsNumber = doc["items_number"].toInt();
 
         if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
             qWarning() << "Invalid position";
@@ -382,9 +451,9 @@ qWarning()<<message;
 
     // Active skill moved
     } else if (type == "mycroft.session.move") {
-        const int from = doc["data"]["from"].toInt();
-        const int to = doc["data"]["to"].toInt();
-        const int itemsNumber = doc["data"]["items_number"].toInt();
+        const int from = doc["from"].toInt();
+        const int to = doc["to"].toInt();
+        const int itemsNumber = doc["items_number"].toInt();
 
         if (from < 0 || from > m_activeSkillsModel->rowCount() - 1) {
             qWarning() << "Invalid from position";

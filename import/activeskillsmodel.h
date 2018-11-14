@@ -36,9 +36,8 @@ public:
     explicit ActiveSkillsModel(QObject *parent = nullptr);
     virtual ~ActiveSkillsModel();
 
-    void insertSkill(int position, const QString &skillId);
+    void insertSkills(int position, const QStringList &skillList);
 
-    //TODO: moveRows removeRows
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
