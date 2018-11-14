@@ -22,8 +22,6 @@
 #include "mycroftplugin.h"
 
 #include "mycroftcontroller.h"
-#include "skillloader.h"
-#include "intentwatcher.h"
 #include "globalsettings.h"
 #include "filereader.h"
 #include "delegate.h"
@@ -64,8 +62,6 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<MycroftController>(uri, 1, 0, "MycroftController", mycroftControllerSingletonProvider);
     qmlRegisterSingletonType<GlobalSettings>(uri, 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
     qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
-    qmlRegisterType<SkillLoader>(uri, 1, 0, "SkillLoader");
-    qmlRegisterType<IntentWatcher>(uri, 1, 0, "IntentWatcher");
     qmlRegisterUncreatableType<Delegate>(uri, 1, 0, "Delegate", "Objects of type Delegate cannot be instantiated.");
 
     //use this only when all qml files are registered by the plugin

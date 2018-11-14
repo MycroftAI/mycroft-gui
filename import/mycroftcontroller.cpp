@@ -400,14 +400,6 @@ qWarning()<<message;
             return;
         }
 
-        //search for duplicates
-       /* bool found = false;
-        for (int i = 0; i < m_activeSkillsModel->rowCount(); ++i) {
-            if (m_activeSkillsModel->data(m_activeSkillsModel->index(i, 0)).toString() == skillId) {
-                found = true;
-            }
-        }*/
-
         m_activeSkillsModel->insertSkills(position, skillList);
 
 

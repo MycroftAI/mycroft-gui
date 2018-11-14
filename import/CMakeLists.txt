@@ -7,8 +7,6 @@ set(mycroftimport_SRCS
     mycroftcontroller.cpp
     activeskillsmodel.cpp
     delegate.cpp
-    skillloader.cpp
-    intentwatcher.cpp
     globalsettings.cpp
     filereader.cpp
     )
