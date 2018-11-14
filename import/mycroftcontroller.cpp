@@ -21,6 +21,7 @@
 #include "mycroftcontroller.h"
 #include "globalsettings.h"
 #include "delegate.h"
+#include "activeskillsmodel.h"
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -49,8 +50,8 @@ MycroftController::MycroftController(QObject *parent)
       m_appSettingObj(new GlobalSettings),
       m_guiId(QUuid::createUuid().toString())
 {
-    m_activeSkillsModel = new QStandardItemModel(this);
-    qmlRegisterType<QStandardItemModel>();
+    m_activeSkillsModel = new ActiveSkillsModel(this);
+    qmlRegisterType<ActiveSkillsModel>();
 
 
     connect(&m_mainWebSocket, &QWebSocket::connected, this,
@@ -338,7 +339,7 @@ qWarning()<<message;
         }
 
         if (!found) {
-            m_activeSkillsModel->insertRow(position, new QStandardItem(doc["data"]["skill_id"].toString()));
+            m_activeSkillsModel->insertSkill(position, doc["data"]["skill_id"].toString());
         }
 
     // Active skill removed
@@ -393,7 +394,7 @@ qWarning()<<message;
             qWarning() << "Invalid to position";
             return;
         }
-        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->rowCount() - from - 1) {
+        if (itemsNumber <= 0 || itemsNumber > m_activeSkillsModel->rowCount() - from) {
             qWarning() << "Invalid items_number";
             return;
         }
@@ -486,7 +487,7 @@ QString MycroftController::currentSkill() const
     return m_currentSkill;
 }
 
-QStandardItemModel *MycroftController::activeSkills() const
+ActiveSkillsModel *MycroftController::activeSkills() const
 {
     return m_activeSkillsModel;
 }

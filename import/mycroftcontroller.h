@@ -33,7 +33,7 @@
 
 class GlobalSettings;
 class QQmlPropertyMap;
-class QStandardItemModel;
+class ActiveSkillsModel;
 class Delegate;
 
 class MycroftController : public QObject
@@ -46,7 +46,7 @@ class MycroftController : public QObject
     //FIXME: to remove?
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
 
-    Q_PROPERTY(QStandardItemModel *activeSkills READ activeSkills CONSTANT)
+    Q_PROPERTY(ActiveSkillsModel *activeSkills READ activeSkills CONSTANT)
 
     Q_ENUMS(Status)
 public:
@@ -64,7 +64,7 @@ public:
     Status status() const;
     QString currentSkill() const;
 
-    QStandardItemModel *activeSkills() const;
+    ActiveSkillsModel *activeSkills() const;
 
 Q_SIGNALS:
     //socket stuff
@@ -117,7 +117,7 @@ private:
     QString m_currentSkill;
     QString m_guiId;
 
-    QStandardItemModel *m_activeSkillsModel;
+    ActiveSkillsModel *m_activeSkillsModel;
     QHash<QString, QQmlPropertyMap*> m_skillData;
     //TODO: move it in activeskillsmodel
     QHash<QString, QHash<QUrl, QQuickItem *> > m_guis;

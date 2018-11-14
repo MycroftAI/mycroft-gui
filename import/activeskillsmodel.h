@@ -36,16 +36,18 @@ public:
     explicit ActiveSkillsModel(QObject *parent = nullptr);
     virtual ~ActiveSkillsModel();
 
-    //TODO: moveRows removeRows, custom data for insertions
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+    void insertSkill(int position, const QString &skillId);
+
+    //TODO: moveRows removeRows
+    bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = SkillId) const override;
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    //TODO: what's the best version?
-    QList<QHash<int, QVariant> > m_data;
-
     QList<QString> m_skills;
+    //TODO
     QHash<QString, QStandardItemModel*> m_guis;
 };
 

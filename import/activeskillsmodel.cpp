@@ -33,10 +33,61 @@ ActiveSkillsModel::~ActiveSkillsModel()
     //TODO: delete everything
 }
 
+void ActiveSkillsModel::insertSkill(int position, const QString &skillId)
+{
+    beginInsertRows(QModelIndex(), qMax(0, position), qMin(m_skills.count(), position));
+    m_skills.insert(position, skillId);
+    endInsertRows();
+}
+
+bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
+{
+    if (sourceParent.isValid() || destinationParent.isValid()) {
+        return false;
+    }
+
+    if (count <= 0 || sourceRow == destinationChild || sourceRow < 0 || sourceRow >= m_skills.count() ||
+        destinationChild < 0 || destinationChild >= m_skills.count() || count - destinationChild > m_skills.count() - sourceRow) {
+        return false;
+    }
+    const int sourceLast = sourceRow + count - 1;
+
+    //beginMoveRows wants indexes before the source rows are removed from the old order
+    if (!beginMoveRows(sourceParent, sourceRow, sourceLast, destinationParent, destinationChild + (sourceRow < destinationChild ? count : 0))) {
+        return false;
+    }
+
+    if (sourceRow < destinationChild) {
+        for (int i = count - 1; i >= 0; --i) {
+            m_skills.move(sourceRow + i, destinationChild + i);
+        }
+    } else {
+        for (int i = 0; i < count; ++i) {
+            m_skills.move(sourceRow + i, destinationChild + i);
+        }
+    }
+
+    endMoveRows();
+}
+
+bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if (row <= 0 || count <= 0 || row + count >= m_skills.count() || parent.isValid()) {
+        return false;
+    }
+
+    beginRemoveRows(parent, row, row + count - 1);
+    m_skills.erase(m_skills.begin() + row, m_skills.begin() + row + count);
+    endRemoveRows();
+}
+
+
 int ActiveSkillsModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
-    return m_data.count();
+    if (parent.isValid()) {
+        return 0;
+    }
+    return m_skills.count();
 }
 
 QVariant ActiveSkillsModel::data(const QModelIndex &index, int role) const
@@ -46,11 +97,12 @@ QVariant ActiveSkillsModel::data(const QModelIndex &index, int role) const
     }
     const int row = index.row();
 
-    if (row < 0 || row > m_data.count() || !m_data[index.row()].contains(role)) {
+    if (row < 0 || row >= m_skills.count() || (role != SkillId && role != GuiModel)) {
         return QVariant();
     }
 
-    return m_data[index.row()][role];
+    //TODO: other roles
+    return m_skills[row];
 
     return QVariant();
 }
