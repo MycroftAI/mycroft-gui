@@ -56,7 +56,7 @@ public:
     /**
      * Unique identifier for this GUI
      */
-    QString guiId() const;
+    QString id() const;
 
 Q_SIGNALS:
     //socket stuff
@@ -64,11 +64,15 @@ Q_SIGNALS:
     void closed();
 
 private:
+    QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
     void onGuiSocketMessageReceived(const QString &message);
 
     QTimer m_reconnectTimer;
-    QString m_guiId;
+    QString m_id;
     QUrl m_url;
+    QHash<QString, QQmlPropertyMap*> m_skillData;
+    //TODO: move it in activeskillsmodel
+    QHash<QString, QHash<QUrl, QQuickItem *> > m_guis;
     MycroftController *m_controller;
     QWebSocket *m_guiWebSocket;
     ActiveSkillsModel *m_activeSkillsModel;

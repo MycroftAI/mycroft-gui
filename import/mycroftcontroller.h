@@ -34,7 +34,7 @@
 class GlobalSettings;
 class QQmlPropertyMap;
 class ActiveSkillsModel;
-class Delegate;
+class AbstractSkillView;
 
 class MycroftController : public QObject
 {
@@ -45,8 +45,6 @@ class MycroftController : public QObject
     Q_PROPERTY(bool listening READ isListening NOTIFY isListeningChanged)
     //FIXME: to remove?
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
-
-    Q_PROPERTY(ActiveSkillsModel *activeSkills READ activeSkills CONSTANT)
 
     Q_ENUMS(Status)
 public:
@@ -64,7 +62,8 @@ public:
     Status status() const;
     QString currentSkill() const;
 
-    ActiveSkillsModel *activeSkills() const;
+    //Public API NOT to be used with QML
+    void registerView(AbstractSkillView *view);
 
 Q_SIGNALS:
     //socket stuff
@@ -86,43 +85,27 @@ Q_SIGNALS:
     //TODO: remove?
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
-    //NEW API:
-    //TODO: remove the signal, make the gui part of the gui model
-    void skillGuiCreated(const QString &skillId, Delegate *gui);
-    void eventTriggered(const QString &eventString, const QVariantMap &parameters);
-
 public Q_SLOTS:
     void start();
     void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
-    void sendGuiRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);
-    void triggerEvent(const QString &eventId, const QVariantMap &parameters);
-    void registerGui(QQuickItem *gui);
 
 private:
     explicit MycroftController(QObject *parent = nullptr);
-    QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
     void onMainSocketMessageReceived(const QString &message);
-    void onGuiSocketMessageReceived(const QString &message);
-
 
     QWebSocket m_mainWebSocket;
-    QWebSocket m_guiWebSocket;
 
     QTimer m_reconnectTimer;
     GlobalSettings *m_appSettingObj;
 
     //TODO: remove
     QString m_currentSkill;
-    QString m_guiId;
 
-    ActiveSkillsModel *m_activeSkillsModel;
+    QHash<QString, AbstractSkillView *> m_views;
+
     QHash<QString, QQmlPropertyMap*> m_skillData;
-    //TODO: move it in activeskillsmodel
-    QHash<QString, QHash<QUrl, Delegate *> > m_guis;
-    
-    QPointer<QQuickItem> m_gui;
 
 #ifdef Q_OS_ANDROID
     QTextToSpeech *m_speech;

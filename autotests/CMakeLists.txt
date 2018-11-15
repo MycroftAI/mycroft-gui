@@ -9,6 +9,7 @@ ecm_add_test(
   ${CMAKE_SOURCE_DIR}/import/mycroftcontroller.cpp
   ${CMAKE_SOURCE_DIR}/import/activeskillsmodel.cpp
   ${CMAKE_SOURCE_DIR}/import/globalsettings.cpp
+  ${CMAKE_SOURCE_DIR}/import/abstractskillview.cpp
 
   TEST_NAME servertest
 

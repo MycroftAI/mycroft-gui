@@ -22,6 +22,7 @@
 #include "globalsettings.h"
 #include "delegate.h"
 #include "activeskillsmodel.h"
+#include "abstractskillview.h"
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -47,12 +48,8 @@ MycroftController *MycroftController::instance()
 
 MycroftController::MycroftController(QObject *parent)
     : QObject(parent),
-      m_appSettingObj(new GlobalSettings),
-      m_guiId(QUuid::createUuid().toString())
+      m_appSettingObj(new GlobalSettings)
 {
-    qmlRegisterType<ActiveSkillsModel>();
-    m_activeSkillsModel = new ActiveSkillsModel(this);
-
     connect(&m_mainWebSocket, &QWebSocket::connected, this,
             [this] () {
                 m_reconnectTimer.stop();
@@ -63,17 +60,14 @@ MycroftController::MycroftController(QObject *parent)
             [this] (QAbstractSocket::SocketState state) {
                 emit socketStatusChanged();
                 if (state == QAbstractSocket::ConnectedState) {
-                    sendRequest(QStringLiteral("mycroft.gui.connected"),
-                                QVariantMap({{"gui_id", m_guiId}}));
+                    for (const auto &guiId : m_views.keys()) {
+                        sendRequest(QStringLiteral("mycroft.gui.connected"),
+                                    QVariantMap({{"gui_id", guiId}}));
+                    }
                 }
             });
 
     connect(&m_mainWebSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onMainSocketMessageReceived);
-
-    connect(&m_guiWebSocket, &QWebSocket::textMessageReceived, this, &MycroftController::onGuiSocketMessageReceived);
-    connect(&m_guiWebSocket, &QWebSocket::stateChanged, this, [this](QAbstractSocket::SocketState socketState){
-        qWarning()<<"GUI SOCKET STATE:"<<socketState;
-    });
 
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
@@ -116,84 +110,6 @@ void MycroftController::reconnect()
     m_mainWebSocket.close();
     m_reconnectTimer.start();
     emit socketStatusChanged();
-}
-
-QQmlPropertyMap *MycroftController::sessionDataForSkill(const QString &skillId)
-{
-    QQmlPropertyMap *map;
-
-    if (m_skillData.contains(skillId)) {
-        map = m_skillData[skillId];
-    } else {
-        map = new QQmlPropertyMap(this);
-        m_skillData[skillId] = map;
-    }
-
-    return map;
-}
-
-QList<QVariantMap> jsonModelToOrderedMap(const QJsonValue &data)
-{
-    QList<QVariantMap> ordMap;
-
-    if (!data.isArray()) {
-        qWarning() << "Error: Model data is not an Array" << data;
-        return ordMap;
-    }
-
-    QStringList roleNames;
-
-    const auto &array = data.toArray();
-    for (const auto &item : array) {
-        if (!item.isObject()) {
-            qWarning() << "Error: Array data structure currupted: " << data;
-            ordMap.clear();
-            return ordMap;
-        }
-        const auto &obj = item.toObject();
-        if (roleNames.isEmpty()) {
-            roleNames = obj.keys();
-        } else if (roleNames != obj.keys()) {
-            qWarning() << "Error: Item with a wrong set of roles encountered, expected: " << roleNames << "Encountered: " << obj.keys();
-            ordMap.clear();
-            return ordMap;
-        }
-        ordMap << obj.toVariantMap();
-    }
-
-    return ordMap;
-}
-
-QStringList jsonModelToStringList(const QString &key, const QJsonValue &data)
-{
-    QStringList items;
-
-    if (!data.isArray()) {
-        qWarning() << "Error: Model data is not an Array" << data;
-        return items;
-    }
-
-    const auto &array = data.toArray();
-    for (const auto &item : array) {
-        if (!item.isObject()) {
-            qWarning() << "Error: Array data structure currupted: " << data;
-            items.clear();
-            return items;
-        }
-        const auto &obj = item.toObject();
-        if (obj.keys().length() != 1 || !obj.contains(key)) {
-            qWarning() << "Error: Item with a wrong key encountered, expected: " << key << "Encountered: " << obj.keys();
-            items.clear();
-            return items;
-        }
-        const auto &value = obj.value(key);
-        if (!value.isString()) {
-            qWarning() << "Error: item in model not a string" << value;
-        }
-        items << value.toString();
-    }
-
-    return items;
 }
 
 void MycroftController::onMainSocketMessageReceived(const QString &message)
@@ -266,198 +182,15 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
             return;
         }
 
-        if (guiId != m_guiId) {
-            qWarning() << "Wrong guiId from mycroft.gui.port";
+        if (!m_views.contains(guiId)) {
+            qWarning() << "Unknown guiId from mycroft.gui.port";
             return;
         }
 
         QUrl url(QString("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
-
+//FIXME
         url.setPort(port);
-        m_guiWebSocket.open(url);
-    }
-}
-
-void MycroftController::onGuiSocketMessageReceived(const QString &message)
-{
-    auto doc = QJsonDocument::fromJson(message.toLatin1());
-
-    auto type = doc["type"].toString();
-qWarning()<<message;
-    //filter out the noise so we can print debug stuff later without drowning in noise
-    if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
-        return;
-    }
-    qDebug() << "gui message type" << type;
-
-///////////////SKILLDATA
-    // The SkillData was updated by the server
-    if (type == "mycroft.session.set") {
-        QVariantMap data = doc["data"].toVariant().toMap();
-//FIXME: remove "data"
-        QQmlPropertyMap *map = sessionDataForSkill(doc["namespace"].toString());
-
-        QVariantMap::const_iterator i;
-        for (i = data.constBegin(); i != data.constEnd(); ++i) {
-            map->insert(i.key(), i.value());
-        }
-
-    // The SkillData was updated by the server
-    } else if (type == "mycroft.session.delete") {
-//FIXME: remove "data"
-        const QString skillId = doc["namespace"].toString();
-        const QString property = doc["property"].toString();
-        if (skillId.isEmpty()) {
-            qWarning() << "No skill id provided";
-            return;
-        }
-        if (property.isEmpty()) {
-            qWarning() << "No property provided";
-            return;
-        }
-        QQmlPropertyMap *map = sessionDataForSkill(skillId);
-        map->clear(property);
-
-
-//////SHOWGUI
-    // The Skill from the server asked to show its gui
-    } else if (type == "mycroft.gui.show") {
-        //FIXME: KILL "data"
-        const QString skillId = doc["namespace"].toString();
-        const QUrl guiUrl = doc["gui_url"].toString();
-
-        if (skillId.isEmpty()) {
-            qWarning() << "Invalid mycroft.gui.show arrived with empty namespace";
-            return;
-        }
-        if (guiUrl.isEmpty()) {
-            qWarning() << "Invalid mycroft.gui.show arrived with empty gui_url";
-            return;
-        }
-
-        Delegate *delegate = nullptr;
-
-        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, Delegate*> &h) noexcept {
-            return h.contains(guiUrl);
-        });
-        if (it != m_guis.constEnd()) {
-            delegate = it.value().value(guiUrl);
-        //initialize a new delegate
-        } else {
-            QQmlComponent guiComponent(qmlEngine(m_gui), guiUrl, this);
-            //TODO: async components for http urls
-            QObject * guiObject = guiComponent.beginCreate(QQmlEngine::contextForObject(m_gui));
-            delegate = qobject_cast<Delegate *>(guiObject);
-            if (guiComponent.isError()) {
-                for (auto err : guiComponent.errors()) {
-                    qWarning() << err.toString();
-                }
-                return;
-            }
-            if (!delegate) {
-                qWarning()<<"ERROR: QML gui not a Mycroft.Delegate instance";
-                guiObject->deleteLater();
-                return;
-            }
-            //delegate->setController(this);
-            //delegate->setSkillId(skillId);
-            delegate->setSessionData(sessionDataForSkill(skillId));
-            guiComponent.completeCreate();
-            qWarning()<<"AAAAAAA"<<skillId<<delegate;
-            m_guis[skillId].insert(guiUrl, delegate);
-        }
-
-        //TODO: change it to invoking a method on the gui object, to hide it from other skills
-        emit skillGuiCreated(skillId, delegate);
-
-
-/////////////ACTIVESKILLS
-
-    // Insert new active skill
-    //TODO: remove data
-    } else if (type == "mycroft.session.insert" && doc["namespace"].toString() == "mycroft.system.active_skills") {
-        const int position = doc["position"].toInt();
-
-        if (position < 0 || position > m_activeSkillsModel->rowCount()) {
-            qWarning() << "Invalid position in mycroft.session.insert";
-            return;
-        }
-
-        const QStringList skillList = jsonModelToStringList(QStringLiteral("skill_id"), doc["data"]);
-
-        if (skillList.isEmpty()) {
-            qWarning() << "Error: no valid skills received in mycroft.session.insert";
-            return;
-        }
-
-        m_activeSkillsModel->insertSkills(position, skillList);
-
-
-    // Active skill removed
-    } else if (type == "mycroft.session.remove" && doc["namespace"].toString() == "mycroft.system.active_skills") {
-        const int position = doc["position"].toInt();
-        const int itemsNumber = doc["items_number"].toInt();
-
-        if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
-            qWarning() << "Invalid position";
-            return;
-        }
-        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->rowCount() - position - 1) {
-            qWarning() << "Invalid items_number";
-            return;
-        }
-
-        for (int i = 0; i < itemsNumber; ++i) {
-
-            const QString skillId = m_activeSkillsModel->data(m_activeSkillsModel->index(position+i, 0)).toString();
-
-            //TODO: do this after an animation
-            {
-                auto i = m_skillData.find(skillId);
-                if (i != m_skillData.end()) {
-                    i.value()->deleteLater();
-                    m_skillData.erase(i);
-                }
-            }
-            {
-                auto i = m_guis.find(skillId);
-                if (i != m_guis.end()) {
-                    for (auto d : i.value().values()) {
-                        d->deleteLater();
-                    }
-                    m_guis.erase(i);
-                }
-            }
-        }
-        m_activeSkillsModel->removeRows(position, itemsNumber);
-
-    // Active skill moved
-    } else if (type == "mycroft.session.move") {
-        const int from = doc["from"].toInt();
-        const int to = doc["to"].toInt();
-        const int itemsNumber = doc["items_number"].toInt();
-
-        if (from < 0 || from > m_activeSkillsModel->rowCount() - 1) {
-            qWarning() << "Invalid from position";
-            return;
-        }
-        if (to < 0 || to > m_activeSkillsModel->rowCount() - 1) {
-            qWarning() << "Invalid to position";
-            return;
-        }
-        if (itemsNumber <= 0 || itemsNumber > m_activeSkillsModel->rowCount() - from) {
-            qWarning() << "Invalid items_number";
-            return;
-        }
-        m_activeSkillsModel->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
-
-
-
-//////EVENTS
-    // Action triggered from the server
-    } else if (type == "mycroft.events.triggered") {
-        //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?
-        emit eventTriggered(doc["event_id"].toString(), doc["parameters"].toVariant().toMap());
+        m_views[guiId]->setUrl(url);
     }
 }
 
@@ -476,37 +209,21 @@ void MycroftController::sendRequest(const QString &type, const QVariantMap &data
     m_mainWebSocket.sendTextMessage(doc.toJson());
 }
 
-void MycroftController::sendGuiRequest(const QString &type, const QVariantMap &data)
-{
-    if (m_guiWebSocket.state() != QAbstractSocket::ConnectedState) {
-        qWarning() << "mycroft connection not open!";
-        return;
-    }
-    QJsonObject root;
-
-    root["type"] = type;
-    root["data"] = QJsonObject::fromVariantMap(data);
-
-    QJsonDocument doc(root);
-    m_guiWebSocket.sendTextMessage(doc.toJson());
-}
-
 void MycroftController::sendText(const QString &message)
 {
     sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{"utterances", QStringList({message})}}));
 }
 
-void MycroftController::registerGui(QQuickItem *gui)
+void MycroftController::registerView(AbstractSkillView *view)
 {
-    //TODO: support more than one
-    m_gui = gui;
-}
-
-void MycroftController::triggerEvent(const QString &actionId, const QVariantMap &parameters)
-{
-    sendRequest(QStringLiteral("mycroft.actions.trigger"),
-                QVariantMap({{"actionId", actionId}, {"parameters", parameters}})
-    );
+    Q_ASSERT(!view->id().isEmpty());
+    Q_ASSERT(!m_views.contains(view->id()));
+    m_views[view->id()] = view;
+//TODO: manage view destruction
+    if (m_mainWebSocket.state() == QAbstractSocket::ConnectedState) {
+        sendRequest(QStringLiteral("mycroft.gui.connected"),
+                    QVariantMap({{"gui_id", view->id()}}));
+    }
 }
 
 MycroftController::Status MycroftController::status() const
@@ -538,11 +255,6 @@ QString MycroftController::currentSkill() const
     return m_currentSkill;
 }
 
-ActiveSkillsModel *MycroftController::activeSkills() const
-{
-    return m_activeSkillsModel;
-}
-
 bool MycroftController::isSpeaking() const
 {
     return m_isSpeaking;
@@ -553,3 +265,4 @@ bool MycroftController::isListening() const
     return m_isListening;
 }
 
+#include "moc_mycroftcontroller.cpp"
