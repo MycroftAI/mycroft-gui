@@ -18,9 +18,9 @@
  */
 
 #include "activeskillsmodel.h"
+#include "delegatesmodel.h"
 
 #include <QDebug>
-#include <QStandardItemModel>
 
 ActiveSkillsModel::ActiveSkillsModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -120,8 +120,6 @@ QVariant ActiveSkillsModel::data(const QModelIndex &index, int role) const
 
     //TODO: other roles
     return m_skills[row];
-
-    return QVariant();
 }
 
 QHash<int, QByteArray> ActiveSkillsModel::roleNames() const

@@ -22,37 +22,27 @@
 #include <QAbstractListModel>
 
 class AbstractDelegate;
-class DelegatesModel;
 
-class ActiveSkillsModel : public QAbstractListModel
+class DelegatesModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
     enum Roles {
-        SkillId = Qt::UserRole + 1,
-        Delegates
+        DelegateUi = Qt::UserRole + 1,
     };
 
-    explicit ActiveSkillsModel(QObject *parent = nullptr);
-    virtual ~ActiveSkillsModel();
+    explicit DelegatesModel(QObject *parent = nullptr);
+    virtual ~DelegatesModel();
 
-    void insertSkills(int position, const QStringList &skillList);
+    void insertDelegate(int position, AbstractDelegate *delegate);
 
-    AbstractDelegate *delegateForSkill(const QString &skillId, const QString &qmlUrl) const;
-    void insertDelegateForSkill(int position, AbstractDelegate *delegate);
-
-//REIMPLEMENTED
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = SkillId) const override;
+    QVariant data(const QModelIndex &index, int role = DelegateUi) const override;
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QList<QString> m_skills;
-    //TODO
-    QHash<QString, DelegatesModel*> m_guis;
+    QList<AbstractDelegate *> m_delegates;
 };
-
-

@@ -6,6 +6,7 @@ set(mycroftimport_SRCS
     mycroftplugin.cpp
     mycroftcontroller.cpp
     activeskillsmodel.cpp
+    delegatesmodel.cpp
     abstractskillview.cpp
     abstractdelegate.cpp
     globalsettings.cpp
