@@ -39,8 +39,7 @@ Item {
     property int leftPadding: 0
     property int bottomPadding: 0
 
-    readonly property Item currentItem: skillsStack.currentItem.currentItem
-    property int currentIndex: skillsStack.currentItem.currentIndex
+    readonly property Item currentItem: null
 
     //for delegates to access the view... eventually this could be come an attache dproperty
     function view() {
@@ -72,7 +71,11 @@ Item {
         }
 
         onStopped: {
-            restFaceSwipeView.currentIndex = 0;
+            return;
+        }
+
+        onSkillDataRecieved: {
+            print(data)
         }
 
         onSpeakingChanged: {
@@ -88,7 +91,6 @@ Item {
         }
         Controls.StackView {
             id: skillsStack
-            //visible: depth > 0 && currentItem.count > 0
         }
     }
     Repeater {//TODO: the model will have models of gui instances, much simpler

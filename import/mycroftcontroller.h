@@ -88,7 +88,7 @@ Q_SIGNALS:
 
     //NEW API:
     //TODO: remove the signal, make the gui part of the gui model
-    void skillGuiCreated(const QString &skillId, QQuickItem *gui);
+    void skillGuiCreated(const QString &skillId, Delegate *gui);
     void eventTriggered(const QString &eventString, const QVariantMap &parameters);
 
 public Q_SLOTS:
@@ -120,7 +120,7 @@ private:
     ActiveSkillsModel *m_activeSkillsModel;
     QHash<QString, QQmlPropertyMap*> m_skillData;
     //TODO: move it in activeskillsmodel
-    QHash<QString, QHash<QUrl, QQuickItem *> > m_guis;
+    QHash<QString, QHash<QUrl, Delegate *> > m_guis;
     
     QPointer<QQuickItem> m_gui;
 

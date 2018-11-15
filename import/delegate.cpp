@@ -21,8 +21,8 @@
 #include "delegate.h"
 #include "mycroftcontroller.h"
 
-Delegate::Delegate(QObject *parent)
-    : QObject(parent)
+Delegate::Delegate(QQuickItem *parent)
+    : QQuickItem(parent)
 {
 }
 

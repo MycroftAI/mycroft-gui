@@ -322,9 +322,6 @@ qWarning()<<message;
 //////SHOWGUI
     // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
-        if (!m_gui) {
-            return;
-        }
         //FIXME: KILL "data"
         const QString skillId = doc["namespace"].toString();
         const QUrl guiUrl = doc["gui_url"].toString();
@@ -339,45 +336,39 @@ qWarning()<<message;
         }
 
         Delegate *delegate = nullptr;
-        QQuickItem *guiItem = nullptr;
 
-        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, QQuickItem*> &h) noexcept {
+        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, Delegate*> &h) noexcept {
             return h.contains(guiUrl);
         });
         if (it != m_guis.constEnd()) {
-            guiItem = it.value().value(guiUrl);
+            delegate = it.value().value(guiUrl);
         //initialize a new delegate
         } else {
             QQmlComponent guiComponent(qmlEngine(m_gui), guiUrl, this);
             //TODO: async components for http urls
-            delegate = new Delegate(m_gui);
-            QQmlEngine::setContextForObject(delegate, QQmlEngine::contextForObject(m_gui));
-            QQmlContext *context = new QQmlContext(QQmlEngine::contextForObject(m_gui), delegate);
-            context->setContextObject(delegate);
-            QObject * guiObject = guiComponent.beginCreate(context);
-            guiItem = qobject_cast<QQuickItem *>(guiObject);
+            QObject * guiObject = guiComponent.beginCreate(QQmlEngine::contextForObject(m_gui));
+            delegate = qobject_cast<Delegate *>(guiObject);
             if (guiComponent.isError()) {
                 for (auto err : guiComponent.errors()) {
                     qWarning() << err.toString();
                 }
                 return;
             }
-            if (!guiItem) {
+            if (!delegate) {
                 qWarning()<<"ERROR: QML gui not a Mycroft.Delegate instance";
                 guiObject->deleteLater();
-                delegate->deleteLater();
                 return;
             }
-
-
+            //delegate->setController(this);
+            //delegate->setSkillId(skillId);
             delegate->setSessionData(sessionDataForSkill(skillId));
             guiComponent.completeCreate();
             qWarning()<<"AAAAAAA"<<skillId<<delegate;
-            m_guis[skillId].insert(guiUrl, guiItem);
+            m_guis[skillId].insert(guiUrl, delegate);
         }
 
         //TODO: change it to invoking a method on the gui object, to hide it from other skills
-        emit skillGuiCreated(skillId, guiItem);
+        emit skillGuiCreated(skillId, delegate);
 
 
 /////////////ACTIVESKILLS
