@@ -114,7 +114,7 @@ QVariant ActiveSkillsModel::data(const QModelIndex &index, int role) const
     }
     const int row = index.row();
 
-    if (row < 0 || row >= m_skills.count() || (role != SkillId && role != GuiModel)) {
+    if (row < 0 || row >= m_skills.count() || (role != SkillId && role != Delegates)) {
         return QVariant();
     }
 
@@ -128,7 +128,7 @@ QHash<int, QByteArray> ActiveSkillsModel::roleNames() const
 {
     return {
         {SkillId, "skillId"},
-        {GuiModel, "guiModel"}
+        {Delegates, "delegates"}
     };
 }
 

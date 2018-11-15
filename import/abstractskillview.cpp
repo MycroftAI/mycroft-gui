@@ -275,27 +275,27 @@ qWarning()<<message;
     } else if (type == "mycroft.gui.show") {
         //FIXME: KILL "data"
         const QString skillId = doc["namespace"].toString();
-        const QUrl guiUrl = doc["gui_url"].toString();
+        const QUrl delegateUrl = doc["gui_url"].toString();
 
         if (skillId.isEmpty()) {
             qWarning() << "Invalid mycroft.gui.show arrived with empty namespace";
             return;
         }
-        if (guiUrl.isEmpty()) {
+        if (delegateUrl.isEmpty()) {
             qWarning() << "Invalid mycroft.gui.show arrived with empty gui_url";
             return;
         }
 
         AbstractDelegate *delegate = nullptr;
 
-        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, AbstractDelegate*> &h) noexcept {
-            return h.contains(guiUrl);
+        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&delegateUrl](const QHash<QUrl, AbstractDelegate*> &h) noexcept {
+            return h.contains(delegateUrl);
         });
         if (it != m_guis.constEnd()) {
-            delegate = it.value().value(guiUrl);
+            delegate = it.value().value(delegateUrl);
         //initialize a new delegate
         } else {
-            QQmlComponent delegateComponent(qmlEngine(this), guiUrl, this);
+            QQmlComponent delegateComponent(qmlEngine(this), delegateUrl, this);
             //TODO: separate context?
             QObject *guiObject = delegateComponent.beginCreate(QQmlEngine::contextForObject(this));
             delegate = qobject_cast<AbstractDelegate *>(guiObject);
@@ -313,7 +313,7 @@ qWarning()<<message;
 
             delegate->setSessionData(sessionDataForSkill(skillId));
             delegateComponent.completeCreate();
-            m_guis[skillId].insert(guiUrl, delegate);
+            m_guis[skillId].insert(delegateUrl, delegate);
         }
 
         //TODO: change it to invoking a method on the gui object, to hide it from other skills

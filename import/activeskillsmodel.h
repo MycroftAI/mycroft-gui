@@ -30,7 +30,7 @@ class ActiveSkillsModel : public QAbstractListModel
 public:
     enum Roles {
         SkillId = Qt::UserRole + 1,
-        GuiModel
+        Delegates
     };
 
     explicit ActiveSkillsModel(QObject *parent = nullptr);
