@@ -60,6 +60,7 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
 
     connect(m_guiWebSocket, &QWebSocket::stateChanged, this,
             [this](QAbstractSocket::SocketState socketState) {
+                //TODO: when the connection closes, all session data and guis should be destroyed
                 qWarning()<<"GUI SOCKET STATE:"<<socketState;
                 //Try to reconnect if our connection died but the main server connection is still alive
                 if (socketState == QAbstractSocket::UnconnectedState && m_url.isValid() && m_controller->status() == MycroftController::Open) {
@@ -286,41 +287,33 @@ qWarning()<<message;
         }
 
         AbstractDelegate *delegate = nullptr;
-        QQuickItem *guiItem = nullptr;
 
-        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, QQuickItem*> &h) noexcept {
+        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, AbstractDelegate*> &h) noexcept {
             return h.contains(guiUrl);
         });
         if (it != m_guis.constEnd()) {
-            guiItem = it.value().value(guiUrl);
+            delegate = it.value().value(guiUrl);
         //initialize a new delegate
         } else {
-            QQmlComponent guiComponent(qmlEngine(this), guiUrl, this);
-            //TODO: async components for http urls
-            delegate = new AbstractDelegate(this);
-            QQmlEngine::setContextForObject(delegate, QQmlEngine::contextForObject(this));
-            QQmlContext *context = new QQmlContext(QQmlEngine::contextForObject(this), delegate);
-            context->setContextObject(delegate);
-            QObject * guiObject = guiComponent.beginCreate(context);
-            guiItem = qobject_cast<QQuickItem *>(guiObject);
-            if (guiComponent.isError()) {
-                for (auto err : guiComponent.errors()) {
+            QQmlComponent delegateComponent(qmlEngine(this), guiUrl, this);
+            //TODO: separate context?
+            QObject *guiObject = delegateComponent.beginCreate(QQmlEngine::contextForObject(this));
+            delegate = qobject_cast<AbstractDelegate *>(guiObject);
+            if (delegateComponent.isError()) {
+                for (auto err : delegateComponent.errors()) {
                     qWarning() << err.toString();
                 }
                 return;
             }
-            if (!guiItem) {
+            if (!delegate) {
                 qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
-                guiObject->deleteLater();
                 delegate->deleteLater();
                 return;
             }
 
-
             delegate->setSessionData(sessionDataForSkill(skillId));
-            guiComponent.completeCreate();
-            qWarning()<<"AAAAAAA"<<skillId<<delegate;
-            m_guis[skillId].insert(guiUrl, guiItem);
+            delegateComponent.completeCreate();
+            m_guis[skillId].insert(guiUrl, delegate);
         }
 
         //TODO: change it to invoking a method on the gui object, to hide it from other skills

@@ -64,12 +64,12 @@ void ServerTest::initTestCase()
     m_view = new AbstractSkillView;
 }
 
+//TODO: test a spotty connection
 void ServerTest::testGuiConnection()
 {
     QSignalSpy newConnectionSpy(m_mainServerSocket, &QWebSocketServer::newConnection);
     QSignalSpy controllerSocketStatusChangedSpy(m_controller, &MycroftController::socketStatusChanged);
     m_controller->start();
-    
 
     //wait the server received a connection and the client got connected state
     newConnectionSpy.wait();
