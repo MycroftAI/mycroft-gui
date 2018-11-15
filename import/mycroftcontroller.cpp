@@ -20,9 +20,10 @@
 
 #include "mycroftcontroller.h"
 #include "globalsettings.h"
-#include "delegate.h"
+#include "abstractdelegate.h"
 #include "activeskillsmodel.h"
 #include "abstractskillview.h"
+
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -174,10 +175,11 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         emit fallbackTextRecieved(m_currentSkill, doc["data"].toVariant().toMap());
     } else if (type == QLatin1String("mycroft.stop.handled") || type == QLatin1String("mycroft.stop")) {
         emit stopped();
+
     } else if (type == "mycroft.gui.port") {
         const int port = doc["data"]["port"].toInt();
         const QString guiId = doc["data"]["gui_id"].toString();
-        if (port < 0) {
+        if (port < 0 || port > 65535) {
             qWarning() << "Invalid port from mycroft.gui.port";
             return;
         }
@@ -188,8 +190,6 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         }
 
         QUrl url(QString("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
-//FIXME
-        url.setPort(port);
         m_views[guiId]->setUrl(url);
     }
 }

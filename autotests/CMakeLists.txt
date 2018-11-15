@@ -5,7 +5,7 @@ set_package_properties(Qt5Test PROPERTIES PURPOSE "Required for autotests")
 
 ecm_add_test(
   servertest.cpp
-  ${CMAKE_SOURCE_DIR}/import/delegate.cpp
+  ${CMAKE_SOURCE_DIR}/import/abstractdelegate.cpp
   ${CMAKE_SOURCE_DIR}/import/mycroftcontroller.cpp
   ${CMAKE_SOURCE_DIR}/import/activeskillsmodel.cpp
   ${CMAKE_SOURCE_DIR}/import/globalsettings.cpp

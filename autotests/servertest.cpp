@@ -22,7 +22,7 @@
 #include <QWebSocketServer>
 #include <QAbstractItemModel>
 #include "../import/mycroftcontroller.h"
-#include "../import/delegate.h"
+#include "../import/abstractdelegate.h"
 #include "../import/activeskillsmodel.h"
 #include "../import/abstractskillview.h"
 

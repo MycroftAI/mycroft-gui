@@ -24,7 +24,7 @@
 #include "mycroftcontroller.h"
 #include "globalsettings.h"
 #include "filereader.h"
-#include "delegate.h"
+#include "abstractdelegate.h"
 #include "abstractskillview.h"
 
 #include <QQmlEngine>
@@ -64,7 +64,7 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<GlobalSettings>(uri, 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
     qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
     qmlRegisterType<AbstractSkillView>(uri, 1, 0, "AbstractSkillView");
-    qmlRegisterType<Delegate>(uri, 1, 0, "Delegate");
+    qmlRegisterType<AbstractDelegate>(uri, 1, 0, "AbstractDelegate");
 
     //use this only when all qml files are registered by the plugin
    // qmlProtectModule(uri, 1);

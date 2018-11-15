@@ -18,28 +18,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "delegate.h"
+#include "abstractdelegate.h"
 #include "mycroftcontroller.h"
 
-Delegate::Delegate(QQuickItem *parent)
+AbstractDelegate::AbstractDelegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
 }
 
-Delegate::~Delegate()
+AbstractDelegate::~AbstractDelegate()
 {
 }
 
-void Delegate::setSessionData(QQmlPropertyMap *data)
+void AbstractDelegate::setSessionData(QQmlPropertyMap *data)
 {
-    if (!m_data) {
-        m_data = data;
-    }
+    //possible to call only once, by the skillview upon instantiation
+    Q_ASSERT(!m_data);
+    m_data = data;
 }
 
-QQmlPropertyMap *Delegate::sessionData() const
+QQmlPropertyMap *AbstractDelegate::sessionData() const
 {
     return m_data;
 }
 
-#include "moc_delegate.cpp"
+#include "moc_abstractdelegate.cpp"

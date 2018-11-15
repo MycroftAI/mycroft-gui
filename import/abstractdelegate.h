@@ -26,19 +26,21 @@
 
 class MycroftController;
 
-class Delegate: public QQuickItem
+class AbstractDelegate: public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QQmlPropertyMap *sessionData READ sessionData CONSTANT)
     Q_PROPERTY(int timeout MEMBER m_timeout NOTIFY timeoutChanged)
+
     //TODO: api for background? would like to avoid
     Q_PROPERTY(int leftPadding MEMBER m_leftPadding NOTIFY leftPaddingChanged)
     Q_PROPERTY(int rightPadding MEMBER m_rightPadding NOTIFY rightPaddingChanged)
     Q_PROPERTY(int topPadding MEMBER m_topPadding NOTIFY topPaddingChanged)
     Q_PROPERTY(int bottomPadding MEMBER m_bottomPadding NOTIFY bottomPaddingChanged)
+
 public:
-    Delegate(QQuickItem *parent = nullptr);
-    ~Delegate();
+    AbstractDelegate(QQuickItem *parent = nullptr);
+    ~AbstractDelegate();
 
     //API used only by MycroftController, *NOT* QML
     //void setController(MycroftController *controller);

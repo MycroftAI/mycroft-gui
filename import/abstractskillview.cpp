@@ -20,7 +20,7 @@
 
 #include "abstractskillview.h"
 #include "activeskillsmodel.h"
-#include "delegate.h"
+#include "abstractdelegate.h"
 
 #include <QWebSocket>
 #include <QUuid>
@@ -285,7 +285,7 @@ qWarning()<<message;
             return;
         }
 
-        Delegate *delegate = nullptr;
+        AbstractDelegate *delegate = nullptr;
         QQuickItem *guiItem = nullptr;
 
         auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&guiUrl](const QHash<QUrl, QQuickItem*> &h) noexcept {
@@ -297,7 +297,7 @@ qWarning()<<message;
         } else {
             QQmlComponent guiComponent(qmlEngine(this), guiUrl, this);
             //TODO: async components for http urls
-            delegate = new Delegate(this);
+            delegate = new AbstractDelegate(this);
             QQmlEngine::setContextForObject(delegate, QQmlEngine::contextForObject(this));
             QQmlContext *context = new QQmlContext(QQmlEngine::contextForObject(this), delegate);
             context->setContextObject(delegate);
@@ -310,7 +310,7 @@ qWarning()<<message;
                 return;
             }
             if (!guiItem) {
-                qWarning()<<"ERROR: QML gui not a Mycroft.Delegate instance";
+                qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
                 guiObject->deleteLater();
                 delegate->deleteLater();
                 return;
