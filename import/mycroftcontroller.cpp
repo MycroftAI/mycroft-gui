@@ -50,6 +50,9 @@ MycroftController::MycroftController(QObject *parent)
       m_appSettingObj(new GlobalSettings),
       m_guiId(QUuid::createUuid().toString())
 {
+    qmlRegisterType<ActiveSkillsModel>();
+    m_activeSkillsModel = new ActiveSkillsModel(this);
+
     connect(&m_mainWebSocket, &QWebSocket::connected, this,
             [this] () {
                 m_reconnectTimer.stop();

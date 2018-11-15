@@ -1,6 +1,5 @@
 /*
  *   Copyright 2018 by Marco Martin <mart@kde.org>
- *   Copyright 2018 David Edmundson <davidedmundson@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -22,7 +21,6 @@
 #include <QWebSocket>
 #include <QWebSocketServer>
 #include <QAbstractItemModel>
-#include <QStandardItemModel>
 #include "../import/mycroftcontroller.h"
 #include "../import/delegate.h"
 #include "../import/activeskillsmodel.h"
@@ -97,9 +95,9 @@ void ServerTest::testGuiConnection()
 
 void ServerTest::testActiveSkills()
 {
-    QSignalSpy m_skillInsertedSpy(m_controller->activeSkills(), &QStandardItemModel::rowsInserted);
-    QSignalSpy m_skillMovedSpy(m_controller->activeSkills(), &QStandardItemModel::rowsMoved);
-    QSignalSpy m_skillRemovedSpy(m_controller->activeSkills(), &QStandardItemModel::rowsRemoved);
+    QSignalSpy m_skillInsertedSpy(m_controller->activeSkills(), &ActiveSkillsModel::rowsInserted);
+    QSignalSpy m_skillMovedSpy(m_controller->activeSkills(), &ActiveSkillsModel::rowsMoved);
+    QSignalSpy m_skillRemovedSpy(m_controller->activeSkills(), &ActiveSkillsModel::rowsRemoved);
 
     QCOMPARE(m_controller->activeSkills()->rowCount(), 0);
 
