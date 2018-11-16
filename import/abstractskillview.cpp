@@ -21,6 +21,7 @@
 #include "abstractskillview.h"
 #include "activeskillsmodel.h"
 #include "abstractdelegate.h"
+#include "sessiondatamap.h"
 
 #include <QWebSocket>
 #include <QUuid>
@@ -29,7 +30,6 @@
 #include <QJsonDocument>
 #include <QQmlContext>
 #include <QQmlEngine>
-#include <QQmlPropertyMap>
 
 
 AbstractSkillView::AbstractSkillView(QQuickItem *parent)
@@ -150,14 +150,14 @@ ActiveSkillsModel *AbstractSkillView::activeSkills() const
 }
 
 
-QQmlPropertyMap *AbstractSkillView::sessionDataForSkill(const QString &skillId)
+SessionDataMap *AbstractSkillView::sessionDataForSkill(const QString &skillId)
 {
-    QQmlPropertyMap *map = nullptr;
+    SessionDataMap *map = nullptr;
 
     if (m_skillData.contains(skillId)) {
         map = m_skillData[skillId];
     } else if (m_activeSkillsModel->skillIndex(skillId).isValid()) {
-        map = new QQmlPropertyMap(this);
+        map = new SessionDataMap(this);
         m_skillData[skillId] = map;
     }
 
@@ -270,10 +270,10 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         }
 
         //we already checked, assume *map is valid
-        QQmlPropertyMap *map = sessionDataForSkill(skillId);
+        SessionDataMap *map = sessionDataForSkill(skillId);
          QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
-            map->insert(i.key(), i.value());
+            map->insertAndNotify(i.key(), i.value());
         }
 
     // The SkillData was removed by the server
@@ -292,8 +292,8 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             qWarning() << "No property provided in mycroft.session.delete";
             return;
         }
-        QQmlPropertyMap *map = sessionDataForSkill(skillId);
-        map->clear(property);
+        SessionDataMap *map = sessionDataForSkill(skillId);
+        map->clearAndNotify(property);
 
 
 //////SHOWGUI

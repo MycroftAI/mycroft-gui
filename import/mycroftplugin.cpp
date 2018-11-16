@@ -28,6 +28,7 @@
 #include "abstractskillview.h"
 #include "activeskillsmodel.h"
 #include "delegatesmodel.h"
+#include "sessiondatamap.h"
 
 #include <QQmlEngine>
 #include <QQmlContext>
@@ -37,7 +38,7 @@ static QObject *fileReaderSingletonProvider(QQmlEngine *engine, QJSEngine *scrip
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
-    
+
     return new FileReader;
 }
 
@@ -66,8 +67,10 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
     qmlRegisterType<AbstractSkillView>(uri, 1, 0, "AbstractSkillView");
     qmlRegisterType<AbstractDelegate>(uri, 1, 0, "AbstractDelegate");
+
     qmlRegisterUncreatableType<ActiveSkillsModel>(uri, 1, 0, "ActiveSkillsModel", "You cannot instantiate items of type ActiveSkillsModel");
     qmlRegisterUncreatableType<DelegatesModel>(uri, 1, 0, "DelegatesModel", "You cannot instantiate items of type DelegatesModel");
+    qmlRegisterUncreatableType<SessionDataMap>(uri, 1, 0, "SessionDataMap", "You cannot instantiate items of type SessionDataMap");
 
     //use this only when all qml files are registered by the plugin
    // qmlProtectModule(uri, 1);

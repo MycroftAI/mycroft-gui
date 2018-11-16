@@ -24,12 +24,14 @@
 #include <QQmlPropertyMap>
 #include <QPointer>
 
+#include "sessiondatamap.h"
+
 class MycroftController;
 
 class AbstractDelegate: public QQuickItem
 {
     Q_OBJECT
-    Q_PROPERTY(QQmlPropertyMap *sessionData READ sessionData CONSTANT)
+    Q_PROPERTY(SessionDataMap *sessionData READ sessionData CONSTANT)
     Q_PROPERTY(int timeout MEMBER m_timeout NOTIFY timeoutChanged)
 
     //TODO: api for background? would like to avoid
@@ -45,8 +47,8 @@ public:
     //API used only by AbstractSkillView during initialization, *NOT* QML
     //void setController(MycroftController *controller);
     //void setSkillId();
-    void setSessionData(QQmlPropertyMap *data);
-    QQmlPropertyMap *sessionData() const;
+    void setSessionData(SessionDataMap *data);
+    SessionDataMap *sessionData() const;
 
     /**
      * INTERNAL: Url of the qml file that generated this instance
@@ -69,7 +71,7 @@ Q_SIGNALS:
     void bottomPaddingChanged();
 
 private:
-    QPointer<QQmlPropertyMap> m_data;
+    QPointer<SessionDataMap> m_data;
 
     QUrl m_qmlUrl;
 

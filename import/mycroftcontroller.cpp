@@ -115,7 +115,7 @@ void MycroftController::reconnect()
 
 void MycroftController::onMainSocketMessageReceived(const QString &message)
 {
-    auto doc = QJsonDocument::fromJson(message.toLatin1());
+    auto doc = QJsonDocument::fromJson(message.toUtf8());
 
     if (doc.isEmpty()) {
         qWarning() << "Empty or invalid JSON message arrived on the gui socket:" << message;

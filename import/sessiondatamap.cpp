@@ -1,6 +1,5 @@
 /*
  *   Copyright 2018 by Marco Martin <mart@kde.org>
- *   Copyright 2018 David Edmundson <davidedmundson@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -18,39 +17,36 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "abstractdelegate.h"
-#include "mycroftcontroller.h"
+#include "sessiondatamap.h"
 
-AbstractDelegate::AbstractDelegate(QQuickItem *parent)
-    : QQuickItem(parent)
+#include <QDebug>
+#include <QJSValue>
+
+SessionDataMap::SessionDataMap(QObject *parent)
+    : QQmlPropertyMap(this, parent)
 {
 }
 
-AbstractDelegate::~AbstractDelegate()
+SessionDataMap::~SessionDataMap()
 {
 }
 
-void AbstractDelegate::setSessionData(SessionDataMap *data)
+QVariant SessionDataMap::updateValue(const QString &key, const QVariant &input)
 {
-    //possible to call only once, by the skillview upon instantiation
-    Q_ASSERT(!m_data);
-    m_data = data;
+    //TODO: send modifications to the server, filter models etc
+    return QQmlPropertyMap::updateValue(key, input);
 }
 
-SessionDataMap *AbstractDelegate::sessionData() const
+void SessionDataMap::insertAndNotify(const QString &key, const QVariant &value)
 {
-    return m_data;
+    insert(key, value);
+    emit valueChanged(key, value);
 }
 
-void AbstractDelegate::setQmlUrl(const QUrl &url)
+void SessionDataMap::clearAndNotify(const QString &key)
 {
-    Q_ASSERT(m_qmlUrl.isEmpty());
-    m_qmlUrl = url;
+    clear(key);
+    emit dataCleared(key);
 }
 
-QUrl AbstractDelegate::qmlUrl() const
-{
-    return m_qmlUrl;
-}
-
-#include "moc_abstractdelegate.cpp"
+#include "moc_sessiondatamap.cpp"

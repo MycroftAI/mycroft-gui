@@ -26,6 +26,7 @@
 
 class ActiveSkillsModel;
 class AbstractDelegate;
+class SessionDataMap;
 
 class AbstractSkillView: public QQuickItem
 {
@@ -64,7 +65,7 @@ public:
      * if no data is present for a skill, it gets created if and only if it's an active skill.
      * @internal this is strictly for internal use only and must *NOT* be exposed to QML. used by the class itself and the autotests.
      */
-    QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
+    SessionDataMap *sessionDataForSkill(const QString &skillId);
 
 Q_SIGNALS:
     //socket stuff
@@ -77,7 +78,7 @@ private:
     QTimer m_reconnectTimer;
     QString m_id;
     QUrl m_url;
-    QHash<QString, QQmlPropertyMap*> m_skillData;
+    QHash<QString, SessionDataMap*> m_skillData;
 
     MycroftController *m_controller;
     QWebSocket *m_guiWebSocket;

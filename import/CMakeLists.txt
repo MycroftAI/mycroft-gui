@@ -9,11 +9,11 @@ set(mycroftimport_SRCS
     delegatesmodel.cpp
     abstractskillview.cpp
     abstractdelegate.cpp
+    sessiondatamap.cpp
     globalsettings.cpp
     filereader.cpp
     )
 
-    
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
