@@ -60,7 +60,7 @@ static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine
 
 void MycroftPlugin::registerTypes(const char *uri)
 {
-    Q_ASSERT(uri == QLatin1String("Mycroft"));
+    Q_ASSERT(QLatin1String(uri) == QLatin1String("Mycroft"));
 
     qmlRegisterSingletonType<MycroftController>(uri, 1, 0, "MycroftController", mycroftControllerSingletonProvider);
     qmlRegisterSingletonType<GlobalSettings>(uri, 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
@@ -68,9 +68,9 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterType<AbstractSkillView>(uri, 1, 0, "AbstractSkillView");
     qmlRegisterType<AbstractDelegate>(uri, 1, 0, "AbstractDelegate");
 
-    qmlRegisterUncreatableType<ActiveSkillsModel>(uri, 1, 0, "ActiveSkillsModel", "You cannot instantiate items of type ActiveSkillsModel");
-    qmlRegisterUncreatableType<DelegatesModel>(uri, 1, 0, "DelegatesModel", "You cannot instantiate items of type DelegatesModel");
-    qmlRegisterUncreatableType<SessionDataMap>(uri, 1, 0, "SessionDataMap", "You cannot instantiate items of type SessionDataMap");
+    qmlRegisterUncreatableType<ActiveSkillsModel>(uri, 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
+    qmlRegisterUncreatableType<DelegatesModel>(uri, 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
+    qmlRegisterUncreatableType<SessionDataMap>(uri, 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
 
     //use this only when all qml files are registered by the plugin
    // qmlProtectModule(uri, 1);

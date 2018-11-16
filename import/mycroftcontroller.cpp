@@ -63,7 +63,7 @@ MycroftController::MycroftController(QObject *parent)
                 if (state == QAbstractSocket::ConnectedState) {
                     for (const auto &guiId : m_views.keys()) {
                         sendRequest(QStringLiteral("mycroft.gui.connected"),
-                                    QVariantMap({{"gui_id", guiId}}));
+                                    QVariantMap({{QStringLiteral("gui_id"), guiId}}));
                     }
                 }
             });
@@ -72,7 +72,7 @@ MycroftController::MycroftController(QObject *parent)
 
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
-        QString socket = m_appSettingObj->webSocketAddress() + ":8181/core";
+        QString socket = m_appSettingObj->webSocketAddress() + QStringLiteral(":8181/core");
         m_mainWebSocket.open(QUrl(socket));
     });
 
@@ -85,7 +85,7 @@ MycroftController::MycroftController(QObject *parent)
 void MycroftController::start()
 {
     auto appSettingObj = new GlobalSettings;
-    QString socket = m_appSettingObj->webSocketAddress() + ":8181/core";
+    QString socket = m_appSettingObj->webSocketAddress() + QStringLiteral(":8181/core");
     m_mainWebSocket.open(QUrl(socket));
     connect(&m_mainWebSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             this, [this] (const QAbstractSocket::SocketError &error) {
@@ -97,7 +97,7 @@ void MycroftController::start()
             return;
         }
 
-        QProcess::startDetached("mycroft-gui-core-loader");
+        QProcess::startDetached(QStringLiteral("mycroft-gui-core-loader"));
         m_reconnectTimer.start();
         emit socketStatusChanged();
     });
@@ -122,7 +122,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         return;
     }
 
-    auto type = doc["type"].toString();
+    auto type = doc[QStringLiteral("type")].toString();
 
     if (type.isEmpty()) {
         qWarning() << "Empty type in the JSON message on the gui socket";
@@ -130,16 +130,16 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     }
 
     //filter out the noise so we can print debug stuff later without drowning in noise
-    if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
+    if (type.startsWith(QStringLiteral("enclosure")) || type.startsWith(QStringLiteral("mycroft-date"))) {
         return;
     }
     qDebug() << "type" << type;
 
-    emit intentRecevied(type, doc["data"].toVariant().toMap());
+    emit intentRecevied(type, doc[QStringLiteral("data")].toVariant().toMap());
 
 #ifdef Q_OS_ANDROID
     if (type == "speak") {
-        m_speech->say(doc["data"]["utterance"].toString());
+        m_speech->say(doc[QStringLiteral("data")]["utterance"].toString());
     }
 #endif
 
@@ -174,21 +174,21 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         return;
     }
 
-    if (type == "mycroft.skill.handler.start") {
-        m_currentSkill = doc["data"]["name"].toString();
+    if (type == QLatin1String("mycroft.skill.handler.start")) {
+        m_currentSkill = doc[QStringLiteral("data")][QStringLiteral("name")].toString();
         qDebug() << "Current skill:" << m_currentSkill;
         emit currentSkillChanged();
-    } else if (type == "mycroft.skill.handler.complete") {
+    } else if (type == QLatin1String("mycroft.skill.handler.complete")) {
         m_currentSkill = QString();
         emit currentSkillChanged();
-    } else if (type == "speak") {
-        emit fallbackTextRecieved(m_currentSkill, doc["data"].toVariant().toMap());
+    } else if (type == QLatin1String("speak")) {
+        emit fallbackTextRecieved(m_currentSkill, doc[QStringLiteral("data")].toVariant().toMap());
     } else if (type == QLatin1String("mycroft.stop.handled") || type == QLatin1String("mycroft.stop")) {
         emit stopped();
 
-    } else if (type == "mycroft.gui.port") {
-        const int port = doc["data"]["port"].toInt();
-        const QString guiId = doc["data"]["gui_id"].toString();
+    } else if (type == QLatin1String("mycroft.gui.port")) {
+        const int port = doc[QStringLiteral("data")][QStringLiteral("port")].toInt();
+        const QString guiId = doc[QStringLiteral("data")][QStringLiteral("gui_id")].toString();
         if (port < 0 || port > 65535) {
             qWarning() << "Invalid port from mycroft.gui.port";
             return;
@@ -199,7 +199,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
             return;
         }
 
-        QUrl url(QString("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
+        QUrl url(QStringLiteral("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
         m_views[guiId]->setUrl(url);
     }
 }
@@ -212,16 +212,16 @@ void MycroftController::sendRequest(const QString &type, const QVariantMap &data
     }
     QJsonObject root;
 
-    root["type"] = type;
-    root["data"] = QJsonObject::fromVariantMap(data);
+    root[QStringLiteral("type")] = type;
+    root[QStringLiteral("data")] = QJsonObject::fromVariantMap(data);
 
     QJsonDocument doc(root);
-    m_mainWebSocket.sendTextMessage(doc.toJson());
+    m_mainWebSocket.sendTextMessage(QString::fromUtf8(doc.toJson()));
 }
 
 void MycroftController::sendText(const QString &message)
 {
-    sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{"utterances", QStringList({message})}}));
+    sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{QStringLiteral("utterances"), QStringList({message})}}));
 }
 
 void MycroftController::registerView(AbstractSkillView *view)
@@ -232,7 +232,7 @@ void MycroftController::registerView(AbstractSkillView *view)
 //TODO: manage view destruction
     if (m_mainWebSocket.state() == QAbstractSocket::ConnectedState) {
         sendRequest(QStringLiteral("mycroft.gui.connected"),
-                    QVariantMap({{"gui_id", view->id()}}));
+                    QVariantMap({{QStringLiteral("gui_id"), view->id()}}));
     }
 }
 

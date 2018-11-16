@@ -56,6 +56,12 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(KF5KIO ${KF5_MIN_VERSION} REQUIRED) # FIXME look for "KIOWidgets" (KRun) explicitly
 endif()
 
+add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
+
+#add_definitions(-Wno-deprecated)
+
+add_definitions(-DQT_NO_URL_CAST_FROM_STRING -DQT_USE_QSTRINGBUILDER -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII)
+
 SET(mycroft_gui_app_SRC
     main.cpp
     speechintent.cpp

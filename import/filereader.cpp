@@ -52,7 +52,7 @@ QStringList FileReader::checkForMeta(const QString &rootDir, const QString &find
     }
     int count = dirList.count();
     for(int i=0; i<count; i++){
-       bool metaExist = file_exists_local(dirList[i] + "/" + findFile);
+       bool metaExist = file_exists_local(dirList[i] + QStringLiteral("/") + findFile);
        if(metaExist){
             containsMeta.append(dirList[i]);
        }

@@ -237,7 +237,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         return;
     }
 
-    auto type = doc["type"].toString();
+    auto type = doc[QStringLiteral("type")].toString();
 
     if (type.isEmpty()) {
         qWarning() << "Empty type in the JSON message on the gui socket";
@@ -245,16 +245,16 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     }
 
     //filter out the noise so we can print debug stuff later without drowning in noise
-    if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
+    if (type.startsWith(QStringLiteral("enclosure")) || type.startsWith(QStringLiteral("mycroft-date"))) {
         return;
     }
     qDebug() << "gui message type" << type;
 
 ///////////////SKILLDATA
     // The SkillData was updated by the server
-    if (type == "mycroft.session.set") {
-        const QString skillId = doc["namespace"].toString();
-        const QVariantMap data = doc["data"].toVariant().toMap();
+    if (type == QLatin1String("mycroft.session.set")) {
+        const QString skillId = doc[QStringLiteral("namespace")].toString();
+        const QVariantMap data = doc[QStringLiteral("data")].toVariant().toMap();
 
         if (skillId.isEmpty()) {
             qWarning() << "Empty skill_id in mycroft.session.set";
@@ -277,9 +277,9 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         }
 
     // The SkillData was removed by the server
-    } else if (type == "mycroft.session.delete") {
-        const QString skillId = doc["namespace"].toString();
-        const QString property = doc["property"].toString();
+    } else if (type == QLatin1String("mycroft.session.delete")) {
+        const QString skillId = doc[QStringLiteral("namespace")].toString();
+        const QString property = doc[QStringLiteral("property")].toString();
         if (skillId.isEmpty()) {
             qWarning() << "No skill_id provided in mycroft.session.delete";
             return;
@@ -298,9 +298,9 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
 //////SHOWGUI
     // The Skill from the server asked to show its gui
-    } else if (type == "mycroft.gui.show") {
-        const QString skillId = doc["namespace"].toString();
-        const QUrl delegateUrl = doc["gui_url"].toString();
+    } else if (type == QLatin1String("mycroft.gui.show")) {
+        const QString skillId = doc[QStringLiteral("namespace")].toString();
+        const QUrl delegateUrl(doc[QStringLiteral("gui_url")].toString());
 
         if (skillId.isEmpty()) {
             qWarning() << "Invalid mycroft.gui.show arrived with empty namespace";
@@ -355,15 +355,15 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
     // Insert new active skill
     //TODO: remove data
-    } else if (type == "mycroft.session.insert" && doc["namespace"].toString() == "mycroft.system.active_skills") {
-        const int position = doc["position"].toInt();
+    } else if (type == QLatin1String("mycroft.session.insert") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
+        const int position = doc[QStringLiteral("position")].toInt();
 
         if (position < 0 || position > m_activeSkillsModel->rowCount()) {
             qWarning() << "Invalid position in mycroft.session.insert";
             return;
         }
 
-        const QStringList skillList = jsonModelToStringList(QStringLiteral("skill_id"), doc["data"]);
+        const QStringList skillList = jsonModelToStringList(QStringLiteral("skill_id"), doc[QStringLiteral("data")]);
 
         if (skillList.isEmpty()) {
             qWarning() << "Error: no valid skills received in mycroft.session.insert";
@@ -374,9 +374,9 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
 
     // Active skill removed
-    } else if (type == "mycroft.session.remove" && doc["namespace"].toString() == "mycroft.system.active_skills") {
-        const int position = doc["position"].toInt();
-        const int itemsNumber = doc["items_number"].toInt();
+    } else if (type == QLatin1String("mycroft.session.remove") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
+        const int position = doc[QStringLiteral("position")].toInt();
+        const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
         if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
             qWarning() << "Invalid position";
@@ -403,10 +403,10 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         m_activeSkillsModel->removeRows(position, itemsNumber);
 
     // Active skill moved
-    } else if (type == "mycroft.session.move") {
-        const int from = doc["from"].toInt();
-        const int to = doc["to"].toInt();
-        const int itemsNumber = doc["items_number"].toInt();
+    } else if (type == QLatin1String("mycroft.session.move")) {
+        const int from = doc[QStringLiteral("from")].toInt();
+        const int to = doc[QStringLiteral("to")].toInt();
+        const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
         if (from < 0 || from > m_activeSkillsModel->rowCount() - 1) {
             qWarning() << "Invalid from position";
@@ -426,7 +426,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
 //////EVENTS TODO
     // Action triggered from the server
-    } else if (type == "mycroft.events.triggered") {
+    } else if (type == QLatin1String("mycroft.events.triggered")) {
         //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?
 //        emit eventTriggered(doc["event_id"].toString(), doc["parameters"].toVariant().toMap());
     }

@@ -88,8 +88,8 @@ void ServerTest::testGuiConnection()
 
     textFromMainSpy.wait();
     auto doc = QJsonDocument::fromJson(textFromMainSpy.first().first().toString().toLatin1());
-    auto type = doc["type"].toString();
-    auto guiId = doc["data"]["gui_id"].toString();
+    auto type = doc[QStringLiteral("type")].toString();
+    auto guiId = doc[QStringLiteral("data")][QStringLiteral("gui_id")].toString();
 
     QCOMPARE(type, QStringLiteral("mycroft.gui.connected"));
     QVERIFY(guiId.length() > 0);
@@ -199,9 +199,10 @@ void ServerTest::testActiveSkills()
 
 void ServerTest::testSessionData()
 {
-    SessionDataMap *map = m_view->sessionDataForSkill("mycroft.weather");
+    SessionDataMap *map = m_view->sessionDataForSkill(QStringLiteral("mycroft.weather"));
     QVERIFY(map);
-    QVERIFY(!m_view->sessionDataForSkill("invalidskillid"));
+    //No sessiondata for invalid skills
+    QVERIFY(!m_view->sessionDataForSkill(QStringLiteral("invalidskillid")));
 
     QSignalSpy dataChangedSpy(map, &SessionDataMap::valueChanged);
 
@@ -212,15 +213,15 @@ void ServerTest::testSessionData()
     QCOMPARE(dataChangedSpy.count(), 2);
 
     QCOMPARE(map->keys().count(), 2);
-    QCOMPARE(map->value("temperature"), "28°C");
-    QCOMPARE(map->value("icon"), "sunny");
+    QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("28°C"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
 }
 
 void ServerTest::testChangeSessionData()
 {
-    SessionDataMap *map = m_view->sessionDataForSkill("mycroft.weather");
+    SessionDataMap *map = m_view->sessionDataForSkill(QStringLiteral("mycroft.weather"));
     QVERIFY(map);
-    QVERIFY(!m_view->sessionDataForSkill("invalidskillid"));
+    QVERIFY(!m_view->sessionDataForSkill(QStringLiteral("invalidskillid")));
 
     QSignalSpy dataChangedSpy(map, &SessionDataMap::valueChanged);
     QSignalSpy dataClearedSpy(map, &SessionDataMap::dataCleared);
@@ -233,33 +234,33 @@ void ServerTest::testChangeSessionData()
 
     //keys are alphabetically ordered
     QCOMPARE(map->keys().count(), 3);
-    QCOMPARE(map->value("temperature"), "24°C");
-    QCOMPARE(map->value("icon"), "sunny");
-    QCOMPARE(map->value("otherproperty"), "value");
+    QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+    QCOMPARE(map->value(QStringLiteral("otherproperty")), QStringLiteral("value"));
 
     //remove otherproperty
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.delete\", \"namespace\": \"mycroft.weather\", \"property\": \"otherproperty\"}"));
 
     dataClearedSpy.wait();
-    QCOMPARE(dataClearedSpy.first().first(), "otherproperty");
+    QCOMPARE(dataClearedSpy.first().first(), QStringLiteral("otherproperty"));
     //is not possible to actually remove a key
     QCOMPARE(map->keys().count(), 3);
-    QCOMPARE(map->value("temperature"), "24°C");
-    QCOMPARE(map->value("icon"), "sunny");
-    QCOMPARE(map->value("otherproperty"), QVariant());
+    QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+    QCOMPARE(map->value(QStringLiteral("otherproperty")), QVariant());
 }
 
 void ServerTest::testShowGui()
 {
     QSignalSpy skillModelDataChangedSpy(m_view->activeSkills(), &ActiveSkillsModel::dataChanged);
 
-    const QUrl url("file://" + QFINDTESTDATA("currentweather.qml"));
+    const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("currentweather.qml"));
 
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_url\": \"") + url.toString().toUtf8() + QStringLiteral("\"}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_url\": \"") + url.toString() + QStringLiteral("\"}"));
 
     skillModelDataChangedSpy.wait();
 
-    AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill("mycroft.weather", url);
+    AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill(QStringLiteral("mycroft.weather"), url);
     QVERIFY(delegate);
 
     QCOMPARE(delegate->qmlUrl(), url);
@@ -268,9 +269,9 @@ void ServerTest::testShowGui()
     SessionDataMap *map = delegate->sessionData();
     QVERIFY(map);
     QCOMPARE(map->keys().count(), 3);
-    QCOMPARE(map->value("temperature"), "24°C");
-    QCOMPARE(map->value("icon"), "sunny");
-    QCOMPARE(map->value("otherproperty"), QVariant());
+    QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+    QCOMPARE(map->value(QStringLiteral("otherproperty")), QVariant());
 
     //try to get the delegate via the model, like qml will do and check they're the same
     DelegatesModel *dm = m_view->activeSkills()->data(m_view->activeSkills()->index(0, 0), ActiveSkillsModel::Delegates).value<DelegatesModel *>();

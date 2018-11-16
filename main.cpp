@@ -51,10 +51,10 @@ int main(int argc, char *argv[])
 
     QCommandLineParser parser;
 
-    auto widthOption = QCommandLineOption("width", "width", "width");
-    auto heightOption = QCommandLineOption("height", "height", "height");
-    auto hideTextInputOption = QCommandLineOption("hideTextInput");
-    auto dpiOption = QCommandLineOption("dpi", "dpi", "dpi");
+    auto widthOption = QCommandLineOption(QStringLiteral("width"), QStringLiteral("width"), QStringLiteral("width"));
+    auto heightOption = QCommandLineOption(QStringLiteral("height"), QStringLiteral("height"), QStringLiteral("height"));
+    auto hideTextInputOption = QCommandLineOption(QStringLiteral("hideTextInput"));
+    auto dpiOption = QCommandLineOption(QStringLiteral("dpi"), QStringLiteral("dpi"), QStringLiteral("dpi"));
     parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption});
 
     parser.process(arguments);
@@ -75,9 +75,9 @@ int main(int argc, char *argv[])
     int height = parser.value(heightOption).toInt();
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("deviceWidth", width);
-    engine.rootContext()->setContextProperty("deviceHeight", height);
-    engine.rootContext()->setContextProperty("hideTextInput", parser.isSet(hideTextInputOption));
+    engine.rootContext()->setContextProperty(QStringLiteral("deviceWidth"), width);
+    engine.rootContext()->setContextProperty(QStringLiteral("deviceHeight"), height);
+    engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
 
     qmlRegisterType<SpeechIntent>("org.kde.private.mycroftgui", 1, 0, "SpeechIntent");
 
