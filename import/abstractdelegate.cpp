@@ -53,4 +53,15 @@ QUrl AbstractDelegate::qmlUrl() const
     return m_qmlUrl;
 }
 
+void AbstractDelegate::setSkillId(const QString &skillId)
+{
+    Q_ASSERT(m_skillId.isEmpty());
+    m_skillId = skillId;
+}
+
+QString AbstractDelegate::skillId() const
+{
+    return m_skillId;
+}
+
 #include "moc_abstractdelegate.cpp"

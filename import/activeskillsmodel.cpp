@@ -19,6 +19,7 @@
 
 #include "activeskillsmodel.h"
 #include "delegatesmodel.h"
+#include "abstractdelegate.h"
 
 #include <QDebug>
 
@@ -77,21 +78,43 @@ AbstractDelegate *ActiveSkillsModel::delegateForSkill(const QString &skillId, co
     return model->delegateForUrl(qmlUrl);
 }
 
-void ActiveSkillsModel::insertDelegateForSkill(const QString &skillId, AbstractDelegate *delegate)
+void ActiveSkillsModel::insertDelegate(AbstractDelegate *delegate)
 {
-    if (!m_skills.contains(skillId)) {
+    if (!m_skills.contains(delegate->skillId())) {
         return;
     }
 
-    DelegatesModel *model = m_delegatesModels.value(skillId);
+    DelegatesModel *model = m_delegatesModels.value(delegate->skillId());
     if (!model) {
         model = new DelegatesModel(this);
-        m_delegatesModels[skillId] = model;
-        const int row = m_skills.indexOf(skillId);
+        m_delegatesModels[delegate->skillId()] = model;
+        const int row = m_skills.indexOf(delegate->skillId());
         emit dataChanged(index(row, 0), index(row, 0), {Delegates});
     }
 
     model->insertDelegate(delegate);
+}
+
+QList<AbstractDelegate *> ActiveSkillsModel::delegatesForSkill(const QString &skillId)
+{
+    QList<AbstractDelegate *> list;
+
+    if (!skillId.isEmpty() && !m_skills.contains(skillId)) {
+        return list;
+    }
+
+    if (skillId.isEmpty()) {
+        for (auto *model : m_delegatesModels.values()) {
+            list << model->delegates();
+        }
+        return list;
+    } else {
+        DelegatesModel *model = m_delegatesModels.value(skillId);
+        if (!model) {
+            return list;
+        }
+        return model->delegates();
+    }
 }
 
 bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)

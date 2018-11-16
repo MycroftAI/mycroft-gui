@@ -46,7 +46,6 @@ public:
 
     //API used only by AbstractSkillView during initialization, *NOT* QML
     //void setController(MycroftController *controller);
-    //void setSkillId();
     void setSessionData(SessionDataMap *data);
     SessionDataMap *sessionData() const;
 
@@ -56,12 +55,26 @@ public:
     void setQmlUrl(const QUrl &url);
     QUrl qmlUrl() const;
 
+    /**
+     * @internal skill id this delegate belongs to
+     */
+    void setSkillId(const QString &skillId);
+    QString skillId() const;
+
 Q_SIGNALS:
     /**
      * Emitted when the delegate asks to be the "current" in the view
      *TODO: maybe abuse focus instead?
      */
     void currentRequested();
+
+    /**
+     * Emitted when the server triggered an event.
+     * It is guaranteed the event will be either a system event or an event belonging to our skill, but never to another skill
+     * @param eventName the unique name for the event
+     * @param data the data for this event in JSon form
+     */
+    void event(const QString &eventName, const QVariantMap &data);
 
     //QML property notifiers
     void timeoutChanged();
@@ -74,6 +87,7 @@ private:
     QPointer<SessionDataMap> m_data;
 
     QUrl m_qmlUrl;
+    QString m_skillId;
 
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
 

@@ -1,6 +1,6 @@
 = EVENTS =
 {
-    "type": "mycroft.events.triggered",  OR "mycroft.events.eventname" where eventname is like "next" "previous" etc
+    "type": "mycroft.events.triggered"
     "namespace": "weather.mycroft"
     "event_name": "system.pick",
     "parameters": {"item": 3}

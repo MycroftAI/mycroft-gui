@@ -47,8 +47,22 @@ public:
      */
     QModelIndex skillIndex(const QString &skillId);
 
+    /**
+     * @returns the delegate if any that corresponds to a particular skill and QML url
+     */
     AbstractDelegate *delegateForSkill(const QString &skillId, const QUrl &qmlUrl) const;
-    void insertDelegateForSkill(const QString &skillId, AbstractDelegate *delegate);
+
+    /**
+     * Adds to the bookeeping a new delegate corresponding to a given skill
+     */
+    void insertDelegate(AbstractDelegate *delegate);
+
+    /**
+     * @returns all delegates existing for a given skill
+     * @param skillId the skill we are searching delegates for.
+     *                  If is an empty string all delegates will be returned.
+     */
+    QList<AbstractDelegate *> delegatesForSkill(const QString &skillId);
 
 //REIMPLEMENTED
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;

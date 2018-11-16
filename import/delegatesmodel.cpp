@@ -39,7 +39,7 @@ void DelegatesModel::insertDelegate(AbstractDelegate *delegate)
     if (m_delegates.contains(delegate) || m_delegateForUrl.contains(delegate->qmlUrl())) {
         return;
     }
-
+//TODO: manage delegate destruction by somebody else
     beginInsertRows(QModelIndex(), qMax(0, m_currentIndex), qMin(m_delegates.count(), m_currentIndex));
     int i = 0;
     m_delegates.insert(m_currentIndex, delegate);
@@ -64,6 +64,11 @@ void DelegatesModel::clear()
 AbstractDelegate *DelegatesModel::delegateForUrl(const QUrl &url)
 {
     return m_delegateForUrl.value(url);
+}
+
+QList<AbstractDelegate *> DelegatesModel::delegates() const
+{
+    return m_delegates;
 }
 
 bool DelegatesModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)

@@ -41,6 +41,7 @@ private Q_SLOTS:
     void testSessionData();
     void testChangeSessionData();
     void testShowGui();
+    void testEventsFromServer();
 
 private:
     //Client
@@ -262,7 +263,7 @@ void ServerTest::testShowGui()
 
     AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill(QStringLiteral("mycroft.weather"), url);
     QVERIFY(delegate);
-
+    QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
     QCOMPARE(delegate->qmlUrl(), url);
 
     //check the delegate has the proper data associated
@@ -278,6 +279,37 @@ void ServerTest::testShowGui()
     QVERIFY(dm);
     AbstractDelegate *delegate2 = dm->data(dm->index(0, 0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
     QCOMPARE(delegate, delegate2);
+}
+
+void ServerTest::testEventsFromServer()
+{
+    AbstractDelegate *delegate = m_view->activeSkills()->delegatesForSkill(QStringLiteral("mycroft.weather")).first();
+    QVERIFY(delegate);
+    QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
+
+    QSignalSpy eventSpy(delegate, &AbstractDelegate::event);
+
+    //An event of the weather skill
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.events.triggered\", \"namespace\": \"mycroft.weather\", \"event_name\": \"show_alert\", \"data\": {\"alert_name\": \"blizzard\", \"condition\": \"severe\"}}"));
+
+    eventSpy.wait();
+    QCOMPARE(eventSpy.count(), 1);
+    QCOMPARE(eventSpy.first().first(), QStringLiteral("show_alert"));
+    QCOMPARE(eventSpy.first()[1].value<QVariantMap>()[QStringLiteral("alert_name")], QStringLiteral("blizzard"));
+    QCOMPARE(eventSpy.first()[1].value<QVariantMap>()[QStringLiteral("condition")], QStringLiteral("severe"));
+
+    //A system event
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.events.triggered\", \"namespace\": \"system\", \"event_name\": \"system.next\", \"data\": {}}"));
+
+    eventSpy.wait();
+    QCOMPARE(eventSpy.count(), 2);
+    QCOMPARE(eventSpy[1].first(), QStringLiteral("system.next"));
+
+    //An event for the wiki skill: the weather one will never receive it
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.events.triggered\", \"namespace\": \"mycroft.wiki\", \"event_name\": \"new_data\", \"data\": {}}"));
+
+    eventSpy.wait(1000);
+    QCOMPARE(eventSpy.count(), 2);
 }
 
 QTEST_MAIN(ServerTest);

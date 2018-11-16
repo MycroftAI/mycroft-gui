@@ -340,10 +340,11 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 return;
             }
 
+            delegate->setSkillId(skillId);
             delegate->setQmlUrl(delegateUrl);
             delegate->setSessionData(sessionDataForSkill(skillId));
             delegateComponent.completeCreate();
-            m_activeSkillsModel->insertDelegateForSkill(skillId, delegate);
+            m_activeSkillsModel->insertDelegate(delegate);
             emit delegate->currentRequested();
         }
 
@@ -427,8 +428,31 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 //////EVENTS TODO
     // Action triggered from the server
     } else if (type == QLatin1String("mycroft.events.triggered")) {
-        //TODO: make it visible only from the current skill QML? maybe as a signel of the QQMLpropertyMap?
-//        emit eventTriggered(doc["event_id"].toString(), doc["parameters"].toVariant().toMap());
+        const QString skillOrSystem = doc[QStringLiteral("namespace")].toString();
+        if (skillOrSystem.isEmpty()) {
+            qWarning() << "No namespace provided for mycroft.events.triggered";
+            return;
+        }
+        // If it's a skill it must exist
+        if (skillOrSystem != QLatin1String("system") && !m_activeSkillsModel->skillIndex(skillOrSystem).isValid()) {
+            qWarning() << "Invalid skill id passed as namespace for mycroft.events.triggered:" << skillOrSystem;
+            return;
+        }
+
+        const QString eventName = doc[QStringLiteral("event_name")].toString();
+        if (eventName.isEmpty()) {
+            qWarning() << "No namespace provided for mycroft.events.triggered";
+            return;
+        }
+
+        // data can also be empty
+        const QVariantMap data = doc[QStringLiteral("data")].toVariant().toMap();
+
+        QList<AbstractDelegate *> delegates = m_activeSkillsModel->delegatesForSkill(skillOrSystem == QLatin1String("system") ? QString() : skillOrSystem);
+
+        for (auto *delegate : delegates) {
+            emit delegate->event(eventName, data);
+        }
     }
 }
 

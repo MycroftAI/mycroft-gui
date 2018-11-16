@@ -54,6 +54,11 @@ public:
      */
     AbstractDelegate *delegateForUrl(const QUrl &url);
 
+    /**
+     * @returns the complete delegate set
+     */
+    QList<AbstractDelegate *> delegates() const;
+
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
