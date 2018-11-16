@@ -72,8 +72,7 @@ private:
     QString m_id;
     QUrl m_url;
     QHash<QString, QQmlPropertyMap*> m_skillData;
-    //TODO: move it in activeskillsmodel
-    QHash<QString, QHash<QUrl, AbstractDelegate *> > m_guis;
+
     MycroftController *m_controller;
     QWebSocket *m_guiWebSocket;
     ActiveSkillsModel *m_activeSkillsModel;

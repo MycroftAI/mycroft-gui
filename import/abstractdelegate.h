@@ -55,6 +55,13 @@ public:
     QUrl qmlUrl() const;
 
 Q_SIGNALS:
+    /**
+     * Emitted when the delegate asks to be the "current" in the view
+     *TODO: maybe abuse focus instead?
+     */
+    void currentRequested();
+
+    //QML property notifiers
     void timeoutChanged();
     void leftPaddingChanged();
     void rightPaddingChanged();

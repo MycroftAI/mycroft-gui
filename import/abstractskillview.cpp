@@ -284,14 +284,10 @@ qWarning()<<message;
             return;
         }
 
-        AbstractDelegate *delegate = nullptr;
+        AbstractDelegate *delegate = m_activeSkillsModel->delegateForSkill(skillId, delegateUrl);
 
-        auto it = std::find_if(m_guis.constBegin(), m_guis.constEnd(), [&delegateUrl](const QHash<QUrl, AbstractDelegate*> &h) noexcept {
-            return h.contains(delegateUrl);
-        });
-        if (it != m_guis.constEnd()) {
-            delegate = it.value().value(delegateUrl);
-        //initialize a new delegate
+        if (delegate) {
+            emit delegate->currentRequested();
         } else {
             QQmlComponent delegateComponent(qmlEngine(this), delegateUrl, this);
             //TODO: separate context?
@@ -312,7 +308,8 @@ qWarning()<<message;
             delegate->setQmlUrl(delegateUrl);
             delegate->setSessionData(sessionDataForSkill(skillId));
             delegateComponent.completeCreate();
-            m_guis[skillId].insert(delegateUrl, delegate);
+            m_activeSkillsModel->insertDelegateForSkill(skillId, delegate);
+            emit delegate->currentRequested();
         }
 
         //TODO: change it to invoking a method on the gui object, to hide it from other skills
@@ -365,15 +362,6 @@ qWarning()<<message;
                 if (i != m_skillData.end()) {
                     i.value()->deleteLater();
                     m_skillData.erase(i);
-                }
-            }
-            {
-                auto i = m_guis.find(skillId);
-                if (i != m_guis.end()) {
-                    for (auto d : i.value().values()) {
-                        d->deleteLater();
-                    }
-                    m_guis.erase(i);
                 }
             }
         }
