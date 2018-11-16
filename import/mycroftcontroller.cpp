@@ -117,7 +117,17 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
 {
     auto doc = QJsonDocument::fromJson(message.toLatin1());
 
+    if (doc.isEmpty()) {
+        qWarning() << "Empty or invalid JSON message arrived on the gui socket:" << message;
+        return;
+    }
+
     auto type = doc["type"].toString();
+
+    if (type.isEmpty()) {
+        qWarning() << "Empty type in the JSON message on the gui socket";
+        return;
+    }
 
     //filter out the noise so we can print debug stuff later without drowning in noise
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {

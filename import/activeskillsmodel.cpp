@@ -56,6 +56,17 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
     endInsertRows();
 }
 
+QModelIndex ActiveSkillsModel::skillIndex(const QString &skillId)
+{
+    const int row = m_skills.indexOf(skillId);
+
+    if (row >= 0) {
+        return index(row, 0, QModelIndex());
+    }
+
+    return QModelIndex();
+}
+
 AbstractDelegate *ActiveSkillsModel::delegateForSkill(const QString &skillId, const QUrl &qmlUrl) const
 {
     DelegatesModel *model = m_delegatesModels.value(skillId);
@@ -68,10 +79,16 @@ AbstractDelegate *ActiveSkillsModel::delegateForSkill(const QString &skillId, co
 
 void ActiveSkillsModel::insertDelegateForSkill(const QString &skillId, AbstractDelegate *delegate)
 {
+    if (!m_skills.contains(skillId)) {
+        return;
+    }
+
     DelegatesModel *model = m_delegatesModels.value(skillId);
     if (!model) {
         model = new DelegatesModel(this);
         m_delegatesModels[skillId] = model;
+        const int row = m_skills.indexOf(skillId);
+        emit dataChanged(index(row, 0), index(row, 0), {Delegates});
     }
 
     model->insertDelegate(delegate);
@@ -145,8 +162,12 @@ QVariant ActiveSkillsModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    //TODO: other roles
-    return m_skills[row];
+    if (role == SkillId) {
+        return m_skills[row];
+    //Delegates
+    } else {
+        return QVariant::fromValue(m_delegatesModels.value(m_skills[row]));
+    }
 }
 
 QHash<int, QByteArray> ActiveSkillsModel::roleNames() const

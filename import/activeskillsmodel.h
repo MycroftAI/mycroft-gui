@@ -37,7 +37,15 @@ public:
     explicit ActiveSkillsModel(QObject *parent = nullptr);
     virtual ~ActiveSkillsModel();
 
+    /**
+     * Insert new skills in the model, at a given position
+     */
     void insertSkills(int position, const QStringList &skillList);
+
+    /**
+     * @returns the index for a skill, an invalid QModelIndex() if not found
+     */
+    QModelIndex skillIndex(const QString &skillId);
 
     AbstractDelegate *delegateForSkill(const QString &skillId, const QUrl &qmlUrl) const;
     void insertDelegateForSkill(const QString &skillId, AbstractDelegate *delegate);

@@ -152,11 +152,11 @@ ActiveSkillsModel *AbstractSkillView::activeSkills() const
 
 QQmlPropertyMap *AbstractSkillView::sessionDataForSkill(const QString &skillId)
 {
-    QQmlPropertyMap *map;
+    QQmlPropertyMap *map = nullptr;
 
     if (m_skillData.contains(skillId)) {
         map = m_skillData[skillId];
-    } else {
+    } else if (m_activeSkillsModel->skillIndex(skillId).isValid()) {
         map = new QQmlPropertyMap(this);
         m_skillData[skillId] = map;
     }
@@ -230,10 +230,20 @@ QStringList jsonModelToStringList(const QString &key, const QJsonValue &data)
 
 void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 {
-        auto doc = QJsonDocument::fromJson(message.toLatin1());
+    auto doc = QJsonDocument::fromJson(message.toUtf8());
+
+    if (doc.isEmpty()) {
+        qWarning() << "Empty or invalid JSON message arrived on the gui socket:" << message;
+        return;
+    }
 
     auto type = doc["type"].toString();
-qWarning()<<message;
+
+    if (type.isEmpty()) {
+        qWarning() << "Empty type in the JSON message on the gui socket";
+        return;
+    }
+
     //filter out the noise so we can print debug stuff later without drowning in noise
     if (type.startsWith("enclosure") || type.startsWith("mycroft-date")) {
         return;
@@ -243,26 +253,43 @@ qWarning()<<message;
 ///////////////SKILLDATA
     // The SkillData was updated by the server
     if (type == "mycroft.session.set") {
-        QVariantMap data = doc["data"].toVariant().toMap();
-//FIXME: remove "data"
-        QQmlPropertyMap *map = sessionDataForSkill(doc["namespace"].toString());
+        const QString skillId = doc["namespace"].toString();
+        const QVariantMap data = doc["data"].toVariant().toMap();
 
-        QVariantMap::const_iterator i;
+        if (skillId.isEmpty()) {
+            qWarning() << "Empty skill_id in mycroft.session.set";
+            return;
+        }
+        if (!m_activeSkillsModel->skillIndex(skillId).isValid()) {
+            qWarning() << "Invalid skill_id in mycroft.session.set:" << skillId;
+            return;
+        }
+        if (data.isEmpty()) {
+            qWarning() << "Empty dtata in mycroft.session.set";
+            return;
+        }
+
+        //we already checked, assume *map is valid
+        QQmlPropertyMap *map = sessionDataForSkill(skillId);
+         QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
             map->insert(i.key(), i.value());
         }
 
-    // The SkillData was updated by the server
+    // The SkillData was removed by the server
     } else if (type == "mycroft.session.delete") {
-//FIXME: remove "data"
         const QString skillId = doc["namespace"].toString();
         const QString property = doc["property"].toString();
         if (skillId.isEmpty()) {
-            qWarning() << "No skill id provided";
+            qWarning() << "No skill_id provided in mycroft.session.delete";
+            return;
+        }
+        if (!m_activeSkillsModel->skillIndex(skillId).isValid()) {
+            qWarning() << "Invalid skill_id in mycroft.session.set:" << skillId;
             return;
         }
         if (property.isEmpty()) {
-            qWarning() << "No property provided";
+            qWarning() << "No property provided in mycroft.session.delete";
             return;
         }
         QQmlPropertyMap *map = sessionDataForSkill(skillId);
@@ -289,9 +316,17 @@ qWarning()<<message;
         if (delegate) {
             emit delegate->currentRequested();
         } else {
-            QQmlComponent delegateComponent(qmlEngine(this), delegateUrl, this);
+            QQmlEngine *engine = qmlEngine(this);
+            QQmlContext *context = QQmlEngine::contextForObject(this);
+            //NOTE: this should happen only when running as autotest
+            //TODO: an ifdef?
+            if (!engine) {
+                engine = new QQmlEngine(this);
+                context = engine->rootContext();
+            }
+            QQmlComponent delegateComponent(engine, delegateUrl, this);
             //TODO: separate context?
-            QObject *guiObject = delegateComponent.beginCreate(QQmlEngine::contextForObject(this));
+            QObject *guiObject = delegateComponent.beginCreate(context);
             delegate = qobject_cast<AbstractDelegate *>(guiObject);
             if (delegateComponent.isError()) {
                 for (auto err : delegateComponent.errors()) {

@@ -59,13 +59,19 @@ public:
      */
     QString id() const;
 
+    /**
+     * @returns the property map that contains the data for a given skill,
+     * if no data is present for a skill, it gets created if and only if it's an active skill.
+     * @internal this is strictly for internal use only and must *NOT* be exposed to QML. used by the class itself and the autotests.
+     */
+    QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
+
 Q_SIGNALS:
     //socket stuff
     void statusChanged();
     void closed();
 
 private:
-    QQmlPropertyMap *sessionDataForSkill(const QString &skillId);
     void onGuiSocketMessageReceived(const QString &message);
 
     QTimer m_reconnectTimer;

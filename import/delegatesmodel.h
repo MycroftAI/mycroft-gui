@@ -66,5 +66,5 @@ Q_SIGNALS:
 private:
     QList<AbstractDelegate *> m_delegates;
     QHash<QUrl, AbstractDelegate *> m_delegateForUrl;
-    int m_currentIndex;
+    int m_currentIndex = 0;
 };
