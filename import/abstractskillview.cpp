@@ -37,7 +37,6 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
       m_controller(MycroftController::instance()),
       m_id(QUuid::createUuid().toString())
 {
-    qmlRegisterType<ActiveSkillsModel>();
     m_activeSkillsModel = new ActiveSkillsModel(this);
 
     m_guiWebSocket = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);

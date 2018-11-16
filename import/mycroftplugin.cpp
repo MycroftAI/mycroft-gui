@@ -26,6 +26,8 @@
 #include "filereader.h"
 #include "abstractdelegate.h"
 #include "abstractskillview.h"
+#include "activeskillsmodel.h"
+#include "delegatesmodel.h"
 
 #include <QQmlEngine>
 #include <QQmlContext>
@@ -57,7 +59,6 @@ static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine
 
 void MycroftPlugin::registerTypes(const char *uri)
 {
-    //TODO: org.kde.mycroft?
     Q_ASSERT(uri == QLatin1String("Mycroft"));
 
     qmlRegisterSingletonType<MycroftController>(uri, 1, 0, "MycroftController", mycroftControllerSingletonProvider);
@@ -65,6 +66,8 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
     qmlRegisterType<AbstractSkillView>(uri, 1, 0, "AbstractSkillView");
     qmlRegisterType<AbstractDelegate>(uri, 1, 0, "AbstractDelegate");
+    qmlRegisterUncreatableType<ActiveSkillsModel>(uri, 1, 0, "ActiveSkillsModel", "You cannot instantiate items of type ActiveSkillsModel");
+    qmlRegisterUncreatableType<DelegatesModel>(uri, 1, 0, "DelegatesModel", "You cannot instantiate items of type DelegatesModel");
 
     //use this only when all qml files are registered by the plugin
    // qmlProtectModule(uri, 1);

@@ -25,7 +25,6 @@
 ActiveSkillsModel::ActiveSkillsModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-
 }
 
 ActiveSkillsModel::~ActiveSkillsModel()
