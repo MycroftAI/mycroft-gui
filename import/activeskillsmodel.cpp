@@ -57,6 +57,27 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
     endInsertRows();
 }
 
+AbstractDelegate *ActiveSkillsModel::delegateForSkill(const QString &skillId, const QUrl &qmlUrl) const
+{
+    DelegatesModel *model = m_delegatesModels.value(skillId);
+    if (!model) {
+        return nullptr;
+    }
+
+    return model->delegateForUrl(qmlUrl);
+}
+
+void ActiveSkillsModel::insertDelegateForSkill(const QString &skillId, AbstractDelegate *delegate)
+{
+    DelegatesModel *model = m_delegatesModels.value(skillId);
+    if (!model) {
+        model = new DelegatesModel(this);
+        m_delegatesModels[skillId] = model;
+    }
+
+    model->insertDelegate(delegate);
+}
+
 bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
 {
     if (sourceParent.isValid() || destinationParent.isValid()) {
@@ -94,6 +115,13 @@ bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent
     }
 
     beginRemoveRows(parent, row, row + count - 1);
+    for (auto it = m_skills.begin() + row; it < m_skills.begin() + row + count; ++it) {
+        DelegatesModel *model = m_delegatesModels.value(*it);
+        if (model) {
+            model->deleteLater();
+            m_delegatesModels.remove(*it);
+        }
+    }
     m_skills.erase(m_skills.begin() + row, m_skills.begin() + row + count);
     endRemoveRows();
 }

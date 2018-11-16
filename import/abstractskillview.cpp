@@ -273,7 +273,6 @@ qWarning()<<message;
 //////SHOWGUI
     // The Skill from the server asked to show its gui
     } else if (type == "mycroft.gui.show") {
-        //FIXME: KILL "data"
         const QString skillId = doc["namespace"].toString();
         const QUrl delegateUrl = doc["gui_url"].toString();
 
@@ -311,6 +310,7 @@ qWarning()<<message;
                 return;
             }
 
+            delegate->setQmlUrl(delegateUrl);
             delegate->setSessionData(sessionDataForSkill(skillId));
             delegateComponent.completeCreate();
             m_guis[skillId].insert(delegateUrl, delegate);

@@ -42,4 +42,15 @@ QQmlPropertyMap *AbstractDelegate::sessionData() const
     return m_data;
 }
 
+void AbstractDelegate::setQmlUrl(const QUrl &url)
+{
+    Q_ASSERT(m_qmlUrl.isEmpty());
+    m_qmlUrl = url;
+}
+
+QUrl AbstractDelegate::qmlUrl() const
+{
+    return m_qmlUrl;
+}
+
 #include "moc_abstractdelegate.cpp"

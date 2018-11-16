@@ -34,17 +34,36 @@ DelegatesModel::~DelegatesModel()
     //TODO: delete everything?
 }
 
-void DelegatesModel::insertDelegate(int position, AbstractDelegate *delegate)
+void DelegatesModel::insertDelegate(AbstractDelegate *delegate)
 {
-    if (m_delegates.contains(delegate)) {
+    if (m_delegates.contains(delegate) || m_delegateForUrl.contains(delegate->qmlUrl())) {
         return;
     }
 
-    beginInsertRows(QModelIndex(), qMax(0, position), qMin(m_delegates.count(), position));
+    beginInsertRows(QModelIndex(), qMax(0, m_currentIndex), qMin(m_delegates.count(), m_currentIndex));
     int i = 0;
-    m_delegates.insert(position, delegate);
+    m_delegates.insert(m_currentIndex, delegate);
+    m_delegateForUrl.insert(delegate->qmlUrl(), delegate);
 
     endInsertRows();
+}
+
+void DelegatesModel::clear()
+{
+    beginResetModel();
+    //TODO: how is the ownership? should we delete them at all or should be QML?
+    //if we delete them, after a timeout to give it time to animate?
+    for (auto *delegate : m_delegates) {
+        delegate->deleteLater();
+    }
+    m_delegates.clear();
+    m_delegateForUrl.clear();
+    endResetModel();
+}
+
+AbstractDelegate *DelegatesModel::delegateForUrl(const QUrl &url)
+{
+    return m_delegateForUrl.value(url);
 }
 
 bool DelegatesModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
@@ -84,7 +103,16 @@ bool DelegatesModel::removeRows(int row, int count, const QModelIndex &parent)
     }
 
     beginRemoveRows(parent, row, row + count - 1);
+    QList<AbstractDelegate *> toDelete;
+    std::copy(m_delegates.begin() + row, m_delegates.begin() + row + count,
+              std::back_inserter(toDelete));
     m_delegates.erase(m_delegates.begin() + row, m_delegates.begin() + row + count);
+    //TODO: how is the ownership? should we delete them at all or should be QML?
+    //if we delete them, after a timeout to give it time to animate?
+    for (auto *delegate : toDelete) {
+        m_delegateForUrl.remove(delegate->qmlUrl());
+        delegate->deleteLater();
+    }
     endRemoveRows();
 }
 

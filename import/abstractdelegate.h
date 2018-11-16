@@ -42,11 +42,17 @@ public:
     AbstractDelegate(QQuickItem *parent = nullptr);
     ~AbstractDelegate();
 
-    //API used only by MycroftController, *NOT* QML
+    //API used only by AbstractSkillView during initialization, *NOT* QML
     //void setController(MycroftController *controller);
     //void setSkillId();
     void setSessionData(QQmlPropertyMap *data);
     QQmlPropertyMap *sessionData() const;
+
+    /**
+     * INTERNAL: Url of the qml file that generated this instance
+     */
+    void setQmlUrl(const QUrl &url);
+    QUrl qmlUrl() const;
 
 Q_SIGNALS:
     void timeoutChanged();
@@ -57,6 +63,8 @@ Q_SIGNALS:
 
 private:
     QPointer<QQmlPropertyMap> m_data;
+
+    QUrl m_qmlUrl;
 
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
 

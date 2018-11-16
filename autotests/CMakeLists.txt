@@ -8,6 +8,7 @@ ecm_add_test(
   ${CMAKE_SOURCE_DIR}/import/abstractdelegate.cpp
   ${CMAKE_SOURCE_DIR}/import/mycroftcontroller.cpp
   ${CMAKE_SOURCE_DIR}/import/activeskillsmodel.cpp
+  ${CMAKE_SOURCE_DIR}/import/delegatesmodel.cpp
   ${CMAKE_SOURCE_DIR}/import/globalsettings.cpp
   ${CMAKE_SOURCE_DIR}/import/abstractskillview.cpp
 

@@ -20,12 +20,15 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <QHash>
+#include <QUrl>
 
 class AbstractDelegate;
 
 class DelegatesModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int currentIndex MEMBER m_currentIndex NOTIFY currentIndexChanged)
 
 public:
     enum Roles {
@@ -35,7 +38,21 @@ public:
     explicit DelegatesModel(QObject *parent = nullptr);
     virtual ~DelegatesModel();
 
-    void insertDelegate(int position, AbstractDelegate *delegate);
+    /**
+     * Insert a delegate after currentIndex
+     * TODO: more fine grained control on position?
+     */
+    void insertDelegate(AbstractDelegate *delegate);
+
+    /**
+     * clears the whole model
+     */
+    void clear();
+
+    /**
+     * @returns the delegate generated with the given qml file url, if any
+     */
+    AbstractDelegate *delegateForUrl(const QUrl &url);
 
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
@@ -43,6 +60,11 @@ public:
     QVariant data(const QModelIndex &index, int role = DelegateUi) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+Q_SIGNALS:
+    void currentIndexChanged();
+
 private:
     QList<AbstractDelegate *> m_delegates;
+    QHash<QUrl, AbstractDelegate *> m_delegateForUrl;
+    int m_currentIndex;
 };

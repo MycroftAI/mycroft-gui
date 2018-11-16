@@ -39,8 +39,8 @@ public:
 
     void insertSkills(int position, const QStringList &skillList);
 
-    AbstractDelegate *delegateForSkill(const QString &skillId, const QString &qmlUrl) const;
-    void insertDelegateForSkill(int position, AbstractDelegate *delegate);
+    AbstractDelegate *delegateForSkill(const QString &skillId, const QUrl &qmlUrl) const;
+    void insertDelegateForSkill(const QString &skillId, AbstractDelegate *delegate);
 
 //REIMPLEMENTED
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
@@ -52,7 +52,7 @@ public:
 private:
     QList<QString> m_skills;
     //TODO
-    QHash<QString, DelegatesModel*> m_guis;
+    QHash<QString, DelegatesModel*> m_delegatesModels;
 };
 
 
