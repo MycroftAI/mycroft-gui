@@ -40,18 +40,29 @@ Models are for both skill data and active skills, distinction is just between "n
 {
     "type": "mycroft.session.list.insert",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "property": "forecast" //the key of the main data map this list in contained into
     "position": 2
     "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...]
 }
 Values is an ordered dict, for a shopping cart it would need multiple roles like product name, price, image
 
-== Updates items starting at the given position, as many items as there are in the array ==
+== Updates item values starting at the given position, as many items as there are in the array ==
 {
     "type": "mycroft.session.list.update",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
     "property": "forecast" //in the future this can become a path if we want lists of lists
     "position": 2
     "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...]
+}
+
+== Moves items within the list ==
+{
+    "type": "mycroft.session.list.move",
+    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "property": "forecast"
+    "from": 2
+    "to": 5
+    "items_number": 2 //optional in case we want to move a big chunk of list at once
 }
 
 == Removes items from the list ==

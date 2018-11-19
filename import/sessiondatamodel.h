@@ -37,6 +37,13 @@ public:
     void insertData(int position, const QList<QVariantMap> &dataList);
 
     /**
+     * update the value of items from position to dataList.count()
+     * for each key contained in dataList.
+     * keys not present will not be updated
+     */
+    void updateData(int position, const QList<QVariantMap> &dataList);
+
+    /**
      * clears the whole model
      */
     void clear();

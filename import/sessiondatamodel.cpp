@@ -47,11 +47,35 @@ void SessionDataModel::insertData(int position, const QList<QVariantMap> &dataLi
 
     beginInsertRows(QModelIndex(), qMax(0, position), qMin(m_data.count(), position+ dataList.count() - 1));
     int i = 0;
-    for (const auto &skillId : dataList) {
-        m_data.insert(position + i, skillId);
+    for (const auto &item : dataList) {
+        m_data.insert(position + i, item);
         ++i;
     }
     endInsertRows();
+}
+
+void SessionDataModel::updateData(int position, const QList<QVariantMap> &dataList)
+{
+    if (dataList.isEmpty()) {
+        return;
+    }
+    //too much rows to update, we don't have enough
+    if (m_data.count() - position < dataList.count()) {
+        return;
+    }
+
+    QSet<int> roles;
+
+    int i = 0;
+    for (auto it = m_data.begin() + position; it < m_data.begin() + position + dataList.count(); ++it) {
+        const QVariantMap newValues = dataList[i];
+        for (auto newIt = newValues.begin(); newIt != newValues.end(); ++newIt) {
+            (*it)[newIt.key()] = newIt.value();
+            roles.insert(m_roles.key(newIt.key().toUtf8()));
+        }
+        ++i;
+    }
+    emit dataChanged(index(position, 0), index(position + dataList.length() - 1, 0), roles.values().toVector());
 }
 
 void SessionDataModel::clear()
@@ -80,7 +104,7 @@ bool SessionDataModel::moveRows(const QModelIndex &sourceParent, int sourceRow, 
 
     if (sourceRow < destinationChild) {
         for (int i = count - 1; i >= 0; --i) {
-            m_data.move(sourceRow + i, destinationChild + i);
+            m_data.move(sourceRow + i, destinationChild + i - 1);
         }
     } else {
         for (int i = 0; i < count; ++i) {
@@ -93,7 +117,7 @@ bool SessionDataModel::moveRows(const QModelIndex &sourceParent, int sourceRow, 
 
 bool SessionDataModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (row <= 0 || count <= 0 || row + count >= m_data.count() || parent.isValid()) {
+    if (row <= 0 || count <= 0 || row + count > m_data.count() || parent.isValid()) {
         return false;
     }
 

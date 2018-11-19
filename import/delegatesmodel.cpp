@@ -87,7 +87,7 @@ bool DelegatesModel::moveRows(const QModelIndex &sourceParent, int sourceRow, in
 
     if (sourceRow < destinationChild) {
         for (int i = count - 1; i >= 0; --i) {
-            m_delegates.move(sourceRow + i, destinationChild + i);
+            m_delegates.move(sourceRow + i, destinationChild + i - 1);
         }
     } else {
         for (int i = 0; i < count; ++i) {
@@ -100,7 +100,7 @@ bool DelegatesModel::moveRows(const QModelIndex &sourceParent, int sourceRow, in
 
 bool DelegatesModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (row <= 0 || count <= 0 || row + count >= m_delegates.count() || parent.isValid()) {
+    if (row <= 0 || count <= 0 || row + count > m_delegates.count() || parent.isValid()) {
         return false;
     }
 

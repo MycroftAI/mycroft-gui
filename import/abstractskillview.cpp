@@ -236,7 +236,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
     qDebug() << "gui message type" << type;
 
-///////////////SKILLDATA
+//BEGIN SKILLDATA
     // The SkillData was updated by the server
     if (type == QLatin1String("mycroft.session.set")) {
         const QString skillId = doc[QStringLiteral("namespace")].toString();
@@ -290,7 +290,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             return;
         }
         if (!m_activeSkillsModel->skillIndex(skillId).isValid()) {
-            qWarning() << "Invalid skill_id in mycroft.session.set:" << skillId;
+            qWarning() << "Invalid skill_id in mycroft.session.delete:" << skillId;
             return;
         }
         if (property.isEmpty()) {
@@ -298,10 +298,16 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             return;
         }
         SessionDataMap *map = sessionDataForSkill(skillId);
+        SessionDataModel *dm = map->value(property).value<SessionDataModel *>();
         map->clearAndNotify(property);
+        //a model will need to be manually deleted
+        if (dm) {
+            dm->deleteLater();
+        }
+//END SKILLDATA
 
 
-//////SHOWGUI
+//BEGIN SHOWGUI
     // The Skill from the server asked to show its gui
     } else if (type == QLatin1String("mycroft.gui.show")) {
         const QString skillId = doc[QStringLiteral("namespace")].toString();
@@ -352,27 +358,23 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             m_activeSkillsModel->insertDelegate(delegate);
             emit delegate->currentRequested();
         }
-
-        //TODO: change it to invoking a method on the gui object, to hide it from other skills
-//        emit skillGuiCreated(skillId, guiItem);
+//END SHOWGUI
 
 
-/////////////ACTIVESKILLS
-
+//BEGIN ACTIVESKILLS
     // Insert new active skill
-    //TODO: remove data
     } else if (type == QLatin1String("mycroft.session.list.insert") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
         const int position = doc[QStringLiteral("position")].toInt();
 
         if (position < 0 || position > m_activeSkillsModel->rowCount()) {
-            qWarning() << "Invalid position in mycroft.session.insert";
+            qWarning() << "Error: Invalid position in mycroft.session.list.insert of mycroft.system.active_skills";
             return;
         }
 
         const QStringList skillList = jsonModelToStringList(QStringLiteral("skill_id"), doc[QStringLiteral("data")]);
 
         if (skillList.isEmpty()) {
-            qWarning() << "Error: no valid skills received in mycroft.session.insert";
+            qWarning() << "Error: no valid skills received in mycroft.session.list.insert of mycroft.system.active_skills";
             return;
         }
 
@@ -385,11 +387,11 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
         if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
-            qWarning() << "Invalid position";
+            qWarning() << "Error: Invalid position in mycroft.session.list.remove of mycroft.system.active_skills";
             return;
         }
-        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->rowCount() - position - 1) {
-            qWarning() << "Invalid items_number";
+        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->rowCount() - position) {
+            qWarning() << "Error: Invalid items_number in mycroft.session.list.remove of mycroft.system.active_skills";
             return;
         }
 
@@ -409,28 +411,179 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         m_activeSkillsModel->removeRows(position, itemsNumber);
 
     // Active skill moved
-    } else if (type == QLatin1String("mycroft.session.list.move")) {
+    } else if (type == QLatin1String("mycroft.session.list.move") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
         const int from = doc[QStringLiteral("from")].toInt();
         const int to = doc[QStringLiteral("to")].toInt();
         const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
         if (from < 0 || from > m_activeSkillsModel->rowCount() - 1) {
-            qWarning() << "Invalid from position";
+            qWarning() << "Error: Invalid from position in mycroft.session.list.move of mycroft.system.active_skills";
             return;
         }
         if (to < 0 || to > m_activeSkillsModel->rowCount() - 1) {
-            qWarning() << "Invalid to position";
+            qWarning() << "Error: Invalid to position in mycroft.session.list.move of mycroft.system.active_skills";
             return;
         }
         if (itemsNumber <= 0 || itemsNumber > m_activeSkillsModel->rowCount() - from) {
-            qWarning() << "Invalid items_number";
+            qWarning() << "Error: Invalid items_number in mycroft.session.list.move of mycroft.system.active_skills";
             return;
         }
         m_activeSkillsModel->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
+//END ACTIVESKILLS
+
+//TODO: manage nested models?
+//BEGIN DATA MODELS
+    // Insert new items in an existing list, or creates one under "property"
+    } else if (type == QLatin1String("mycroft.session.list.insert")) {
+        const QString skillId = doc[QStringLiteral("namespace")].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill_id provided in mycroft.session.list.insert";
+            return;
+        }
+        const QString &property = doc[QStringLiteral("property")].toString();
+        if (property.isEmpty()) {
+            qWarning() << "Error: Invalid or empty \"property\" in mycroft.session.list.insert";
+            return;
+        }
+
+        SessionDataMap *map = sessionDataForSkill(skillId);
+        SessionDataModel *dm = map->value(property).value<SessionDataModel *>();
+
+        if (!dm) {
+            dm = new SessionDataModel(map);
+            map->insertAndNotify(property, QVariant::fromValue(dm));
+        }
+
+        const int position = doc[QStringLiteral("position")].toInt();
+
+        if (position < 0 || position > dm->rowCount()) {
+            qWarning() << "Error: Invalid position in mycroft.session.list.insert";
+            return;
+        }
+
+        QList<QVariantMap> list = variantListToOrderedMap(doc[QStringLiteral("data")].toVariant().value<QVariantList>());
+        
+        if (list.isEmpty()) {
+            qWarning() << "Error: invalid data in mycroft.session.list.insert:" << doc[QStringLiteral("data")];
+            return;
+        }
+
+        dm->insertData(position, list);
+
+    // Updates the value of items in an existing list, Error if under "property" no list exists
+    } else if (type == QLatin1String("mycroft.session.list.update")) {
+        const QString skillId = doc[QStringLiteral("namespace")].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill_id provided in mycroft.session.list.update";
+            return;
+        }
+        const QString &property = doc[QStringLiteral("property")].toString();
+        if (property.isEmpty()) {
+            qWarning() << "Error: Invalid or empty \"property\" in mycroft.session.list.update";
+            return;
+        }
+
+        SessionDataMap *map = sessionDataForSkill(skillId);
+        SessionDataModel *dm = map->value(property).value<SessionDataModel *>();
+
+        if (!dm) {
+            qWarning() << "Error: no list model existing under property" << property << "in mycroft.session.list.update";
+            return;
+        }
+
+        const int position = doc[QStringLiteral("position")].toInt();
+
+        if (position < 0 || position > m_activeSkillsModel->rowCount()) {
+            qWarning() << "Error: Invalid position in mycroft.session.list.update";
+            return;
+        }
+
+        QList<QVariantMap> list = variantListToOrderedMap(doc[QStringLiteral("data")].toVariant().value<QVariantList>());
+        
+        if (list.isEmpty()) {
+            qWarning() << "Error: invalid data in mycroft.session.list.insert:" << doc[QStringLiteral("data")];
+            return;
+        }
+
+        dm->updateData(position, list);
+
+    // Moves items within an existing list, Error if under "property" no list exists
+    } else if (type == QLatin1String("mycroft.session.list.move")) {
+        const QString skillId = doc[QStringLiteral("namespace")].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill_id provided in mycroft.session.list.update";
+            return;
+        }
+        const QString &property = doc[QStringLiteral("property")].toString();
+        if (property.isEmpty()) {
+            qWarning() << "Error: Invalid or empty \"property\" in mycroft.session.list.move";
+            return;
+        }
+
+        SessionDataMap *map = sessionDataForSkill(skillId);
+        SessionDataModel *dm = map->value(property).value<SessionDataModel *>();
+
+        if (!dm) {
+            qWarning() << "Error: no list model existing under property" << property << "in mycroft.session.list.move";
+            return;
+        }
+
+        const int from = doc[QStringLiteral("from")].toInt();
+        const int to = doc[QStringLiteral("to")].toInt();
+        const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
+
+        if (from < 0 || from > dm->rowCount() - 1) {
+            qWarning() << "Error: Invalid from position in mycroft.session.list.move";
+            return;
+        }
+        if (to < 0 || to > dm->rowCount() - 1) {
+            qWarning() << "Error: Invalid to position in mycroft.session.list.move";
+            return;
+        }
+        if (itemsNumber <= 0 || itemsNumber > dm->rowCount() - from) {
+            qWarning() << "Error: Invalid items_number in mycroft.session.list.move";
+            return;
+        }
+        dm->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
+
+    // Removes items from an existing list, Error if under "property" no list exists
+    } else if (type == QLatin1String("mycroft.session.list.remove")) {
+        const QString skillId = doc[QStringLiteral("namespace")].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill_id provided in mycroft.session.list.update";
+            return;
+        }
+        const QString &property = doc[QStringLiteral("property")].toString();
+        if (property.isEmpty()) {
+            qWarning() << "Error: Invalid or empty \"property\" in mycroft.session.list.move";
+            return;
+        }
+
+        SessionDataMap *map = sessionDataForSkill(skillId);
+        SessionDataModel *dm = map->value(property).value<SessionDataModel *>();
+
+        if (!dm) {
+            qWarning() << "Error: no list model existing under property" << property << "in mycroft.session.list.move";
+            return;
+        }
+
+        const int position = doc[QStringLiteral("position")].toInt();
+        const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
+
+        if (position < 0 || position > dm->rowCount() - 1) {
+            qWarning() << "Error: Invalid position in mycroft.session.list.remove of mycroft.system.active_skills";
+            return;
+        }
+        if (itemsNumber < 0 || itemsNumber > dm->rowCount() - position) {
+            qWarning() << "Error: Invalid items_number in mycroft.session.list.remove of mycroft.system.active_skills";
+            return;
+        }
+
+        dm->removeRows(position, itemsNumber);
+//END DATA MODELS
 
 
-
-//////EVENTS TODO
+//BEGIN EVENTS
     // Action triggered from the server
     } else if (type == QLatin1String("mycroft.events.triggered")) {
         const QString skillOrSystem = doc[QStringLiteral("namespace")].toString();
@@ -459,6 +612,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             emit delegate->event(eventName, data);
         }
     }
+//END EVENTS
 }
 
 #include "moc_abstractskillview.cpp"
