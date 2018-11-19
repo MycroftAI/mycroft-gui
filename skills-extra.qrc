@@ -1,0 +1,146 @@
+<RCC>
+    <qresource prefix="/skills/ui/skills">
+
+        <file alias="mycroft-spelling/Main.qml">skills-extra/mycroft-spelling/Main.qml</file>
+
+        <file alias="soundcloud-audio-player/Main.qml">skills-extra/soundcloud-audio-player/Main.qml</file>
+        <file alias="soundcloud-audio-player/images/soundcloud.png">skills-extra/soundcloud-audio-player/images/soundcloud.png</file>
+
+        <file alias="shopping-demo/Main.qml">skills-extra/shopping-demo/Main.qml</file>
+        <file alias="shopping-demo/cart/Main.qml">skills-extra/shopping-demo/cart/Main.qml</file>
+        <file alias="shopping-demo/cart/images/removeitem.svg">skills-extra/shopping-demo/cart/images/removeitem.svg</file>
+        <file alias="shopping-demo/checkout/Main.qml">skills-extra/shopping-demo/checkout/Main.qml</file>
+        <file alias="shopping-demo/payment/Main.qml">skills-extra/shopping-demo/payment/Main.qml</file>
+
+        <file alias="skill-samegame/Main.qml">skills-extra/skill-samegame/Main.qml</file>
+        <file alias="skill-samegame/content/Block.qml">skills-extra/skill-samegame/content/Block.qml</file>
+        <file alias="skill-samegame/content/BlockEmitter.qml">skills-extra/skill-samegame/content/BlockEmitter.qml</file>
+        <file alias="skill-samegame/content/Button.qml">skills-extra/skill-samegame/content/Button.qml</file>
+        <file alias="skill-samegame/content/GameArea.qml">skills-extra/skill-samegame/content/GameArea.qml</file>
+        <file alias="skill-samegame/content/LogoAnimation.qml">skills-extra/skill-samegame/content/LogoAnimation.qml</file>
+        <file alias="skill-samegame/content/MenuEmitter.qml">skills-extra/skill-samegame/content/MenuEmitter.qml</file>
+        <file alias="skill-samegame/content/PaintEmitter.qml">skills-extra/skill-samegame/content/PaintEmitter.qml</file>
+        <file alias="skill-samegame/content/PrimaryPack.qml">skills-extra/skill-samegame/content/PrimaryPack.qml</file>
+        <file alias="skill-samegame/content/PuzzleBlock.qml">skills-extra/skill-samegame/content/PuzzleBlock.qml</file>
+        <file alias="skill-samegame/content/SamegameText.qml">skills-extra/skill-samegame/content/SamegameText.qml</file>
+        <file alias="skill-samegame/content/Settings.qml">skills-extra/skill-samegame/content/Settings.qml</file>
+        <file alias="skill-samegame/content/SimpleBlock.qml">skills-extra/skill-samegame/content/SimpleBlock.qml</file>
+        <file alias="skill-samegame/content/SmokeText.qml">skills-extra/skill-samegame/content/SmokeText.qml</file>
+        <file alias="skill-samegame/content/gfx/background-puzzle.png">skills-extra/skill-samegame/content/gfx/background-puzzle.png</file>
+        <file alias="skill-samegame/content/gfx/background.png">skills-extra/skill-samegame/content/gfx/background.png</file>
+        <file alias="skill-samegame/content/gfx/bar.png">skills-extra/skill-samegame/content/gfx/bar.png</file>
+        <file alias="skill-samegame/content/gfx/blue-puzzle.png">skills-extra/skill-samegame/content/gfx/blue-puzzle.png</file>
+        <file alias="skill-samegame/content/gfx/blue.png">skills-extra/skill-samegame/content/gfx/blue.png</file>
+        <file alias="skill-samegame/content/gfx/bubble-highscore.png">skills-extra/skill-samegame/content/gfx/bubble-highscore.png</file>
+        <file alias="skill-samegame/content/gfx/bubble-puzzle.png">skills-extra/skill-samegame/content/gfx/bubble-puzzle.png</file>
+        <file alias="skill-samegame/content/gfx/but-game-1.png">skills-extra/skill-samegame/content/gfx/but-game-1.png</file>
+        <file alias="skill-samegame/content/gfx/but-game-2.png">skills-extra/skill-samegame/content/gfx/but-game-2.png</file>
+        <file alias="skill-samegame/content/gfx/but-game-3.png">skills-extra/skill-samegame/content/gfx/but-game-3.png</file>
+        <file alias="skill-samegame/content/gfx/but-game-4.png">skills-extra/skill-samegame/content/gfx/but-game-4.png</file>
+        <file alias="skill-samegame/content/gfx/but-game-new.png">skills-extra/skill-samegame/content/gfx/but-game-new.png</file>
+        <file alias="skill-samegame/content/gfx/but-menu.png">skills-extra/skill-samegame/content/gfx/but-menu.png</file>
+        <file alias="skill-samegame/content/gfx/but-puzzle-next.png">skills-extra/skill-samegame/content/gfx/but-puzzle-next.png</file>
+        <file alias="skill-samegame/content/gfx/but-quit.png">skills-extra/skill-samegame/content/gfx/but-quit.png</file>
+        <file alias="skill-samegame/content/gfx/green-puzzle.png">skills-extra/skill-samegame/content/gfx/green-puzzle.png</file>
+        <file alias="skill-samegame/content/gfx/green.png">skills-extra/skill-samegame/content/gfx/green.png</file>
+        <file alias="skill-samegame/content/gfx/icon-fail.png">skills-extra/skill-samegame/content/gfx/icon-fail.png</file>
+        <file alias="skill-samegame/content/gfx/icon-ok.png">skills-extra/skill-samegame/content/gfx/icon-ok.png</file>
+        <file alias="skill-samegame/content/gfx/icon-time.png">skills-extra/skill-samegame/content/gfx/icon-time.png</file>
+        <file alias="skill-samegame/content/gfx/logo-a.png">skills-extra/skill-samegame/content/gfx/logo-a.png</file>
+        <file alias="skill-samegame/content/gfx/logo-e.png">skills-extra/skill-samegame/content/gfx/logo-e.png</file>
+        <file alias="skill-samegame/content/gfx/logo-g.png">skills-extra/skill-samegame/content/gfx/logo-g.png</file>
+        <file alias="skill-samegame/content/gfx/logo-m.png">skills-extra/skill-samegame/content/gfx/logo-m.png</file>
+        <file alias="skill-samegame/content/gfx/logo-s.png">skills-extra/skill-samegame/content/gfx/logo-s.png</file>
+        <file alias="skill-samegame/content/gfx/logo.png">skills-extra/skill-samegame/content/gfx/logo.png</file>
+        <file alias="skill-samegame/content/gfx/particle-brick.png">skills-extra/skill-samegame/content/gfx/particle-brick.png</file>
+        <file alias="skill-samegame/content/gfx/particle-paint.png">skills-extra/skill-samegame/content/gfx/particle-paint.png</file>
+        <file alias="skill-samegame/content/gfx/particle-smoke.png">skills-extra/skill-samegame/content/gfx/particle-smoke.png</file>
+        <file alias="skill-samegame/content/gfx/red-puzzle.png">skills-extra/skill-samegame/content/gfx/red-puzzle.png</file>
+        <file alias="skill-samegame/content/gfx/red.png">skills-extra/skill-samegame/content/gfx/red.png</file>
+        <file alias="skill-samegame/content/gfx/text-highscore-new.png">skills-extra/skill-samegame/content/gfx/text-highscore-new.png</file>
+        <file alias="skill-samegame/content/gfx/text-highscore.png">skills-extra/skill-samegame/content/gfx/text-highscore.png</file>
+        <file alias="skill-samegame/content/gfx/text-no-winner.png">skills-extra/skill-samegame/content/gfx/text-no-winner.png</file>
+        <file alias="skill-samegame/content/gfx/text-p1-go.png">skills-extra/skill-samegame/content/gfx/text-p1-go.png</file>
+        <file alias="skill-samegame/content/gfx/text-p1-won.png">skills-extra/skill-samegame/content/gfx/text-p1-won.png</file>
+        <file alias="skill-samegame/content/gfx/text-p1.png">skills-extra/skill-samegame/content/gfx/text-p1.png</file>
+        <file alias="skill-samegame/content/gfx/text-p2-go.png">skills-extra/skill-samegame/content/gfx/text-p2-go.png</file>
+        <file alias="skill-samegame/content/gfx/text-p2-won.png">skills-extra/skill-samegame/content/gfx/text-p2-won.png</file>
+        <file alias="skill-samegame/content/gfx/text-p2.png">skills-extra/skill-samegame/content/gfx/text-p2.png</file>
+        <file alias="skill-samegame/content/gfx/yellow-puzzle.png">skills-extra/skill-samegame/content/gfx/yellow-puzzle.png</file>
+        <file alias="skill-samegame/content/gfx/yellow.png">skills-extra/skill-samegame/content/gfx/yellow.png</file>
+        <file alias="skill-samegame/content/levels/TemplateBase.qml">skills-extra/skill-samegame/content/levels/TemplateBase.qml</file>
+        <file alias="skill-samegame/content/levels/level0.qml">skills-extra/skill-samegame/content/levels/level0.qml</file>
+        <file alias="skill-samegame/content/levels/level1.qml">skills-extra/skill-samegame/content/levels/level1.qml</file>
+        <file alias="skill-samegame/content/levels/level2.qml">skills-extra/skill-samegame/content/levels/level2.qml</file>
+        <file alias="skill-samegame/content/levels/level3.qml">skills-extra/skill-samegame/content/levels/level3.qml</file>
+        <file alias="skill-samegame/content/levels/level4.qml">skills-extra/skill-samegame/content/levels/level4.qml</file>
+        <file alias="skill-samegame/content/levels/level5.qml">skills-extra/skill-samegame/content/levels/level5.qml</file>
+        <file alias="skill-samegame/content/levels/level6.qml">skills-extra/skill-samegame/content/levels/level6.qml</file>
+        <file alias="skill-samegame/content/levels/level7.qml">skills-extra/skill-samegame/content/levels/level7.qml</file>
+        <file alias="skill-samegame/content/levels/level8.qml">skills-extra/skill-samegame/content/levels/level8.qml</file>
+        <file alias="skill-samegame/content/levels/level9.qml">skills-extra/skill-samegame/content/levels/level9.qml</file>
+        <file alias="skill-samegame/content/samegame.js">skills-extra/skill-samegame/content/samegame.js</file>
+
+        <file alias="tictactoe/Main.qml">skills-extra/tictactoe/Main.qml</file>
+        <file alias="tictactoe/TicTac.qml">skills-extra/tictactoe/TicTac.qml</file>
+        <file alias="tictactoe/finished/Main.qml">skills-extra/tictactoe/finished/Main.qml</file>
+        <file alias="tictactoe/images/background.png">skills-extra/tictactoe/images/background.png</file>
+        <file alias="tictactoe/images/board.png">skills-extra/tictactoe/images/board.png</file>
+        <file alias="tictactoe/images/o.png">skills-extra/tictactoe/images/o.png</file>
+        <file alias="tictactoe/images/x.png">skills-extra/tictactoe/images/x.png</file>
+        <file alias="tictactoe/tic-tac-toe.js">skills-extra/tictactoe/tic-tac-toe.js</file>
+
+        <file alias="mycroft-yelp/Main.qml">skills-extra/mycroft-yelp/Main.qml</file>
+
+        <file alias="food-wizard/Main.qml">skills-extra/food-wizard/Main.qml</file>
+        <file alias="food-wizard/showrecipe/Main.qml">skills-extra/food-wizard/showrecipe/Main.qml</file>
+
+        <file alias="mycroft-weather/Main.qml">skills-extra/mycroft-weather/Main.qml</file>
+        <file alias="mycroft-weather/icons/cloudy-day-1.svg">skills-extra/mycroft-weather/icons/cloudy-day-1.svg</file>
+        <file alias="mycroft-weather/icons/cloudy-day-2.svg">skills-extra/mycroft-weather/icons/cloudy-day-2.svg</file>
+        <file alias="mycroft-weather/icons/cloudy-day-3.svg">skills-extra/mycroft-weather/icons/cloudy-day-3.svg</file>
+        <file alias="mycroft-weather/icons/cloudy-night-1.svg">skills-extra/mycroft-weather/icons/cloudy-night-1.svg</file>
+        <file alias="mycroft-weather/icons/cloudy-night-2.svg">skills-extra/mycroft-weather/icons/cloudy-night-2.svg</file>
+        <file alias="mycroft-weather/icons/cloudy-night-3.svg">skills-extra/mycroft-weather/icons/cloudy-night-3.svg</file>
+        <file alias="mycroft-weather/icons/cloudy.svg">skills-extra/mycroft-weather/icons/cloudy.svg</file>
+        <file alias="mycroft-weather/icons/day.svg">skills-extra/mycroft-weather/icons/day.svg</file>
+        <file alias="mycroft-weather/icons/haze.svg">skills-extra/mycroft-weather/icons/haze.svg</file>
+        <file alias="mycroft-weather/icons/night.svg">skills-extra/mycroft-weather/icons/night.svg</file>
+        <file alias="mycroft-weather/icons/rainy-1.svg">skills-extra/mycroft-weather/icons/rainy-1.svg</file>
+        <file alias="mycroft-weather/icons/rainy-2.svg">skills-extra/mycroft-weather/icons/rainy-2.svg</file>
+        <file alias="mycroft-weather/icons/rainy-3.svg">skills-extra/mycroft-weather/icons/rainy-3.svg</file>
+        <file alias="mycroft-weather/icons/rainy-4.svg">skills-extra/mycroft-weather/icons/rainy-4.svg</file>
+        <file alias="mycroft-weather/icons/rainy-5.svg">skills-extra/mycroft-weather/icons/rainy-5.svg</file>
+        <file alias="mycroft-weather/icons/rainy-6.svg">skills-extra/mycroft-weather/icons/rainy-6.svg</file>
+        <file alias="mycroft-weather/icons/rainy-7.svg">skills-extra/mycroft-weather/icons/rainy-7.svg</file>
+        <file alias="mycroft-weather/icons/snowy-1.svg">skills-extra/mycroft-weather/icons/snowy-1.svg</file>
+        <file alias="mycroft-weather/icons/snowy-2.svg">skills-extra/mycroft-weather/icons/snowy-2.svg</file>
+        <file alias="mycroft-weather/icons/snowy-3.svg">skills-extra/mycroft-weather/icons/snowy-3.svg</file>
+        <file alias="mycroft-weather/icons/snowy-4.svg">skills-extra/mycroft-weather/icons/snowy-4.svg</file>
+        <file alias="mycroft-weather/icons/snowy-5.svg">skills-extra/mycroft-weather/icons/snowy-5.svg</file>
+        <file alias="mycroft-weather/icons/snowy-6.svg">skills-extra/mycroft-weather/icons/snowy-6.svg</file>
+        <file alias="mycroft-weather/icons/thunder.svg">skills-extra/mycroft-weather/icons/thunder.svg</file>
+        <file alias="mycroft-weather/icons/weather-sprite.svg">skills-extra/mycroft-weather/icons/weather-sprite.svg</file>
+        <file alias="mycroft-weather/icons/weather.svg">skills-extra/mycroft-weather/icons/weather.svg</file>
+        <file alias="mycroft-weather/icons/weather_sagittarius.svg">skills-extra/mycroft-weather/icons/weather_sagittarius.svg</file>
+        <file alias="mycroft-weather/icons/weather_sunset.svg">skills-extra/mycroft-weather/icons/weather_sunset.svg</file>
+
+        <file alias="mycroft-wiki/Main.qml">skills-extra/mycroft-wiki/Main.qml</file>
+        <file alias="mycroft-wiki/disambiguate/Main.qml">skills-extra/mycroft-wiki/disambiguate/Main.qml</file>
+        <file alias="skill-wikidata/Main.qml">skills-extra/skill-wikidata/Main.qml</file>
+        
+        <file alias="youtube-skill/Main.qml">skills-extra/youtube-skill/Main.qml</file>
+        <file alias="youtube-skill/SeekControl.qml">skills-extra/youtube-skill/SeekControl.qml</file>
+        <file alias="youtube-skill/search-page/Main.qml">skills-extra/youtube-skill/search-page/Main.qml</file>
+        <file alias="youtube-skill/images/media-album-track.svg">skills-extra/youtube-skill/images/media-album-track.svg</file>
+        <file alias="youtube-skill/images/media-playback-pause.svg">skills-extra/youtube-skill/images/media-playback-pause.svg</file>
+        <file alias="youtube-skill/images/media-playback-start.svg">skills-extra/youtube-skill/images/media-playback-start.svg</file>
+        <file alias="youtube-skill/images/media-playlist-repeat.svg">skills-extra/youtube-skill/images/media-playlist-repeat.svg</file>
+        <file alias="youtube-skill/images/media-playlist-shuffle.svg">skills-extra/youtube-skill/images/media-playlist-shuffle.svg</file>
+        <file alias="youtube-skill/images/media-repeat-playlist.svg">skills-extra/youtube-skill/images/media-repeat-playlist.svg</file>
+        <file alias="youtube-skill/images/media-repeat-track.svg">skills-extra/youtube-skill/images/media-repeat-track.svg</file>
+        <file alias="youtube-skill/images/media-skip-backward.svg">skills-extra/youtube-skill/images/media-skip-backward.svg</file>
+        <file alias="youtube-skill/images/media-skip-forward.svg">skills-extra/youtube-skill/images/media-skip-forward.svg</file>
+        
+    </qresource>
+</RCC>

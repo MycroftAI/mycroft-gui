@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=mycroft-gui-app
+Icon=kmenuedit
+Type=Application
+StartupNotify=true
+
+Name=Mycroft Gui

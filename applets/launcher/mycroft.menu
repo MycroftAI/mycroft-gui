@@ -1,0 +1,27 @@
+<!DOCTYPE Menu PUBLIC '-//freedesktop//DTD Menu 1.0//EN' 'http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd'>
+<Menu>
+  <Name>Applications</Name>
+  <Menu>
+    <Name>Mycroft</Name>
+    <Directory>Mycroft.directory</Directory>
+    <Include>
+      <Filename>net.bs.mycroft.gui.desktop</Filename>
+      <Filename>net.bs.mycroft.gui.device3.desktop</Filename>
+      <Filename>net.bs.mycroft.gui.device.desktop</Filename>
+      <Filename>net.bs.mycroft.gui.device2.desktop</Filename>
+      <Filename>net.bs.mycroft.installer.desktop</Filename>
+      <Filename>org.kde.konsole.desktop</Filename>
+      <Filename>calamares.desktop</Filename>
+    </Include>
+    <Layout>
+      <Merge type="files"/>
+      <Filename>calamares.desktop</Filename>
+      <Filename>net.bs.mycroft.gui.desktop</Filename>
+      <Filename>net.bs.mycroft.gui.device3.desktop</Filename>
+      <Filename>net.bs.mycroft.gui.device.desktop</Filename>
+      <Filename>net.bs.mycroft.gui.device2.desktop</Filename>
+      <Filename>net.bs.mycroft.installer.desktop</Filename>
+      <Filename>org.kde.konsole.desktop</Filename>
+    </Layout>
+  </Menu>
+ </Menu>
