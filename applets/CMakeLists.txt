@@ -1,2 +1,1 @@
 add_subdirectory(launcher)
-plasma_install_package(mycroftplasmoid org.kde.plasma.mycroftplasmoidng)
