@@ -20,11 +20,11 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.2 as Controls
 import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
 
 //TODO: should all delegates be a Kirigami Page?
-Controls.Control {
+Mycroft.AbstractDelegate {
     id: control
-    property int graceTime: 6000
     //FIXME: all of this should be grouped
     property alias backgroundImage: img.source
     property alias backgroundHorizontalAlignment: img.horizontalAlignment

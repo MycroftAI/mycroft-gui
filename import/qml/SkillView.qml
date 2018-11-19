@@ -21,8 +21,7 @@ import QtQuick.Controls 2.4 as Controls
 import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
-//FIXME: we probably want to wrap this in an Item or Control as we don't want to expose full StackView api
-Item {
+Mycroft.AbstractSkillView {
     id: root
 
     property Item initialItem: null
@@ -32,53 +31,10 @@ Item {
     }
 
 
-    property int rightPadding: 0
-    property int topPadding: 0
-    property int leftPadding: 0
-    property int bottomPadding: 0
-
     readonly property Item currentItem: null
-
-    //for delegates to access the view... eventually this could be come an attache dproperty
-    function view() {
-        return root;
-    }
 
     function goBack() {
         
-    }
-
-    Component.onCompleted: {
-        Mycroft.MycroftController.registerGui(root)
-    }
-
-
-    Connections {
-        id: mycroftConnection
-        target: Mycroft.MycroftController
-
-        onSkillGuiCreated: {
-            var swipeView = repeater.swipeViewForSkill(skillId);
-            gui.parent = swipeView;
-            for (var i = 0; i < swipeView.contentChildren.length; ++i) {
-                swipeView.contentChildren[i];
-            }
-            swipeView.addItem(gui)
-            swipeView.incrementCurrentIndex();
-            restFaceSwipeView.currentIndex = 1;
-        }
-
-        onStopped: {
-            return;
-        }
-
-        onSkillDataRecieved: {
-            print(data)
-        }
-
-        onSpeakingChanged: {
-            //starting the timeout of the delegate
-        }
     }
 
     Controls.SwipeView {
@@ -87,28 +43,22 @@ Item {
         Item {
             id: restFaceParent
         }
-        Controls.StackView {
-            id: skillsStack
-        }
-    }
-    Repeater {//TODO: the model will have models of gui instances, much simpler
-        id: repeater
-        function swipeViewForSkill(skillId) {
-            var item;
-            for (var i = 0; i < count; ++i) {
-                item = itemAt(i);
-                //TODO
-                if (1||item.skillId == skillId) {
-                    return item;
+        Item {
+            Repeater {
+                model: activeSkills
+                delegate: Controls.SwipeView {
+                    id: swipeView
+                    anchors.fill: parent
+                    //assume the index 0 is the one most recently used, so the one that should be shown
+                    visible: index == 0
+                    Repeater {
+                        model: model.delegates
+                        delegate: Controls.Control {
+                            contentItem: model.delegateUi
+                        }
+                    }
                 }
             }
-        }
-        model: 1//Mycroft.MycroftController.activeSkills
-        delegate: Controls.SwipeView {
-            id: swipeView
-            anchors.fill: parent
-            property string skillId: model.display
-            Component.onCompleted: skillsStack.push(swipeView)
         }
     }
 }

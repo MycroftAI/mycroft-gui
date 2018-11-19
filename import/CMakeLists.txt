@@ -10,6 +10,7 @@ set(mycroftimport_SRCS
     abstractskillview.cpp
     abstractdelegate.cpp
     sessiondatamap.cpp
+    sessiondatamodel.cpp
     globalsettings.cpp
     filereader.cpp
     )
