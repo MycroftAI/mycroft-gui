@@ -242,10 +242,6 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         return;
     }
 
-    //filter out the noise so we can print debug stuff later without drowning in noise
-    if (type.startsWith(QStringLiteral("enclosure")) || type.startsWith(QStringLiteral("mycroft-date"))) {
-        return;
-    }
     qDebug() << "gui message type" << type;
 
 ///////////////SKILLDATA
