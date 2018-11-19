@@ -33,6 +33,36 @@ The slim messages approach is a well tested protocol approach used for instance 
 * the exact message format would be in both direction both server->gui and gui->server
 
 
+= MODELS =
+Models are for both skill data and active skills, distinction is just between "namespace": "mycroft.system.active_skills" and "namespace": "mycroft.weather"
+
+== Inserts new items at position ==
+{
+    "type": "mycroft.session.list.insert",
+    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "position": 2
+    "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...]
+}
+Values is an ordered dict, for a shopping cart it would need multiple roles like product name, price, image
+
+== Updates items starting at the given position, as many items as there are in the array ==
+{
+    "type": "mycroft.session.list.update",
+    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "property": "forecast" //in the future this can become a path if we want lists of lists
+    "position": 2
+    "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...]
+}
+
+== Removes items from the list ==
+{
+    "type": "mycroft.session.list.remove",
+    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
+    "property": "forecast" //in the future this can become a path if we want lists of lists
+    "position": 2
+    "items_number": 5 //optional in case we want to get rid a big chunk of list at once
+}
+
 = SHOW GUI =
 {
     "type": "mycroft.gui.show",
@@ -40,33 +70,3 @@ The slim messages approach is a well tested protocol approach used for instance 
     "gui_url": "file:///opt/mycroft/weather.mycroft/ui/currentweather.qml"
 }
 * the skill author to have that would just call a functin like self.show_gui("currentweather.qml") everyhint else done behind the scenes
-
-
-
-= MODELS =
-Models are for both data and active skills, distinction is just between "namespace": "mycroft.system.active_skills" and "namespace": "mycroft.weather"
-
-{
-    "type": "mycroft.session.insert",
-    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
-    "position": 2
-    "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...]
-}
-Values is an ordered dict, for a shopping cart it would need multiple roles like product name, price, image
-
-
-{
-    "type": "mycroft.session.remove",
-    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
-    "property": "forecast" //in the future this can become a path if we want lists of lists
-    "position": 2
-    "items_number": 5 //optional in case we want to get rid a big chunk of list at once
-}
-{
-    "type": "mycroft.session.move",
-    "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
-    "property": "forecast"
-    "from": 2
-    "to": 5
-    "items_number": 2 //optional in case we want to move a big chunk of list at once
-}

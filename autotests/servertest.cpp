@@ -111,7 +111,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->rowCount(), 0);
 
     //Add weather skill
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 0, \"data\": [{\"skill_id\": \"mycroft.weather\"}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 0, \"data\": [{\"skill_id\": \"mycroft.weather\"}]}"));
 
     skillInsertedSpy.wait();
 
@@ -119,7 +119,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(0,0)), QStringLiteral("mycroft.weather"));
 
     //Add food-wizard skill, before weather
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 0, \"data\": [{\"skill_id\": \"aiix.food-wizard\"}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 0, \"data\": [{\"skill_id\": \"aiix.food-wizard\"}]}"));
 
     skillInsertedSpy.wait();
 
@@ -128,7 +128,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(1,0)), QStringLiteral("mycroft.weather"));
 
     //Add timer skill, between food-wizard and weather
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 1, \"data\": [{\"skill_id\": \"mycroft.timer\"}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 1, \"data\": [{\"skill_id\": \"mycroft.timer\"}]}"));
 
     skillInsertedSpy.wait();
 
@@ -138,7 +138,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("mycroft.weather"));
 
     //Add shopping skill, wiki and weather in the end: weather will be ignored as is already present
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 3, \"data\": [{\"skill_id\": \"aiix.shopping-demo\"}, {\"skill_id\": \"mycroft.wiki\"}, {\"skill_id\": \"mycroft.weather\"}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.insert\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 3, \"data\": [{\"skill_id\": \"aiix.shopping-demo\"}, {\"skill_id\": \"mycroft.wiki\"}, {\"skill_id\": \"mycroft.weather\"}]}"));
 
     skillInsertedSpy.wait();
 
@@ -151,7 +151,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("mycroft.wiki"));
 
     //Move timer in first position
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 2, \"to\": 1, \"items_number\": 1}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 2, \"to\": 1, \"items_number\": 1}"));
 
     skillMovedSpy.wait();
 
@@ -163,7 +163,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("mycroft.wiki"));
 
     //Move weather and food-wizard in front
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 1, \"to\": 0, \"items_number\": 2}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 1, \"to\": 0, \"items_number\": 2}"));
 
     skillMovedSpy.wait();
 
@@ -175,7 +175,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("mycroft.wiki"));
 
     //Move timer and food-wizard in the back
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 1, \"to\": 2, \"items_number\": 2}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 1, \"to\": 2, \"items_number\": 2}"));
 
     skillMovedSpy.wait();
 
@@ -187,7 +187,7 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("mycroft.wiki"));
 
     //Remove shopping-demo and timer
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.remove\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 1, \"items_number\": 2}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.remove\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 1, \"items_number\": 2}"));
 
     skillRemovedSpy.wait();
 

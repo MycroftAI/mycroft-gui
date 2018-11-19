@@ -361,7 +361,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
     // Insert new active skill
     //TODO: remove data
-    } else if (type == QLatin1String("mycroft.session.insert") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
+    } else if (type == QLatin1String("mycroft.session.list.insert") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
         const int position = doc[QStringLiteral("position")].toInt();
 
         if (position < 0 || position > m_activeSkillsModel->rowCount()) {
@@ -380,7 +380,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
 
     // Active skill removed
-    } else if (type == QLatin1String("mycroft.session.remove") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
+    } else if (type == QLatin1String("mycroft.session.list.remove") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
         const int position = doc[QStringLiteral("position")].toInt();
         const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
@@ -409,7 +409,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         m_activeSkillsModel->removeRows(position, itemsNumber);
 
     // Active skill moved
-    } else if (type == QLatin1String("mycroft.session.move")) {
+    } else if (type == QLatin1String("mycroft.session.list.move")) {
         const int from = doc[QStringLiteral("from")].toInt();
         const int to = doc[QStringLiteral("to")].toInt();
         const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
