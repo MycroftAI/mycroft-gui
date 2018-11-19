@@ -32,15 +32,32 @@ class AbstractDelegate: public QQuickItem
     Q_PROPERTY(SessionDataMap *sessionData READ sessionData CONSTANT)
     Q_PROPERTY(int timeout MEMBER m_timeout NOTIFY timeoutChanged)
 
-    //TODO: api for background? would like to avoid
+    /**
+     * Source file for a background: it can be either an image or a QML file.
+     * Both relative paths and remote urls are supported
+     */
+    Q_PROPERTY(QString backgroundSource MEMBER m_backgroundSource NOTIFY backgroundSourceChanged)
+
+    Q_PROPERTY(QQuickItem *background MEMBER m_background NOTIFY backgroundChanged)
+
+    /**
+     * Padding adds a space between each edge of the content item and the background item, effectively controlling the size of the content item.
+     */
     Q_PROPERTY(int leftPadding MEMBER m_leftPadding NOTIFY leftPaddingChanged)
     Q_PROPERTY(int rightPadding MEMBER m_rightPadding NOTIFY rightPaddingChanged)
     Q_PROPERTY(int topPadding MEMBER m_topPadding NOTIFY topPaddingChanged)
     Q_PROPERTY(int bottomPadding MEMBER m_bottomPadding NOTIFY bottomPaddingChanged)
 
+    Q_PROPERTY(QQmlListProperty<QObject> contentData READ contentData FINAL)
+    Q_CLASSINFO("DefaultProperty", "contentData")
+
 public:
     AbstractDelegate(QQuickItem *parent = nullptr);
     ~AbstractDelegate();
+
+    QQmlListProperty<QObject> contentData();
+    //QQmlListProperty<QQuickItem> contentChildren();
+
 
     //API used only by AbstractSkillView during initialization, *NOT* QML
     //void setController(MycroftController *controller);
@@ -59,6 +76,9 @@ public:
     void setSkillId(const QString &skillId);
     QString skillId() const;
 
+protected:
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+
 Q_SIGNALS:
     /**
      * Emitted when the delegate asks to be the "current" in the view
@@ -75,6 +95,8 @@ Q_SIGNALS:
     void event(const QString &eventName, const QVariantMap &data);
 
     //QML property notifiers
+    void backgroundSourceChanged();
+    void backgroundChanged();
     void timeoutChanged();
     void leftPaddingChanged();
     void rightPaddingChanged();
@@ -82,11 +104,22 @@ Q_SIGNALS:
     void bottomPaddingChanged();
 
 private:
+    static void contentData_append(QQmlListProperty<QObject> *prop, QObject *object);
+    static int contentData_count(QQmlListProperty<QObject> *prop);
+    static QObject *contentData_at(QQmlListProperty<QObject> *prop, int index);
+    static void contentData_clear(QQmlListProperty<QObject> *prop);
+
+    QQuickItem *m_contentItem;
+    QQuickItem *m_background;
+    QList<QObject *> m_contentData;
+
+
     QPointer<SessionDataMap> m_data;
 
     QUrl m_qmlUrl;
     QString m_skillId;
 
+    QString m_backgroundSource;
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
 
     int m_leftPadding = 0; //FIXME: how to bind to kirigami units from c++?

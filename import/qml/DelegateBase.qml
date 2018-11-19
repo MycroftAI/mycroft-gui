@@ -26,7 +26,6 @@ import Mycroft 1.0 as Mycroft
 Mycroft.AbstractDelegate {
     id: control
     //FIXME: all of this should be grouped
-    property alias backgroundImage: img.source
     property alias backgroundHorizontalAlignment: img.horizontalAlignment
     property alias backgroundVerticalAlignment: img.verticalAlignment
     property alias backgroundDim: rect.opacity
@@ -86,7 +85,7 @@ Mycroft.AbstractDelegate {
         }
     }
 
-    contentItem: MouseArea {
+     MouseArea {
         id: main
         drag.filterChildren: true
     }

@@ -21,10 +21,77 @@
 AbstractDelegate::AbstractDelegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
+    m_contentItem = new QQuickItem(this);
 }
 
 AbstractDelegate::~AbstractDelegate()
 {
+}
+
+void AbstractDelegate::contentData_append(QQmlListProperty<QObject> *prop, QObject *object)
+{
+    AbstractDelegate *delegate = static_cast<AbstractDelegate *>(prop->object);
+    if (!delegate) {
+        return;
+    }
+qWarning()<<"AAAA"<<prop<<object<<prop->object;
+    QQuickItem *item = qobject_cast<QQuickItem *>(object);
+    delegate->m_contentData.append(object);
+    if (item) {
+        item->setParentItem(delegate->m_contentItem);
+    }
+}
+
+int AbstractDelegate::contentData_count(QQmlListProperty<QObject> *prop)
+{
+    AbstractDelegate *delegate = static_cast<AbstractDelegate *>(prop->object);
+    if (!delegate) {
+        return 0;
+    }
+
+    return delegate->m_contentData.count();
+}
+
+QObject *AbstractDelegate::contentData_at(QQmlListProperty<QObject> *prop, int index)
+{
+    AbstractDelegate *delegate = static_cast<AbstractDelegate *>(prop->object);
+    if (!delegate) {
+        return nullptr;
+    }
+
+    if (index < 0 || index >= delegate->m_contentData.count()) {
+        return nullptr;
+    }
+    return delegate->m_contentData.value(index);
+}
+
+void AbstractDelegate::contentData_clear(QQmlListProperty<QObject> *prop)
+{
+    AbstractDelegate *delegate = static_cast<AbstractDelegate *>(prop->object);
+    if (!delegate) {
+        return;
+    }
+
+    return delegate->m_contentData.clear();
+}
+
+QQmlListProperty<QObject> AbstractDelegate::contentData()
+{
+    return QQmlListProperty<QObject>(this, nullptr,
+                                     contentData_append,
+                                     contentData_count,
+                                     contentData_at,
+                                     contentData_clear);
+}
+
+void AbstractDelegate::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+{
+    m_contentItem->setX(m_leftPadding);
+    m_contentItem->setY(m_topPadding);
+    m_contentItem->setWidth(newGeometry.width() - m_leftPadding - m_rightPadding);
+    m_contentItem->setHeight(newGeometry.width() - m_topPadding - m_bottomPadding);
+    
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }
 
 void AbstractDelegate::setSessionData(SessionDataMap *data)
