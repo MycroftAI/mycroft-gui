@@ -10,6 +10,7 @@ ecm_add_test(
   ${CMAKE_SOURCE_DIR}/import/activeskillsmodel.cpp
   ${CMAKE_SOURCE_DIR}/import/delegatesmodel.cpp
   ${CMAKE_SOURCE_DIR}/import/sessiondatamap.cpp
+  ${CMAKE_SOURCE_DIR}/import/sessiondatamodel.cpp
   ${CMAKE_SOURCE_DIR}/import/globalsettings.cpp
   ${CMAKE_SOURCE_DIR}/import/abstractskillview.cpp
 

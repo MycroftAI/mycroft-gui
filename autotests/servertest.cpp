@@ -25,6 +25,7 @@
 #include "../import/delegatesmodel.h"
 #include "../import/abstractskillview.h"
 #include "../import/sessiondatamap.h"
+#include "../import/sessiondatamodel.h"
 
 class ServerTest : public QObject
 {
@@ -206,14 +207,31 @@ void ServerTest::testSessionData()
     QSignalSpy dataChangedSpy(map, &SessionDataMap::valueChanged);
 
     //set data for weather skill
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.set\", \"namespace\": \"mycroft.weather\", \"data\": {\"temperature\": \"28°C\", \"icon\": \"sunny\"}}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.set\", \"namespace\": \"mycroft.weather\", \"data\": {\"temperature\": \"28°C\", \"icon\": \"sunny\", \"forecast\":[{\"when\": \"Monday\", \"temperature\": \"13°C\", \"icon\": \"cloudy\"}, {\"when\": \"Tuesday\", \"temperature\": \"24°C\", \"icon\": \"overcast\"}, {\"when\": \"Wednesday\", \"temperature\": \"22°C\", \"icon\": \"rain\"}]}}"));
 
     dataChangedSpy.wait();
-    QCOMPARE(dataChangedSpy.count(), 2);
+    QCOMPARE(dataChangedSpy.count(), 3);
 
-    QCOMPARE(map->keys().count(), 2);
+    QCOMPARE(map->keys().count(), 3);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("28°C"));
     QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+
+    //Verify the model contents
+    SessionDataModel *dm = map->value(QStringLiteral("forecast")).value<SessionDataModel *>();
+    QVERIFY(dm);
+    QCOMPARE(dm->rowCount(), 3);
+
+    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Monday"));
+    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("13°C"));
+    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("cloudy"));
+
+    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Tuesday"));
+    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("24°C"));
+    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("overcast"));
+
+    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Wednesday"));
+    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("22°C"));
+    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("rain"));
 }
 
 void ServerTest::testChangeSessionData()
@@ -232,7 +250,7 @@ void ServerTest::testChangeSessionData()
     QCOMPARE(dataChangedSpy.count(), 2);
 
     //keys are alphabetically ordered
-    QCOMPARE(map->keys().count(), 3);
+    QCOMPARE(map->keys().count(), 4);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
     QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
     QCOMPARE(map->value(QStringLiteral("otherproperty")), QStringLiteral("value"));
@@ -243,7 +261,7 @@ void ServerTest::testChangeSessionData()
     dataClearedSpy.wait();
     QCOMPARE(dataClearedSpy.first().first(), QStringLiteral("otherproperty"));
     //is not possible to actually remove a key
-    QCOMPARE(map->keys().count(), 3);
+    QCOMPARE(map->keys().count(), 4);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
     QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
     QCOMPARE(map->value(QStringLiteral("otherproperty")), QVariant());
@@ -267,7 +285,7 @@ void ServerTest::testShowGui()
     //check the delegate has the proper data associated
     SessionDataMap *map = delegate->sessionData();
     QVERIFY(map);
-    QCOMPARE(map->keys().count(), 3);
+    QCOMPARE(map->keys().count(), 4);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
     QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
     QCOMPARE(map->value(QStringLiteral("otherproperty")), QVariant());

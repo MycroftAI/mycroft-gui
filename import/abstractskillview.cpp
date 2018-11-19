@@ -20,6 +20,7 @@
 #include "activeskillsmodel.h"
 #include "abstractdelegate.h"
 #include "sessiondatamap.h"
+#include "sessiondatamodel.h"
 
 #include <QWebSocket>
 #include <QUuid>
@@ -162,33 +163,24 @@ SessionDataMap *AbstractSkillView::sessionDataForSkill(const QString &skillId)
     return map;
 }
 
-QList<QVariantMap> jsonModelToOrderedMap(const QJsonValue &data)
+QList<QVariantMap> variantListToOrderedMap(const QVariantList &data)
 {
     QList<QVariantMap> ordMap;
 
-    if (!data.isArray()) {
-        qWarning() << "Error: Model data is not an Array" << data;
-        return ordMap;
-    }
-
     QStringList roleNames;
 
-    const auto &array = data.toArray();
-    for (const auto &item : array) {
-        if (!item.isObject()) {
-            qWarning() << "Error: Array data structure currupted: " << data;
-            ordMap.clear();
+    for (const auto &item : data) {
+        if (!item.canConvert<QVariantMap>()) {
+            qWarning() << "Error: Array data structure corrupted: " << data;
             return ordMap;
         }
-        const auto &obj = item.toObject();
+        const auto &map = item.value<QVariantMap>();
         if (roleNames.isEmpty()) {
-            roleNames = obj.keys();
-        } else if (roleNames != obj.keys()) {
-            qWarning() << "Error: Item with a wrong set of roles encountered, expected: " << roleNames << "Encountered: " << obj.keys();
-            ordMap.clear();
-            return ordMap;
+            roleNames = map.keys();
+        } else if (roleNames != map.keys()) {
+            qWarning() << "WARNING: Item with a wrong set of roles encountered, some roles will be inaccessible from QML, expected: " << roleNames << "Encountered: " << map.keys();
         }
-        ordMap << obj.toVariantMap();
+        ordMap << map;
     }
 
     return ordMap;
@@ -267,7 +259,26 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         SessionDataMap *map = sessionDataForSkill(skillId);
          QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
-            map->insertAndNotify(i.key(), i.value());
+            //insert it as a model
+            QList<QVariantMap> list = variantListToOrderedMap(i.value().value<QVariantList>());
+            SessionDataModel *dm = map->value(i.key()).value<SessionDataModel *>();
+
+            if (!list.isEmpty()) {
+                if (!dm) {
+                    dm = new SessionDataModel(map);
+                    map->insertAndNotify(i.key(), QVariant::fromValue(dm));
+                } else {
+                    dm->clear();
+                }
+                dm->insertData(0, list);
+
+            //insert it as is.
+            } else {
+                if (dm) {
+                    dm->deleteLater();
+                }
+                map->insertAndNotify(i.key(), i.value());
+            }
         }
 
     // The SkillData was removed by the server
