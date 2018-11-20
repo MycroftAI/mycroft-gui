@@ -21,7 +21,6 @@
 AbstractDelegate::AbstractDelegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
-    m_contentItem = new QQuickItem(this);
 }
 
 AbstractDelegate::~AbstractDelegate()
@@ -34,10 +33,14 @@ void AbstractDelegate::contentData_append(QQmlListProperty<QObject> *prop, QObje
     if (!delegate) {
         return;
     }
-qWarning()<<"AAAA"<<prop<<object<<prop->object;
+
     QQuickItem *item = qobject_cast<QQuickItem *>(object);
     delegate->m_contentData.append(object);
     if (item) {
+        if (!delegate->m_contentItem) {
+            qWarning()<<"Creting default contentItem";
+            delegate->m_contentItem = new QQuickItem(delegate);
+        }
         item->setParentItem(delegate->m_contentItem);
     }
 }
@@ -86,12 +89,61 @@ QQmlListProperty<QObject> AbstractDelegate::contentData()
 
 void AbstractDelegate::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
+    if (m_contentItem) {
+        m_contentItem->setX(m_leftPadding);
+        m_contentItem->setY(m_topPadding);
+        m_contentItem->setWidth(newGeometry.width() - m_leftPadding - m_rightPadding);
+        m_contentItem->setHeight(newGeometry.height() - m_topPadding - m_bottomPadding);
+    }
+
+    if (m_backgroundItem) {
+        m_backgroundItem->setX(0);
+        m_backgroundItem->setY(0);
+        m_backgroundItem->setWidth(newGeometry.width());
+        m_backgroundItem->setHeight(newGeometry.height());
+    }
+
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
+
+QQuickItem *AbstractDelegate::contentItem() const
+{
+    return m_contentItem;
+}
+
+void AbstractDelegate::setContentItem(QQuickItem *item)
+{
+    if (m_contentItem == item) {
+        return;
+    }
+
+    m_contentItem = item;
     m_contentItem->setX(m_leftPadding);
     m_contentItem->setY(m_topPadding);
-    m_contentItem->setWidth(newGeometry.width() - m_leftPadding - m_rightPadding);
-    m_contentItem->setHeight(newGeometry.width() - m_topPadding - m_bottomPadding);
-    
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+    m_contentItem->setWidth(width() - m_leftPadding - m_rightPadding);
+    m_contentItem->setHeight(height() - m_topPadding - m_bottomPadding);
+
+    emit contentItemChanged();
+}
+
+QQuickItem *AbstractDelegate::background() const
+{
+    return m_backgroundItem;
+}
+
+void AbstractDelegate::setBackground(QQuickItem *item)
+{
+    if (m_backgroundItem == item) {
+        return;
+    }
+
+    m_backgroundItem = item;
+    m_backgroundItem->setX(0);
+    m_backgroundItem->setY(0);
+    m_backgroundItem->setWidth(width());
+    m_backgroundItem->setHeight(height());
+
+    emit backgroundChanged();
 }
 
 void AbstractDelegate::setSessionData(SessionDataMap *data)
@@ -108,6 +160,7 @@ SessionDataMap *AbstractDelegate::sessionData() const
 
 void AbstractDelegate::setQmlUrl(const QUrl &url)
 {
+    //possible to call only once, by the skillview upon instantiation
     Q_ASSERT(m_qmlUrl.isEmpty());
     m_qmlUrl = url;
 }
@@ -119,6 +172,7 @@ QUrl AbstractDelegate::qmlUrl() const
 
 void AbstractDelegate::setSkillId(const QString &skillId)
 {
+    //possible to call only once, by the skillview upon instantiation
     Q_ASSERT(m_skillId.isEmpty());
     m_skillId = skillId;
 }

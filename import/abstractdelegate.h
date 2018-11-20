@@ -29,16 +29,27 @@ class MycroftController;
 class AbstractDelegate: public QQuickItem
 {
     Q_OBJECT
+    /**
+     * The skill data sent by the server.
+     */
     Q_PROPERTY(SessionDataMap *sessionData READ sessionData CONSTANT)
+
+    /**
+     * The idle time after Mycroft stopped talking  before the delegate wants to return to the resting face expressed in milliseconds.
+     * The view may or may not follow this.
+     * By default, it's 5 seconsa
+     */
     Q_PROPERTY(int timeout MEMBER m_timeout NOTIFY timeoutChanged)
 
     /**
-     * Source file for a background: it can be either an image or a QML file.
+     * Source file for a skill-wide background (independent to the background item): it can be either an image or a QML file. 
+     * The view may or may not decide to display it, if different delegates of the same skill have different skillBackgrounds, it will fade between them when the current delegate changes.
      * Both relative paths and remote urls are supported
      */
-    Q_PROPERTY(QString backgroundSource MEMBER m_backgroundSource NOTIFY backgroundSourceChanged)
+    Q_PROPERTY(QString skillBackgroundSource MEMBER m_backgroundSource NOTIFY backgroundSourceChanged)
 
-    Q_PROPERTY(QQuickItem *background MEMBER m_background NOTIFY backgroundChanged)
+    Q_PROPERTY(QQuickItem *contentItem READ contentItem WRITE setContentItem NOTIFY contentItemChanged)
+    Q_PROPERTY(QQuickItem *background READ background WRITE setBackground NOTIFY backgroundChanged)
 
     /**
      * Padding adds a space between each edge of the content item and the background item, effectively controlling the size of the content item.
@@ -49,6 +60,7 @@ class AbstractDelegate: public QQuickItem
     Q_PROPERTY(int bottomPadding MEMBER m_bottomPadding NOTIFY bottomPaddingChanged)
 
     Q_PROPERTY(QQmlListProperty<QObject> contentData READ contentData FINAL)
+    Q_CLASSINFO("DeferredPropertyNames", "background,contentItem")
     Q_CLASSINFO("DefaultProperty", "contentData")
 
 public:
@@ -56,16 +68,34 @@ public:
     ~AbstractDelegate();
 
     QQmlListProperty<QObject> contentData();
-    //QQmlListProperty<QQuickItem> contentChildren();
 
+/*
+ * QML properties setters and getters
+ */
+    QQuickItem *contentItem() const;
+    void setContentItem(QQuickItem *item);
 
-    //API used only by AbstractSkillView during initialization, *NOT* QML
-    //void setController(MycroftController *controller);
-    void setSessionData(SessionDataMap *data);
-    SessionDataMap *sessionData() const;
+    QQuickItem *background() const;
+    void setBackground(QQuickItem *item);
 
     /**
-     * INTERNAL: Url of the qml file that generated this instance
+     * The only way the skill UI has to access the data sent by the server
+     */
+    SessionDataMap *sessionData() const;
+
+/*
+ * @internal All the following API is meant to be used only by AbstractSkillView during initialization, *NOT* QML from where is not accessible at all.
+ */
+
+    /**
+     * The sessiondata is writable only by AbstractskillView internally, not from QML
+     */
+    void setSessionData(SessionDataMap *data);
+
+    //TODO: void setSkillView(AbstractSkillView *view);
+
+    /**
+     * @internal Url of the qml file that generated this instance
      */
     void setQmlUrl(const QUrl &url);
     QUrl qmlUrl() const;
@@ -88,7 +118,16 @@ Q_SIGNALS:
 
     /**
      * Emitted when the server triggered an event.
-     * It is guaranteed the event will be either a system event or an event belonging to our skill, but never to another skill
+     * It is guaranteed the event will be either a system event or an event belonging to our skill, but never to another skill.
+     * The Skill writer can access this by implementing the following code on the root element of the delegate:
+     * @code
+     *  onEvent: {
+     *      switch (eventName) {
+     *      case "myevent1":
+     *       ....
+     *      }
+     *  }
+     * @endcode
      * @param eventName the unique name for the event
      * @param data the data for this event in JSon form
      */
@@ -97,6 +136,7 @@ Q_SIGNALS:
     //QML property notifiers
     void backgroundSourceChanged();
     void backgroundChanged();
+    void contentItemChanged();
     void timeoutChanged();
     void leftPaddingChanged();
     void rightPaddingChanged();
@@ -104,16 +144,20 @@ Q_SIGNALS:
     void bottomPaddingChanged();
 
 private:
+    //internal accessorts for the contentData QProperty
     static void contentData_append(QQmlListProperty<QObject> *prop, QObject *object);
     static int contentData_count(QQmlListProperty<QObject> *prop);
     static QObject *contentData_at(QQmlListProperty<QObject> *prop, int index);
     static void contentData_clear(QQmlListProperty<QObject> *prop);
 
-    QQuickItem *m_contentItem;
-    QQuickItem *m_background;
+    QPointer<QQuickItem> m_contentItem;
+    QPointer<QQuickItem> m_backgroundItem;
+
+    //Internal implementation detail: this is used to reparent all items to contentItem
     QList<QObject *> m_contentData;
 
 
+    //The main data from the Mycroft server
     QPointer<SessionDataMap> m_data;
 
     QUrl m_qmlUrl;
@@ -122,7 +166,10 @@ private:
     QString m_backgroundSource;
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
 
-    int m_leftPadding = 0; //FIXME: how to bind to kirigami units from c++?
+    /**
+     * Padding adds a space between each edge of the content item and the background item, effectively controlling the size of the content item.
+     */
+    int m_leftPadding = 0;
     int m_rightPadding = 0;
     int m_topPadding = 0;
     int m_bottomPadding = 0;
