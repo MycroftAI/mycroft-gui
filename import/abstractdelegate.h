@@ -54,13 +54,13 @@ class AbstractDelegate: public QQuickItem
     /**
      * Padding adds a space between each edge of the content item and the background item, effectively controlling the size of the content item.
      */
-    Q_PROPERTY(int leftPadding MEMBER m_leftPadding NOTIFY leftPaddingChanged)
-    Q_PROPERTY(int rightPadding MEMBER m_rightPadding NOTIFY rightPaddingChanged)
-    Q_PROPERTY(int topPadding MEMBER m_topPadding NOTIFY topPaddingChanged)
-    Q_PROPERTY(int bottomPadding MEMBER m_bottomPadding NOTIFY bottomPaddingChanged)
+    Q_PROPERTY(int leftPadding READ leftPadding WRITE setLeftPadding NOTIFY leftPaddingChanged)
+    Q_PROPERTY(int rightPadding READ rightPadding WRITE setRightPadding NOTIFY rightPaddingChanged)
+    Q_PROPERTY(int topPadding READ topPadding WRITE setTopPadding NOTIFY topPaddingChanged)
+    Q_PROPERTY(int bottomPadding READ bottomPadding WRITE setBottomPadding NOTIFY bottomPaddingChanged)
 
     Q_PROPERTY(QQmlListProperty<QObject> contentData READ contentData FINAL)
-    Q_CLASSINFO("DeferredPropertyNames", "background,contentItem")
+   // Q_CLASSINFO("DeferredPropertyNames", "background,contentItem")
     Q_CLASSINFO("DefaultProperty", "contentData")
 
 public:
@@ -83,6 +83,18 @@ public:
      */
     SessionDataMap *sessionData() const;
 
+    // Setters and getters for the padding
+    int leftPadding() const;
+    void setLeftPadding(int padding);
+
+    int topPadding() const;
+    void setTopPadding(int padding);
+
+    int rightPadding() const;
+    void setRightPadding(int padding);
+
+    int bottomPadding() const;
+    void setBottomPadding(int padding);
 /*
  * @internal All the following API is meant to be used only by AbstractSkillView during initialization, *NOT* QML from where is not accessible at all.
  */
@@ -144,6 +156,7 @@ Q_SIGNALS:
     void bottomPaddingChanged();
 
 private:
+    void syncChildItemsGeometry(const QSizeF &size);
     //internal accessorts for the contentData QProperty
     static void contentData_append(QQmlListProperty<QObject> *prop, QObject *object);
     static int contentData_count(QQmlListProperty<QObject> *prop);

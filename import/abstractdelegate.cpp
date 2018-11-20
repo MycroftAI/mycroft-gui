@@ -27,6 +27,23 @@ AbstractDelegate::~AbstractDelegate()
 {
 }
 
+void AbstractDelegate::syncChildItemsGeometry(const QSizeF &size)
+{
+    if (m_contentItem) {
+        m_contentItem->setX(m_leftPadding);
+        m_contentItem->setY(m_topPadding);
+        m_contentItem->setSize(QSizeF(size.width() - m_leftPadding - m_rightPadding,
+                size.height() - m_topPadding - m_bottomPadding));
+    }
+
+    if (m_backgroundItem) {
+        m_backgroundItem->setX(0);
+        m_backgroundItem->setY(0);
+        m_backgroundItem->setSize(size);
+    }
+
+}
+
 void AbstractDelegate::contentData_append(QQmlListProperty<QObject> *prop, QObject *object)
 {
     AbstractDelegate *delegate = static_cast<AbstractDelegate *>(prop->object);
@@ -38,7 +55,7 @@ void AbstractDelegate::contentData_append(QQmlListProperty<QObject> *prop, QObje
     delegate->m_contentData.append(object);
     if (item) {
         if (!delegate->m_contentItem) {
-            qWarning()<<"Creting default contentItem";
+            //qWarning()<<"Creting default contentItem";
             delegate->m_contentItem = new QQuickItem(delegate);
         }
         item->setParentItem(delegate->m_contentItem);
@@ -89,20 +106,7 @@ QQmlListProperty<QObject> AbstractDelegate::contentData()
 
 void AbstractDelegate::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (m_contentItem) {
-        m_contentItem->setX(m_leftPadding);
-        m_contentItem->setY(m_topPadding);
-        m_contentItem->setWidth(newGeometry.width() - m_leftPadding - m_rightPadding);
-        m_contentItem->setHeight(newGeometry.height() - m_topPadding - m_bottomPadding);
-    }
-
-    if (m_backgroundItem) {
-        m_backgroundItem->setX(0);
-        m_backgroundItem->setY(0);
-        m_backgroundItem->setWidth(newGeometry.width());
-        m_backgroundItem->setHeight(newGeometry.height());
-    }
-
+    syncChildItemsGeometry(newGeometry.size());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }
 
@@ -118,10 +122,11 @@ void AbstractDelegate::setContentItem(QQuickItem *item)
     }
 
     m_contentItem = item;
+    item->setParentItem(this);
     m_contentItem->setX(m_leftPadding);
     m_contentItem->setY(m_topPadding);
-    m_contentItem->setWidth(width() - m_leftPadding - m_rightPadding);
-    m_contentItem->setHeight(height() - m_topPadding - m_bottomPadding);
+    m_contentItem->setSize(QSizeF(width() - m_leftPadding - m_rightPadding,
+                                  height() - m_topPadding - m_bottomPadding));
 
     emit contentItemChanged();
 }
@@ -140,11 +145,78 @@ void AbstractDelegate::setBackground(QQuickItem *item)
     m_backgroundItem = item;
     m_backgroundItem->setX(0);
     m_backgroundItem->setY(0);
-    m_backgroundItem->setWidth(width());
-    m_backgroundItem->setHeight(height());
+    m_backgroundItem->setSize(size());
 
     emit backgroundChanged();
 }
+
+int AbstractDelegate::leftPadding() const
+{
+    return m_leftPadding;
+}
+
+void AbstractDelegate::setLeftPadding(int padding)
+{
+    if (m_leftPadding == padding) {
+        return;
+    }
+
+    m_leftPadding = padding;
+    syncChildItemsGeometry(size());
+    emit leftPaddingChanged();
+}
+
+
+int AbstractDelegate::topPadding() const
+{
+    return m_topPadding;
+}
+
+void AbstractDelegate::setTopPadding(int padding)
+{
+    if (m_topPadding == padding) {
+        return;
+    }
+
+    m_topPadding = padding;
+    syncChildItemsGeometry(size());
+    emit topPaddingChanged();
+}
+
+
+int AbstractDelegate::rightPadding() const
+{
+    return m_rightPadding;
+}
+
+void AbstractDelegate::setRightPadding(int padding)
+{
+    if (m_rightPadding == padding) {
+        return;
+    }
+
+    m_rightPadding = padding;
+    syncChildItemsGeometry(size());
+    emit rightPaddingChanged();
+}
+
+
+int AbstractDelegate::bottomPadding() const
+{
+    return m_bottomPadding;
+}
+
+void AbstractDelegate::setBottomPadding(int padding)
+{
+    if (m_bottomPadding == padding) {
+        return;
+    }
+
+    m_bottomPadding = padding;
+    syncChildItemsGeometry(size());
+    emit bottomPaddingChanged();
+}
+
 
 void AbstractDelegate::setSessionData(SessionDataMap *data)
 {
