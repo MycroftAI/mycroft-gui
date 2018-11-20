@@ -60,6 +60,11 @@ public:
     QString id() const;
 
     /**
+     * @internal triggers an event: invoked by the c++ side of the delegates via AbstractDelegate::triggerEvent
+     */
+    void triggerEvent(const QString &skillId, const QString &eventName, const QVariantMap &parameters);
+
+    /**
      * @returns the property map that contains the data for a given skill,
      * if no data is present for a skill, it gets created if and only if it's an active skill.
      * @internal this is strictly for internal use only and must *NOT* be exposed to QML. used by the class itself and the autotests.

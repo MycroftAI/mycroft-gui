@@ -41,6 +41,7 @@ private Q_SLOTS:
     void testChangeSessionData();
     void testShowGui();
     void testEventsFromServer();
+    void testEventsFromClient();
 
 private:
     //Client
@@ -406,6 +407,42 @@ void ServerTest::testEventsFromServer()
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.events.triggered\", \"namespace\": \"mycroft.wiki\", \"event_name\": \"new_data\", \"data\": {}}"));
 
     eventSpy.wait(1000);
+    QCOMPARE(eventSpy.count(), 2);
+}
+
+void ServerTest::testEventsFromClient()
+{
+    AbstractDelegate *delegate = m_view->activeSkills()->delegatesForSkill(QStringLiteral("mycroft.weather")).first();
+    QVERIFY(delegate);
+    QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
+
+    QSignalSpy eventSpy(m_guiWebSocket, &QWebSocket::textMessageReceived);
+
+    //skill own event
+    delegate->triggerEvent(QStringLiteral("mycroft.weather.refresh_forecast"), QVariantMap({{QStringLiteral("when"), QStringLiteral("Monday")}}));
+    eventSpy.wait();
+
+    QJsonDocument doc = QJsonDocument::fromJson(eventSpy.first().first().toString().toUtf8());
+    QVERIFY(!doc.isEmpty());
+    QCOMPARE(doc[QStringLiteral("type")], QStringLiteral("mycroft.events.triggered"));
+    QCOMPARE(doc[QStringLiteral("namespace")], QStringLiteral("mycroft.weather"));
+    QCOMPARE(doc[QStringLiteral("event_name")], QStringLiteral("mycroft.weather.refresh_forecast"));
+    QCOMPARE(doc[QStringLiteral("parameters")][QStringLiteral("when")], QStringLiteral("Monday"));
+
+    //system event
+    delegate->triggerEvent(QStringLiteral("system.next"), QVariantMap());
+    eventSpy.wait();
+
+    doc = QJsonDocument::fromJson(eventSpy[1].first().toString().toUtf8());
+    QVERIFY(!doc.isEmpty());
+    QCOMPARE(doc[QStringLiteral("type")], QStringLiteral("mycroft.events.triggered"));
+    QCOMPARE(doc[QStringLiteral("event_name")], QStringLiteral("system.next"));
+    QCOMPARE(doc[QStringLiteral("namespace")], QStringLiteral("system"));
+
+    //event from another skill: will get blocked and *not* sent
+    delegate->triggerEvent(QStringLiteral("timer.pause"), QVariantMap());
+    eventSpy.wait(1000);
+
     QCOMPARE(eventSpy.count(), 2);
 }
 

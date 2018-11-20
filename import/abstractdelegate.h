@@ -23,6 +23,7 @@
 #include <QPointer>
 
 #include "sessiondatamap.h"
+#include "abstractskillview.h"
 
 class MycroftController;
 
@@ -104,7 +105,8 @@ public:
      */
     void setSessionData(SessionDataMap *data);
 
-    //TODO: void setSkillView(AbstractSkillView *view);
+    void setSkillView(AbstractSkillView *view);
+    AbstractSkillView *skillView() const;
 
     /**
      * @internal Url of the qml file that generated this instance
@@ -117,6 +119,13 @@ public:
      */
     void setSkillId(const QString &skillId);
     QString skillId() const;
+
+public Q_SLOTS:
+    /**
+     * Trigger an event either for this skill or a system one
+     * Is not possible to trigger events belonging to different skills
+     */
+    void triggerEvent(const QString &eventName, const QVariantMap &parameters);
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
@@ -172,6 +181,7 @@ private:
 
     //The main data from the Mycroft server
     QPointer<SessionDataMap> m_data;
+    QPointer<AbstractSkillView> m_skillView;
 
     QUrl m_qmlUrl;
     QString m_skillId;

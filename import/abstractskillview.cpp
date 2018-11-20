@@ -59,7 +59,7 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
     connect(m_guiWebSocket, &QWebSocket::stateChanged, this,
             [this](QAbstractSocket::SocketState socketState) {
                 //TODO: when the connection closes, all session data and guis should be destroyed
-                qWarning()<<"GUI SOCKET STATE:"<<socketState;
+                //qWarning()<<"GUI SOCKET STATE:"<<socketState;
                 //Try to reconnect if our connection died but the main server connection is still alive
                 if (socketState == QAbstractSocket::UnconnectedState && m_url.isValid() && m_controller->status() == MycroftController::Open) {
                     m_reconnectTimer.start();
@@ -118,6 +118,23 @@ void AbstractSkillView::setUrl(const QUrl &url)
 QString AbstractSkillView::id() const
 {
     return m_id;
+}
+
+void AbstractSkillView::triggerEvent(const QString &skillId, const QString &eventName, const QVariantMap &parameters)
+{
+    if (m_guiWebSocket->state() != QAbstractSocket::ConnectedState) {
+        qWarning() << "Error: Mycroft gui connection not open!";
+        return;
+    }
+    QJsonObject root;
+
+    root[QStringLiteral("type")] = QStringLiteral("mycroft.events.triggered");
+    root[QStringLiteral("namespace")] = skillId;
+    root[QStringLiteral("event_name")] = eventName;
+    root[QStringLiteral("parameters")] = QJsonObject::fromVariantMap(parameters);
+
+    QJsonDocument doc(root);
+    m_guiWebSocket->sendTextMessage(QString::fromUtf8(doc.toJson()));
 }
 
 MycroftController::Status AbstractSkillView::status() const
@@ -234,7 +251,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         return;
     }
 
-    qDebug() << "gui message type" << type;
+    //qDebug() << "gui message type" << type;
 
 //BEGIN SKILLDATA
     // The SkillData was updated by the server
@@ -353,6 +370,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
             delegate->setSkillId(skillId);
             delegate->setQmlUrl(delegateUrl);
+            delegate->setSkillView(this);
             delegate->setSessionData(sessionDataForSkill(skillId));
             delegateComponent.completeCreate();
             m_activeSkillsModel->insertDelegate(delegate);

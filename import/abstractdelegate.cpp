@@ -27,6 +27,22 @@ AbstractDelegate::~AbstractDelegate()
 {
 }
 
+void AbstractDelegate::triggerEvent(const QString &eventName, const QVariantMap &parameters)
+{
+    if (!m_skillView) {
+        qWarning() << "No SkillView, this should never happen: orphan delegate?";
+        return;
+    }
+
+    if (eventName.startsWith(QStringLiteral("system."))) {
+        m_skillView->triggerEvent(QStringLiteral("system"), eventName, parameters);
+    } else if (eventName.startsWith(m_skillId + QStringLiteral("."))) {
+        m_skillView->triggerEvent(m_skillId, eventName, parameters);
+    } else {
+        qWarning() << "Warning: you can only trigger system events or events belonging to the skill" << m_skillId;
+    }
+}
+
 void AbstractDelegate::syncChildItemsGeometry(const QSizeF &size)
 {
     if (m_contentItem) {
@@ -217,6 +233,18 @@ void AbstractDelegate::setBottomPadding(int padding)
     emit bottomPaddingChanged();
 }
 
+
+void AbstractDelegate::setSkillView(AbstractSkillView *view)
+{
+    //possible to call only once, by the skillview, setting itself upon instantiation
+    Q_ASSERT(!m_skillView);
+    m_skillView = view;
+}
+
+AbstractSkillView *AbstractDelegate::skillView() const
+{
+    return m_skillView;
+}
 
 void AbstractDelegate::setSessionData(SessionDataMap *data)
 {
