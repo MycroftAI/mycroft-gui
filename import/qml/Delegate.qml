@@ -25,11 +25,6 @@ import Mycroft 1.0 as Mycroft
 //TODO: should all delegates be a Kirigami Page?
 Mycroft.AbstractDelegate {
     id: control
-    //FIXME: all of this should be grouped
-    property alias backgroundHorizontalAlignment: img.horizontalAlignment
-    property alias backgroundVerticalAlignment: img.verticalAlignment
-    property alias backgroundDim: rect.opacity
-
 
     signal backRequested
 
@@ -54,39 +49,16 @@ Mycroft.AbstractDelegate {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    leftPadding: (typeof view  !== "undefined" && view() ?view().leftPadding : 0) + Kirigami.Units.largeSpacing
-    topPadding: (typeof view  !== "undefined" && view() ?view().topPadding : 0) + Kirigami.Units.largeSpacing
-    rightPadding: (typeof view  !== "undefined" && view() ?view().rightPadding : 0) + Kirigami.Units.largeSpacing
-    bottomPadding: (typeof view  !== "undefined" && view() ?view().bottomPadding : 0) + Kirigami.Units.largeSpacing
+    leftPadding: Kirigami.Units.largeSpacing
+    topPadding: Kirigami.Units.largeSpacing
+    rightPadding: Kirigami.Units.largeSpacing
+    bottomPadding: Kirigami.Units.largeSpacing
 
-    //this to make all items children of contentItem so everything will have paddings automagically
-    default property alias data: main.data
     //TODO: make this background an internal component
     //so the implementation can do background.image: "foo" background.dim: 0.6 etc as grouped properties
-    background: Item {
-        Image {
-            id: img
-            anchors.fill: parent
-            fillMode: Image.PreserveAspectCrop
-            opacity: status == Image.Ready
-            Behavior on opacity {
-                OpacityAnimator {
-                    duration: Kirigami.Units.longDuration * 2
-                    easing.type: Easing.InOutCubic
-                }
-            }
-        }
-        Rectangle {
-            id: rect
-            anchors.fill: parent
-            //TODO: api for having skills that just fill a solid color
-            color: "black"
-            opacity: 0.6
-        }
-    }
-
-     MouseArea {
-        id: main
-        drag.filterChildren: true
+    background: Rectangle {
+        //TODO: api for having skills that just fill a solid color
+        color: "black"
+        opacity: 0.6
     }
 }

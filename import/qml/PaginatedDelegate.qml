@@ -23,7 +23,7 @@ import QtQuick.Controls 2.4 as Controls
 import QtQuick.Layouts 1.3
 import org.kde.kirigami 2.5 as Kirigami
 
-DelegateBase {
+Delegate {
     id: root
     property int switchWidth: Kirigami.Units.gridUnit * 35
     property int switchHeight: Kirigami.Units.gridUnit * 35

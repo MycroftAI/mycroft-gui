@@ -44,6 +44,7 @@ private Q_SLOTS:
     void testSessionData();
     void testChangeSessionData();
     void testShowGui();
+    void testShowSecondGuiPage();
     void testEventsFromServer();
     void testEventsFromClient();
 
@@ -98,6 +99,9 @@ void ServerTest::initTestCase()
     qmlRegisterUncreatableType<ActiveSkillsModel>("Mycroft", 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
     qmlRegisterUncreatableType<DelegatesModel>("Mycroft", 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
     qmlRegisterUncreatableType<SessionDataMap>("Mycroft", 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
+
+    qmlRegisterType(QUrl::fromLocalFile(QFINDTESTDATA(QStringLiteral("../import/qml/Delegate.qml"))), "Mycroft", 1, 0, "Delegate");
+
     qmlProtectModule("Mycroft", 1);
 
     m_mainServerSocket = new QWebSocketServer(QStringLiteral("core"),
@@ -110,12 +114,14 @@ void ServerTest::initTestCase()
     //TODO: delete
     //m_view = new AbstractSkillView;
     m_window = new QQuickView;
+    m_window->setResizeMode(QQuickView::SizeRootObjectToView);
+    m_window->resize(400, 800);
 
-    m_window->setSource(QUrl(QStringLiteral("file://") + QFINDTESTDATA("../import/qml/SkillView.qml")));
+    //Load the AbstractSkillview from our specialization in QML
+    m_window->setSource(QUrl::fromLocalFile(QFINDTESTDATA("../import/qml/SkillView.qml")));
     if (m_window->errors().length() > 0) {
         qWarning() << m_window->errors();
     }
-    m_window->resize(400, 800);
     m_window->show();
     m_view = qobject_cast<AbstractSkillView *>(m_window->rootObject());
     QVERIFY(m_view);
@@ -261,14 +267,14 @@ void ServerTest::testSessionData()
     QSignalSpy dataChangedSpy(map, &SessionDataMap::valueChanged);
 
     //set data for weather skill
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.set\", \"namespace\": \"mycroft.weather\", \"data\": {\"temperature\": \"28°C\", \"icon\": \"sunny\", \"forecast\":[{\"when\": \"Monday\", \"temperature\": \"13°C\", \"icon\": \"cloudy\"}, {\"when\": \"Tuesday\", \"temperature\": \"24°C\", \"icon\": \"overcast\"}, {\"when\": \"Wednesday\", \"temperature\": \"22°C\", \"icon\": \"rain\"}]}}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.set\", \"namespace\": \"mycroft.weather\", \"data\": {\"temperature\": \"28°C\", \"icon\": \"weather-clear\", \"forecast\":[{\"when\": \"Monday\", \"temperature\": \"13°C\", \"icon\": \"weather-clouds\"}, {\"when\": \"Tuesday\", \"temperature\": \"24°C\", \"icon\": \"overcast\"}, {\"when\": \"Wednesday\", \"temperature\": \"22°C\", \"icon\": \"weather-showers-day\"}]}}"));
 
     dataChangedSpy.wait();
     QCOMPARE(dataChangedSpy.count(), 3);
 
     QCOMPARE(map->keys().count(), 3);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("28°C"));
-    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("weather-clear"));
 
     //Verify the model contents, setting the whole list means reset of the model
     SessionDataModel *dm = map->value(QStringLiteral("forecast")).value<SessionDataModel *>();
@@ -278,7 +284,7 @@ void ServerTest::testSessionData()
 
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Monday"));
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("13°C"));
-    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("cloudy"));
+    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clouds"));
 
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Tuesday"));
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("24°C"));
@@ -286,7 +292,7 @@ void ServerTest::testSessionData()
 
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Wednesday"));
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("22°C"));
-    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("rain"));
+    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-showers-day"));
 }
 
 void ServerTest::testChangeSessionData()
@@ -307,7 +313,7 @@ void ServerTest::testChangeSessionData()
     //keys are alphabetically ordered
     QCOMPARE(map->keys().count(), 4);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
-    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("weather-clear"));
     QCOMPARE(map->value(QStringLiteral("otherproperty")), QStringLiteral("value"));
 
     //remove otherproperty
@@ -318,7 +324,7 @@ void ServerTest::testChangeSessionData()
     //is not possible to actually remove a key
     QCOMPARE(map->keys().count(), 4);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
-    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("weather-clear"));
     QCOMPARE(map->value(QStringLiteral("otherproperty")), QVariant());
 
     //Change a value in the model of forecasts
@@ -328,37 +334,37 @@ void ServerTest::testChangeSessionData()
     QSignalSpy modelDataInsertedSpy(dm, &SessionDataModel::rowsInserted);
     QSignalSpy modelDataMovedSpy(dm, &SessionDataModel::rowsMoved);
     QSignalSpy modelDataRemovedSpy(dm, &SessionDataModel::rowsRemoved);
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.update\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"position\": 1, \"data\": [{\"temperature\": \"30°C\", \"icon\": \"sunny\"}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.update\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"position\": 1, \"data\": [{\"temperature\": \"30°C\", \"icon\": \"weather-clear\"}]}"));
     modelDataChangedSpy.wait();
 
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("30°C"));
-    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("sunny"));
+    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clear"));
 
     //Insert a new value in the forecasts model
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.insert\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"position\": 1, \"data\": [{\"when\": \"Thursday\", \"temperature\": \"2°C\", \"icon\": \"snow\"}, {\"when\": \"Friday\", \"temperature\": \"12°C\", \"icon\": \"partly_sunny\"}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.insert\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"position\": 1, \"data\": [{\"when\": \"Thursday\", \"temperature\": \"2°C\", \"icon\": \"weather-snow\"}, {\"when\": \"Friday\", \"temperature\": \"12°C\", \"icon\": \"weather-few-clouds\"}]}"));
     modelDataInsertedSpy.wait();
 
     QCOMPARE(dm->rowCount(), 5);
 
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Monday"));
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("13°C"));
-    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("cloudy"));
+    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clouds"));
 
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Thursday"));
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("2°C"));
-    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("snow"));
+    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-snow"));
 
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Friday"));
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("12°C"));
-    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("partly_sunny"));
+    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-few-clouds"));
 
     QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Tuesday"));
     QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("30°C"));
-    QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("sunny"));
+    QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clear"));
 
     QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Wednesday"));
     QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("22°C"));
-    QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("rain"));
+    QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-showers-day"));
 
     //Move Thursday and Friday at the bottom of the list
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"from\": 1, \"to\": 5, \"items_number\": 2}"));
@@ -367,23 +373,23 @@ void ServerTest::testChangeSessionData()
     QCOMPARE(dm->rowCount(), 5);
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Monday"));
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("13°C"));
-    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("cloudy"));
+    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clouds"));
 
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Tuesday"));
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("30°C"));
-    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("sunny"));
+    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clear"));
 
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Wednesday"));
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("22°C"));
-    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("rain"));
+    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-showers-day"));
 
     QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Thursday"));
     QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("2°C"));
-    QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("snow"));
+    QCOMPARE(dm->data(dm->index(3, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-snow"));
 
     QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Friday"));
     QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("12°C"));
-    QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("partly_sunny"));
+    QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-few-clouds"));
 
     //Remove Thursday and Friday from the
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.remove\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"position\": 3, \"items_number\": 2}"));
@@ -392,15 +398,15 @@ void ServerTest::testChangeSessionData()
     QCOMPARE(dm->rowCount(), 3);
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Monday"));
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("13°C"));
-    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("cloudy"));
+    QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clouds"));
 
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Tuesday"));
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("30°C"));
-    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("sunny"));
+    QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-clear"));
 
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Wednesday"));
     QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("22°C"));
-    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("rain"));
+    QCOMPARE(dm->data(dm->index(2, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("weather-showers-day"));
 }
 
 void ServerTest::testShowGui()
@@ -423,7 +429,7 @@ void ServerTest::testShowGui()
     QVERIFY(map);
     QCOMPARE(map->keys().count(), 4);
     QCOMPARE(map->value(QStringLiteral("temperature")), QStringLiteral("24°C"));
-    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("sunny"));
+    QCOMPARE(map->value(QStringLiteral("icon")), QStringLiteral("weather-clear"));
     QCOMPARE(map->value(QStringLiteral("otherproperty")), QVariant());
 
     //try to get the delegate via the model, like qml will do and check they're the same
@@ -432,6 +438,22 @@ void ServerTest::testShowGui()
     new QAbstractItemModelTester(dm, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
     AbstractDelegate *delegate2 = dm->data(dm->index(0, 0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
     QCOMPARE(delegate, delegate2);
+}
+
+void ServerTest::testShowSecondGuiPage()
+{
+    QSignalSpy skillModelDataChangedSpy(m_view->activeSkills(), &ActiveSkillsModel::dataChanged);
+
+    const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("forecast.qml"));
+QTest::qWait(2000);
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_url\": \"") + url.toString() + QStringLiteral("\"}"));
+
+    skillModelDataChangedSpy.wait();
+
+    AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill(QStringLiteral("mycroft.weather"), url);
+    QVERIFY(delegate);
+    QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
+    QCOMPARE(delegate->qmlUrl(), url);
 }
 
 void ServerTest::testEventsFromServer()

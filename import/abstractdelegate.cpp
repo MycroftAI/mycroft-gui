@@ -159,6 +159,7 @@ void AbstractDelegate::setBackground(QQuickItem *item)
     }
 
     m_backgroundItem = item;
+    m_backgroundItem->setParentItem(this);
     m_backgroundItem->setX(0);
     m_backgroundItem->setY(0);
     m_backgroundItem->setSize(size());

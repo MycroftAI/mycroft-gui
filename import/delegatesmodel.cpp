@@ -37,12 +37,16 @@ void DelegatesModel::insertDelegate(AbstractDelegate *delegate)
         return;
     }
 //TODO: manage delegate destruction by somebody else
+    if (!m_delegates.isEmpty()) {
+        ++m_currentIndex;
+    }
     beginInsertRows(QModelIndex(), qMax(0, m_currentIndex), qMin(m_delegates.count(), m_currentIndex));
-    int i = 0;
+
     m_delegates.insert(m_currentIndex, delegate);
     m_delegateForUrl.insert(delegate->qmlUrl(), delegate);
 
     endInsertRows();
+    emit currentIndexChanged();
 }
 
 void DelegatesModel::clear()

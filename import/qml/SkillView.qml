@@ -17,6 +17,7 @@
  */
 
 import QtQuick 2.4
+import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.4 as Controls
 import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
@@ -30,7 +31,6 @@ Mycroft.AbstractSkillView {
         initialItem.anchors.fill = restFaceParent;
     }
 
-
     readonly property Item currentItem: null
 
     function goBack() {
@@ -42,19 +42,123 @@ Mycroft.AbstractSkillView {
         anchors.fill: parent
         Item {
             id: restFaceParent
+            width: restFaceSwipeView.width
+            height: restFaceSwipeView.height
+            Text {
+                text: "resting face"
+                anchors.centerIn: parent
+            }
         }
+
         Item {
+            width: restFaceSwipeView.width
+            height: restFaceSwipeView.height
             Repeater {
+                id: activeSkillsRepeater
                 model: activeSkills
-                delegate: Controls.SwipeView {
-                    id: swipeView
+                
+                delegate: Item {
                     anchors.fill: parent
-                    //assume the index 0 is the one most recently used, so the one that should be shown
-                    //visible: index == 0
-                    Repeater {
+                    Item {
+                        id: backgroundImage
+                        anchors {
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
+                        width: parent.width * 2
+                        x: -delegatesView.visibleArea.xPosition * 1.5 * parent.width
+
+                        property string source
+                        property Image currentImage: image1
+                        onSourceChanged: {
+                            if (backgroundImage.currentImage == image1) {
+                                image2.opacity = 0;
+                                image2.source = source;
+                                if (image2.status == Image.Ready) {
+                                    backgroundImage.setCurrent(image2);
+                                }
+                            } else {
+                                image1.opacity = 0;
+                                image1.source = source;
+                                if (image1.status == Image.Ready) {
+                                    backgroundImage.setCurrent(image1);
+                                }
+                            }
+                        }
+
+                        function setCurrent(image) {
+                            backgroundImage.currentImage = image;
+                            fadeAnim.restart();
+                        }
+                        
+                        Image {
+                            id: image1
+                            anchors.fill: parent
+                            z: backgroundImage.currentImage == image1 ? 1 : 0
+                            onStatusChanged: {
+                                if (backgroundImage.currentImage == image2 && status == Image.Ready) {
+                                    backgroundImage.setCurrent(image1);
+                                }
+                            }
+                        }
+                        Image {
+                            id: image2
+                            anchors.fill: parent
+                            z: backgroundImage.currentImage == image2 ? 1 : 0
+                            onStatusChanged: {
+                                if (backgroundImage.currentImage == image1 && status == Image.Ready) {
+                                    backgroundImage.setCurrent(image2);
+                                }
+                            }
+                        }
+                        SequentialAnimation {
+                            id: fadeAnim
+                            OpacityAnimator {
+                                target: backgroundImage.currentImage
+                                from: 0
+                                to: 1
+                                duration: 1000
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                    }
+                    ListView {
+                        id: delegatesView
+                        interactive: true
+                        cacheBuffer: contentWidth * 2
+                        anchors.fill: parent
+                        orientation: ListView.Horizontal
+                        boundsBehavior: Flickable.StopAtBounds
+                        snapMode: ListView.SnapToItem
+                        preferredHighlightBegin: 0
+                        preferredHighlightEnd: 0
+                        highlightMoveDuration: Kirigami.Units.longDuration
+                        highlightFollowsCurrentItem: true
                         model: delegates
+                        visible: index == 0
+
+                        onCurrentIndexChanged: {
+                            delegates.currentIndex = currentIndex
+                        }
+                        onCurrentItemChanged: {
+                            var background = currentItem.contentItem.skillBackgroundSource;
+                            if (background.length > 0) {
+                                backgroundImage.source = background;
+                            }
+                        }
+                        onMovementEnded: currentIndex = indexAt(contentX, 0);
+                        onFlickEnded: movementEnded()
+                        Connections {
+                            target: delegates
+                            onCurrentIndexChanged: {
+                                delegatesView.currentIndex = delegates.currentIndex
+                            }
+                        }
                         delegate: Controls.Control {
+                            width: Math.max(0, restFaceSwipeView.width /  Math.ceil(restFaceSwipeView.width / (Kirigami.Units.gridUnit * 30)))
+                            height: parent.height
                             contentItem: model.delegateUi
+                            Component.onCompleted: restFaceSwipeView.currentIndex = 1
                         }
                     }
                 }

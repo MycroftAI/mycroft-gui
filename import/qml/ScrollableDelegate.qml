@@ -22,7 +22,7 @@ import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 //TODO: this muct become a Delegate subclass
-DelegateBase {
+Delegate {
     id: control
 
     //this to make all items children of the scrollview item so everything will have paddings automagically
