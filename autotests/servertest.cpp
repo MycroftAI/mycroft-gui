@@ -523,7 +523,7 @@ void ServerTest::testEventsFromClient()
 
     QCOMPARE(eventSpy.count(), 2);
     //Wait a moment before closing the program
-    QTest::qWait(20000);
+    QTest::qWait(2000);
 }
 
 QTEST_MAIN(ServerTest);
