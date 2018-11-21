@@ -46,7 +46,8 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
         return;
     }
 
-    beginInsertRows(QModelIndex(), qMax(0, position), qMin(m_skills.count(), position+ filteredList.count() - 1));
+    beginInsertRows(QModelIndex(), position, position + filteredList.count() - 1);
+
     int i = 0;
     for (const auto &skillId : filteredList) {
         m_skills.insert(position + i, skillId);
@@ -134,7 +135,7 @@ bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow,
 
     if (sourceRow < destinationChild) {
         for (int i = count - 1; i >= 0; --i) {
-            m_skills.move(sourceRow + i, destinationChild + i - 1);
+            m_skills.move(sourceRow + i, qMin(destinationChild + i, m_skills.count() - 1));
         }
     } else {
         for (int i = 0; i < count; ++i) {

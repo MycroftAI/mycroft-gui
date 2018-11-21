@@ -50,9 +50,9 @@ Mycroft.AbstractSkillView {
                     id: swipeView
                     anchors.fill: parent
                     //assume the index 0 is the one most recently used, so the one that should be shown
-                    visible: index == 0
+                    //visible: index == 0
                     Repeater {
-                        model: model.delegates
+                        model: delegates
                         delegate: Controls.Control {
                             contentItem: model.delegateUi
                         }

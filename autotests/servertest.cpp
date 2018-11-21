@@ -19,8 +19,12 @@
 #include <QWebSocket>
 #include <QWebSocketServer>
 #include <QAbstractItemModel>
+#include <QQuickView>
+#include <QQmlEngine>
 #include "../import/mycroftcontroller.h"
 #include "../import/abstractdelegate.h"
+#include "../import/filereader.h"
+#include "../import/globalsettings.h"
 #include "../import/activeskillsmodel.h"
 #include "../import/delegatesmodel.h"
 #include "../import/abstractskillview.h"
@@ -48,6 +52,8 @@ private:
     MycroftController *m_controller;
     AbstractSkillView *m_view;
 
+    QQuickView *m_window;
+
     //Server
     QWebSocketServer *m_mainServerSocket;
     QWebSocketServer *m_guiServerSocket;
@@ -56,9 +62,44 @@ private:
     QWebSocket *m_guiWebSocket;
 };
 
+static QObject *fileReaderSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return new FileReader;
+}
+
+static QObject *globalSettingsSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return new GlobalSettings;
+}
+
+static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+
+    return MycroftController::instance();
+}
+
 
 void ServerTest::initTestCase()
 {
+    qmlRegisterSingletonType<MycroftController>("Mycroft", 1, 0, "MycroftController", mycroftControllerSingletonProvider);
+    qmlRegisterSingletonType<GlobalSettings>("Mycroft", 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
+    qmlRegisterSingletonType<FileReader>("Mycroft", 1, 0, "FileReader", fileReaderSingletonProvider);
+    qmlRegisterType<AbstractSkillView>("Mycroft", 1, 0, "AbstractSkillView");
+    qmlRegisterType<AbstractDelegate>("Mycroft", 1, 0, "AbstractDelegate");
+
+    qmlRegisterUncreatableType<ActiveSkillsModel>("Mycroft", 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
+    qmlRegisterUncreatableType<DelegatesModel>("Mycroft", 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
+    qmlRegisterUncreatableType<SessionDataMap>("Mycroft", 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
+    qmlProtectModule("Mycroft", 1);
+
     m_mainServerSocket = new QWebSocketServer(QStringLiteral("core"),
                                             QWebSocketServer::NonSecureMode, this);
     m_mainServerSocket->listen(QHostAddress::Any, 8181);
@@ -67,7 +108,19 @@ void ServerTest::initTestCase()
     m_guiServerSocket->listen(QHostAddress::Any, 1818);
     m_controller = MycroftController::instance();
     //TODO: delete
-    m_view = new AbstractSkillView;
+    //m_view = new AbstractSkillView;
+    m_window = new QQuickView;
+
+    m_window->setSource(QUrl(QStringLiteral("file://") + QFINDTESTDATA("../import/qml/SkillView.qml")));
+    if (m_window->errors().length() > 0) {
+        qWarning() << m_window->errors();
+    }
+    m_window->resize(400, 800);
+    m_window->show();
+    m_view = qobject_cast<AbstractSkillView *>(m_window->rootObject());
+    QVERIFY(m_view);
+
+    new QAbstractItemModelTester(m_view->activeSkills(), QAbstractItemModelTester::FailureReportingMode::QtTest, this);
 }
 
 //TODO: test a spotty connection
@@ -183,9 +236,9 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->rowCount(), 5);
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(0,0)), QStringLiteral("mycroft.weather"));
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(1,0)), QStringLiteral("aiix.shopping-demo"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("mycroft.timer"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(3,0)), QStringLiteral("aiix.food-wizard"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("mycroft.wiki"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("mycroft.wiki"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(3,0)), QStringLiteral("mycroft.timer"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("aiix.food-wizard"));
 
     //Remove shopping-demo and timer
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.remove\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 1, \"items_number\": 2}"));
@@ -194,8 +247,9 @@ void ServerTest::testActiveSkills()
 
     QCOMPARE(m_view->activeSkills()->rowCount(), 3);
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(0,0)), QStringLiteral("mycroft.weather"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(1,0)), QStringLiteral("aiix.food-wizard"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("mycroft.wiki"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(1,0)), QStringLiteral("mycroft.timer"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("aiix.food-wizard"));
+    
 }
 
 void ServerTest::testSessionData()
