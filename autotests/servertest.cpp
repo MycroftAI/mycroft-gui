@@ -445,7 +445,8 @@ void ServerTest::testShowSecondGuiPage()
     QSignalSpy skillModelDataChangedSpy(m_view->activeSkills(), &ActiveSkillsModel::dataChanged);
 
     const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("forecast.qml"));
-QTest::qWait(2000);
+    //wait a moment before showing it there
+    QTest::qWait(2000);
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_url\": \"") + url.toString() + QStringLiteral("\"}"));
 
     skillModelDataChangedSpy.wait();
@@ -521,6 +522,8 @@ void ServerTest::testEventsFromClient()
     eventSpy.wait(1000);
 
     QCOMPARE(eventSpy.count(), 2);
+    //Wait a moment before closing the program
+    QTest::qWait(20000);
 }
 
 QTEST_MAIN(ServerTest);

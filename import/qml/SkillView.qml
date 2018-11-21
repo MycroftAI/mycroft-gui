@@ -37,6 +37,13 @@ Mycroft.AbstractSkillView {
         
     }
 
+    //FIXME: placeholder, to remove
+    Image {
+        id: image1
+        anchors.fill: parent
+        source: "https://source.unsplash.com/1920x1080/?+mountains"
+    }
+
     Controls.SwipeView {
         id: restFaceSwipeView
         anchors.fill: parent
@@ -45,7 +52,10 @@ Mycroft.AbstractSkillView {
             width: restFaceSwipeView.width
             height: restFaceSwipeView.height
             Text {
-                text: "resting face"
+                text: "13:37"
+                color: "white"
+                font.pointSize: 44
+                style: Text.Outline
                 anchors.centerIn: parent
             }
         }
@@ -59,6 +69,7 @@ Mycroft.AbstractSkillView {
                 
                 delegate: Item {
                     anchors.fill: parent
+                    opacity: Math.min(1, restFaceSwipeView.contentItem.contentX/width)
                     Item {
                         id: backgroundImage
                         anchors {
@@ -155,7 +166,7 @@ Mycroft.AbstractSkillView {
                             }
                         }
                         delegate: Controls.Control {
-                            width: Math.max(0, restFaceSwipeView.width /  Math.ceil(restFaceSwipeView.width / (Kirigami.Units.gridUnit * 30)))
+                            width: Math.max(0, restFaceSwipeView.width /  Math.min(delegatesView.count, Math.ceil(restFaceSwipeView.width / (Kirigami.Units.gridUnit * 30))))
                             height: parent.height
                             contentItem: model.delegateUi
                             Component.onCompleted: restFaceSwipeView.currentIndex = 1

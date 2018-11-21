@@ -23,7 +23,7 @@ import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 Mycroft.Delegate {
-    skillBackgroundSource: "https://source.unsplash.com/1920x1080/?+sunny"
+    skillBackgroundSource: "https://source.unsplash.com/1920x1080/?+sun"
     ColumnLayout {
         Kirigami.Heading {
             text: "Today"
