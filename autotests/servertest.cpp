@@ -229,16 +229,16 @@ void ServerTest::testActiveSkills()
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("mycroft.wiki"));
 
     //Move timer and food-wizard in the back
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 1, \"to\": 3, \"items_number\": 2}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 1, \"to\": 4, \"items_number\": 2}"));
 
     skillMovedSpy.wait();
 
     QCOMPARE(m_view->activeSkills()->rowCount(), 5);
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(0,0)), QStringLiteral("mycroft.weather"));
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(1,0)), QStringLiteral("aiix.shopping-demo"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("mycroft.wiki"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(3,0)), QStringLiteral("mycroft.timer"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("aiix.food-wizard"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("mycroft.timer"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(3,0)), QStringLiteral("aiix.food-wizard"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(4,0)), QStringLiteral("mycroft.wiki"));
 
     //Remove shopping-demo and timer
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.remove\", \"namespace\": \"mycroft.system.active_skills\", \"position\": 1, \"items_number\": 2}"));
@@ -247,9 +247,8 @@ void ServerTest::testActiveSkills()
 
     QCOMPARE(m_view->activeSkills()->rowCount(), 3);
     QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(0,0)), QStringLiteral("mycroft.weather"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(1,0)), QStringLiteral("mycroft.timer"));
-    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("aiix.food-wizard"));
-    
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(1,0)), QStringLiteral("aiix.food-wizard"));
+    QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(2,0)), QStringLiteral("mycroft.wiki"));
 }
 
 void ServerTest::testSessionData()
@@ -274,6 +273,7 @@ void ServerTest::testSessionData()
     //Verify the model contents, setting the whole list means reset of the model
     SessionDataModel *dm = map->value(QStringLiteral("forecast")).value<SessionDataModel *>();
     QVERIFY(dm);
+    new QAbstractItemModelTester(dm, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
     QCOMPARE(dm->rowCount(), 3);
 
     QCOMPARE(dm->data(dm->index(0, 0), dm->roleNames().key("when")).toString(), QStringLiteral("Monday"));
@@ -361,7 +361,7 @@ void ServerTest::testChangeSessionData()
     QCOMPARE(dm->data(dm->index(4, 0), dm->roleNames().key("icon")).toString(), QStringLiteral("rain"));
 
     //Move Thursday and Friday at the bottom of the list
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"from\": 1, \"to\": 4, \"items_number\": 2}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"from\": 1, \"to\": 5, \"items_number\": 2}"));
 
     modelDataMovedSpy.wait();
     QCOMPARE(dm->rowCount(), 5);
@@ -429,6 +429,7 @@ void ServerTest::testShowGui()
     //try to get the delegate via the model, like qml will do and check they're the same
     DelegatesModel *dm = m_view->activeSkills()->data(m_view->activeSkills()->index(0, 0), ActiveSkillsModel::Delegates).value<DelegatesModel *>();
     QVERIFY(dm);
+    new QAbstractItemModelTester(dm, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
     AbstractDelegate *delegate2 = dm->data(dm->index(0, 0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
     QCOMPARE(delegate, delegate2);
 }

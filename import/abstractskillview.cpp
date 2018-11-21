@@ -554,7 +554,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             qWarning() << "Error: Invalid from position in mycroft.session.list.move";
             return;
         }
-        if (to < 0 || to > dm->rowCount() - 1) {
+        if (to < 0 || to > dm->rowCount()) {
             qWarning() << "Error: Invalid to position in mycroft.session.list.move";
             return;
         }

@@ -81,13 +81,13 @@ bool DelegatesModel::moveRows(const QModelIndex &sourceParent, int sourceRow, in
     const int sourceLast = sourceRow + count - 1;
 
     //beginMoveRows wants indexes before the source rows are removed from the old order
-    if (!beginMoveRows(sourceParent, sourceRow, sourceLast, destinationParent, destinationChild + (sourceRow < destinationChild ? count : 0))) {
+    if (!beginMoveRows(sourceParent, sourceRow, sourceLast, destinationParent, destinationChild)) {
         return false;
     }
 
     if (sourceRow < destinationChild) {
         for (int i = count - 1; i >= 0; --i) {
-            m_delegates.move(sourceRow + i, destinationChild + i - 1);
+            m_delegates.move(sourceRow + i, qMin(destinationChild + i, m_delegates.count() - 1));
         }
     } else {
         for (int i = 0; i < count; ++i) {

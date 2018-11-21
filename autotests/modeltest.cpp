@@ -40,28 +40,52 @@ public Q_SLOTS:
     void initTestCase();
 
 private Q_SLOTS:
-    void testActiveSkills();
+    void testActiveSkillsModel();
+    void testDelegatesModel();
 
 private:
     ActiveSkillsModel *m_skillsModel;
+    DelegatesModel *m_delegatesModel;
+    SessionDataModel *m_sessionDataModel;
 };
 
 
 void ModelTest::initTestCase()
 {
     m_skillsModel = new ActiveSkillsModel(this);
+    m_delegatesModel = new DelegatesModel(this);
+    m_sessionDataModel = new SessionDataModel(this);
+
+    new QAbstractItemModelTester(m_skillsModel, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
+    new QAbstractItemModelTester(m_delegatesModel, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
+    new QAbstractItemModelTester(m_sessionDataModel, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
 }
 
 //TODO: test a spotty connection
-void ModelTest::testActiveSkills()
+void ModelTest::testActiveSkillsModel()
 {
-    new QAbstractItemModelTester(m_skillsModel, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
     m_skillsModel->insertSkills(0, QStringList({QStringLiteral("skill0"), QStringLiteral("skill1"), QStringLiteral("skill2"), QStringLiteral("skill3")}));
     m_skillsModel->moveRows(QModelIndex(), 2, 1, QModelIndex(), 1);
     m_skillsModel->moveRows(QModelIndex(), 2, 2, QModelIndex(), 1);
     m_skillsModel->moveRows(QModelIndex(), 0, 2, QModelIndex(), 3);
+    m_skillsModel->moveRows(QModelIndex(), 0, 2, QModelIndex(), 4);
     m_skillsModel->removeRows(1, 2);
     m_skillsModel->insertSkills(2, QStringList({QStringLiteral("newSkill")}));
+}
+
+void ModelTest::testDelegatesModel()
+{
+    new QAbstractItemModelTester(m_delegatesModel, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
+    m_delegatesModel->insertDelegate(new AbstractDelegate());
+    m_delegatesModel->insertDelegate(new AbstractDelegate());
+    m_delegatesModel->insertDelegate(new AbstractDelegate());
+    m_delegatesModel->insertDelegate(new AbstractDelegate());
+    m_delegatesModel->moveRows(QModelIndex(), 2, 1, QModelIndex(), 1);
+    m_delegatesModel->moveRows(QModelIndex(), 2, 2, QModelIndex(), 1);
+    m_delegatesModel->moveRows(QModelIndex(), 0, 2, QModelIndex(), 3);
+    m_delegatesModel->moveRows(QModelIndex(), 0, 1, QModelIndex(), 4);
+    m_delegatesModel->removeRows(1, 2);
+    m_delegatesModel->insertDelegate(new AbstractDelegate());
 }
 
 QTEST_MAIN(ModelTest);

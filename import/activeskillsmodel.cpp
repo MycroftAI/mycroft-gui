@@ -33,6 +33,10 @@ ActiveSkillsModel::~ActiveSkillsModel()
 
 void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
 {
+    if (position < 0 || position > m_skills.count()) {
+        return;
+    }
+
     QStringList filteredList;
 
     std::copy_if(skillList.begin(), skillList.end(),
@@ -129,13 +133,13 @@ bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow,
     const int sourceLast = sourceRow + count - 1;
 
     //beginMoveRows wants indexes before the source rows are removed from the old order
-    if (!beginMoveRows(sourceParent, sourceRow, sourceLast, destinationParent, destinationChild + (sourceRow < destinationChild ? count : 0))) {
+    if (!beginMoveRows(sourceParent, sourceRow, sourceLast, destinationParent, destinationChild)) {
         return false;
     }
 
     if (sourceRow < destinationChild) {
         for (int i = count - 1; i >= 0; --i) {
-            m_skills.move(sourceRow + i, qMin(destinationChild + i, m_skills.count() - 1));
+            m_skills.move(sourceRow + i, destinationChild - count + i);
         }
     } else {
         for (int i = 0; i < count; ++i) {
