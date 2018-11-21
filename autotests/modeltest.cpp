@@ -42,6 +42,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void testActiveSkillsModel();
     void testDelegatesModel();
+    void testSessionDataModel();
 
 private:
     ActiveSkillsModel *m_skillsModel;
@@ -61,7 +62,6 @@ void ModelTest::initTestCase()
     new QAbstractItemModelTester(m_sessionDataModel, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
 }
 
-//TODO: test a spotty connection
 void ModelTest::testActiveSkillsModel()
 {
     m_skillsModel->insertSkills(0, QStringList({QStringLiteral("skill0"), QStringLiteral("skill1"), QStringLiteral("skill2"), QStringLiteral("skill3")}));
@@ -86,6 +86,17 @@ void ModelTest::testDelegatesModel()
     m_delegatesModel->moveRows(QModelIndex(), 0, 1, QModelIndex(), 4);
     m_delegatesModel->removeRows(1, 2);
     m_delegatesModel->insertDelegate(new AbstractDelegate());
+}
+
+void ModelTest::testSessionDataModel()
+{
+    m_sessionDataModel->insertData(0, QList<QVariantMap> ({{{QStringLiteral("prop"), QStringLiteral("value1")}}, {{QStringLiteral("prop"), QStringLiteral("value2")}},  {{QStringLiteral("prop"), QStringLiteral("value3")}}, {{QStringLiteral("prop"), QStringLiteral("value4")}}}));
+    m_sessionDataModel->moveRows(QModelIndex(), 2, 1, QModelIndex(), 1);
+    m_sessionDataModel->moveRows(QModelIndex(), 2, 2, QModelIndex(), 1);
+    m_sessionDataModel->moveRows(QModelIndex(), 0, 2, QModelIndex(), 3);
+    m_sessionDataModel->moveRows(QModelIndex(), 0, 2, QModelIndex(), 4);
+    m_sessionDataModel->removeRows(1, 2);
+    m_sessionDataModel->insertData(2, QList<QVariantMap> ({{{QStringLiteral("prop"), QStringLiteral("newValue")}}}));
 }
 
 QTEST_MAIN(ModelTest);
