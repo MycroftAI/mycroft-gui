@@ -172,6 +172,17 @@ Mycroft.AbstractSkillView {
                             Component.onCompleted: restFaceSwipeView.currentIndex = 1
                         }
                     }
+                    Controls.PageIndicator {
+                        visible: delegatesView.count > 1
+                        z: 999
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            bottom: parent.bottom
+                            margins: Kirigami.Units.largeSpacing
+                        }
+                        count: delegatesView.count
+                        currentIndex: delegatesView.currentIndex
+                    }
                 }
             }
         }
