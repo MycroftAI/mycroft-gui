@@ -97,6 +97,7 @@ void ModelTest::testSessionDataModel()
     m_sessionDataModel->moveRows(QModelIndex(), 0, 2, QModelIndex(), 4);
     m_sessionDataModel->removeRows(1, 2);
     m_sessionDataModel->insertData(2, QList<QVariantMap> ({{{QStringLiteral("prop"), QStringLiteral("newValue")}}}));
+    QCOMPARE(m_sessionDataModel->data(m_sessionDataModel->index(2, 0), m_sessionDataModel->roleNames().key("prop")).toString(), QStringLiteral("newValue"));
 }
 
 QTEST_MAIN(ModelTest);
