@@ -28,7 +28,7 @@ Item {
         top: parent.top
         bottom: parent.bottom
     }
-    width: parent.width * 2
+    width: height * (currentImage.sourceSize.width / currentImage.sourceSize.height)
     x: -delegatesView.visibleArea.xPosition * 1.5 * parent.width
 
     property string source

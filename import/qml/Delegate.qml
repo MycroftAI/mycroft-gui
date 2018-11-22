@@ -57,6 +57,6 @@ Mycroft.AbstractDelegate {
     background: Rectangle {
         //TODO: api for having skills that just fill a solid color
         color: "black"
-        opacity: 0.6
+        opacity: 0.4
     }
 }

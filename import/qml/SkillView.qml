@@ -44,7 +44,12 @@ Mycroft.AbstractSkillView {
     //FIXME: placeholder, to remove
     Image {
         id: image1
-        anchors.fill: parent
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+        width: height * (sourceSize.width / sourceSize.height)
         source: "https://source.unsplash.com/1920x1080/?+mountains"
     }
 
@@ -80,6 +85,7 @@ Mycroft.AbstractSkillView {
                     ListView {
                         id: delegatesView
                         interactive: true
+                        clip: true
                         cacheBuffer: contentWidth * 2
                         anchors.fill: parent
                         orientation: ListView.Horizontal
