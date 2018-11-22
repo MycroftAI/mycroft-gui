@@ -50,7 +50,6 @@ void DelegatesModel::insertDelegates(QList<AbstractDelegate *> delegates)
     const int startPos = qMax(0, qMin(m_currentIndex + 1, m_delegates.count()));
 
     if (!missingDelegates.isEmpty()) {
-//TODO: manage delegate destruction by somebody else
 
         beginInsertRows(QModelIndex(), startPos, startPos + missingDelegates.count() - 1);
 
