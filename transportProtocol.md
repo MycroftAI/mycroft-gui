@@ -128,3 +128,5 @@ Values is an ordered dict, for a shopping cart it would need multiple roles like
 It should always be an array, even if containing a single url. If multiple urls are provided, the GUI is guaranteed to show the first one, with the possibility of seeing the other pages as well, for instance with an horizontal swipe.
 
 The skill author to have that would just call a functin like self.show_gui("currentweather.qml") the construction of the proper message is done behind the scenes.
+
+TODO: storing delegates order on the server, resting-faces, mini-faces
