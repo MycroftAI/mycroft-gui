@@ -1,8 +1,8 @@
-= ACTIVE SKILLS DATA =
+# ACTIVE SKILLS LIST
 The active skill data, described in the section MODELS is mandatory for the rest of the protocol to work. I.e. if some data or an event arrives with namespace "mycroft.weather", the skill id "mycroft.weather" must have been advertised as recently used in the recent skills model beforehand, otherwise all requests on that namespace will be ignored on both client and serverside and considered a protocol error.
 Recent skills are ordered from the last used to the oldest, so the first item of the model will always be the the one showing any QML GUI, if available.
 
-= EVENTS =
+# EVENTS
 {
     "type": "mycroft.events.triggered"
     "namespace": "weather.mycroft"
@@ -13,12 +13,12 @@ Recent skills are ordered from the last used to the oldest, so the first item of
 * event names that start with "system." are available to all skills, like previous/next/pick. the skill author can have as many custom events as he wants
 * same message format goes both ways python->gui and gui->python
 
-= SKILL DATA =
+# SKILL DATA
 
 At the center of data sharing there is a key/value dictionary that is kept synchronized between the server and the GUI client.
 Values can either be simple strings, numbers and booleans or be more complicated data models as described in the MODELS section.
 
-== Sets a new key/value in the sessionData dictionary ==
+## Sets a new key/value in the sessionData dictionary
 Either sets a new key/value pair or replace an existing old value.
 {
     "type": "mycroft.session.set",
@@ -30,7 +30,7 @@ Either sets a new key/value pair or replace an existing old value.
     }
 }
 
-== Deletes a key/value pair from the sessionData dictionary ==
+## Deletes a key/value pair from the sessionData dictionary
 {
     "type": "mycroft.session.delete",
     "namespace": "weather.mycroft"
@@ -42,7 +42,7 @@ All properties already in the dictionary need to be sent as soon as a new client
 The exact message format would be in both direction both server->gui and gui->server
 
 
-= MODELS =
+# MODELS
 Models are for both skill data and active skills, distinction is just between "namespace": "mycroft.system.active_skills" and "namespace": "mycroft.weather"
 All operations have a type which starts by "type": "mycroft.session.list."
 
@@ -61,7 +61,7 @@ The format of the data passed via the socket is of an ordered map
 It must always be an array, even if contains a single item, and each item must contain the exact same set of keys, even if some of them could be empty.
 If subsequent inserts of items will contain a different set of keys, or toehr keys more, those new keys will be ignored by the GUI.
 
-== Inserts new items at position ==
+## Inserts new items at position
 {
     "type": "mycroft.session.list.insert",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
@@ -71,7 +71,7 @@ If subsequent inserts of items will contain a different set of keys, or toehr ke
 }
 Values is an ordered dict, for a shopping cart it would need multiple roles like product name, price, image
 
-== Updates item values starting at the given position, as many items as there are in the array ==
+## Updates item values starting at the given position, as many items as there are in the array
 {
     "type": "mycroft.session.list.update",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
@@ -80,7 +80,7 @@ Values is an ordered dict, for a shopping cart it would need multiple roles like
     "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...] //values must always be in array form
 }
 
-== Moves items within the list ==
+## Moves items within the list
 {
     "type": "mycroft.session.list.move",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
@@ -90,7 +90,7 @@ Values is an ordered dict, for a shopping cart it would need multiple roles like
     "items_number": 2 //optional in case we want to move a big chunk of list at once
 }
 
-== Removes items from the list ==
+## Removes items from the list
 {
     "type": "mycroft.session.list.remove",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
@@ -99,7 +99,7 @@ Values is an ordered dict, for a shopping cart it would need multiple roles like
     "items_number": 5 //optional in case we want to get rid a big chunk of list at once
 }
 
-= SHOW GUI =
+# SHOW GUI
 {
     "type": "mycroft.gui.show",
     "namespace": "weather.mycroft"
