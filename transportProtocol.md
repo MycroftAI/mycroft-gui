@@ -3,12 +3,12 @@ The active skill data, described in the section MODELS is mandatory for the rest
 Recent skills are ordered from the last used to the oldest, so the first item of the model will always be the the one showing any QML GUI, if available.
 
 # EVENTS
-{
+`{
     "type": "mycroft.events.triggered"
     "namespace": "weather.mycroft"
     "event_name": "system.pick",
     "parameters": {"item": 3}
-}
+}`
 
 * event names that start with "system." are available to all skills, like previous/next/pick. the skill author can have as many custom events as he wants
 * same message format goes both ways python->gui and gui->python
@@ -20,7 +20,7 @@ Values can either be simple strings, numbers and booleans or be more complicated
 
 ## Sets a new key/value in the sessionData dictionary
 Either sets a new key/value pair or replace an existing old value.
-{
+`{
     "type": "mycroft.session.set",
     "namespace": "weather.mycroft"
     "data": {
@@ -28,14 +28,14 @@ Either sets a new key/value pair or replace an existing old value.
         "icon": "cloudy",
         "forecast": [{...},...] //if it's a list a model gets created, or resetted if it was already existing, see the MODELS section
     }
-}
+}`
 
 ## Deletes a key/value pair from the sessionData dictionary
-{
+`{
     "type": "mycroft.session.delete",
     "namespace": "weather.mycroft"
     "property": "temperature"
-}
+}`
 
 All properties already in the dictionary need to be sent as soon as a new client connects to the web socket
 
@@ -47,7 +47,7 @@ Models are for both skill data and active skills, distinction is just between "n
 All operations have a type which starts by "type": "mycroft.session.list."
 
 The format of the data passed via the socket is of an ordered map
-[
+`[
 {
   "key1": "value1",
   "key2": "value2"
@@ -56,55 +56,56 @@ The format of the data passed via the socket is of an ordered map
   "key1": "value3",
   "key2": "value4"
 }
-]
+]`
 
 It must always be an array, even if contains a single item, and each item must contain the exact same set of keys, even if some of them could be empty.
 If subsequent inserts of items will contain a different set of keys, or toehr keys more, those new keys will be ignored by the GUI.
 
 ## Inserts new items at position
-{
+`{
     "type": "mycroft.session.list.insert",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
     "property": "forecast" //the key of the main data map this list in contained into
     "position": 2
     "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...] //values must always be in array form
-}
+}`
+
 Values is an ordered dict, for a shopping cart it would need multiple roles like product name, price, image
 
 ## Updates item values starting at the given position, as many items as there are in the array
-{
+`{
     "type": "mycroft.session.list.update",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
     "property": "forecast" //in the future this can become a path if we want lists of lists
     "position": 2
     "values": [{"date": "tomorrow", "temperature" : 13, ...}, ...] //values must always be in array form
-}
+}`
 
-## Moves items within the list
-{
+## Move items within the list
+`{
     "type": "mycroft.session.list.move",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
     "property": "forecast"
     "from": 2
     "to": 5
     "items_number": 2 //optional in case we want to move a big chunk of list at once
-}
+}`
 
-## Removes items from the list
-{
+## Remove items from the list
+`{
     "type": "mycroft.session.list.remove",
     "namespace": "mycroft.system.active_skills" // skill: mycroft.weather
     "property": "forecast" //in the future this can become a path if we want lists of lists
     "position": 2
     "items_number": 5 //optional in case we want to get rid a big chunk of list at once
-}
+}`
 
 # SHOW GUI
-{
+`{
     "type": "mycroft.gui.show",
     "namespace": "weather.mycroft"
     "gui_urls": ["file:///opt/mycroft/weather.mycroft/ui/currentweather.qml", "..."]
-}
+}`
 
 It should always be an array, even if containing a single url. If multiple urls are provided, the GUI is guaranteed to show the first one, with the possibility of seeing the other pages as well, for instance with an horizontal swipe.
 
