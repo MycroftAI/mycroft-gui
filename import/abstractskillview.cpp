@@ -328,53 +328,73 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     // The Skill from the server asked to show its gui
     } else if (type == QLatin1String("mycroft.gui.show")) {
         const QString skillId = doc[QStringLiteral("namespace")].toString();
-        const QUrl delegateUrl(doc[QStringLiteral("gui_url")].toString());
 
         if (skillId.isEmpty()) {
             qWarning() << "Invalid mycroft.gui.show arrived with empty namespace";
             return;
         }
-        if (delegateUrl.isEmpty()) {
-            qWarning() << "Invalid mycroft.gui.show arrived with empty gui_url";
+
+        QList<QUrl> delegateUrls;
+        const QStringList urlStrings = doc[QStringLiteral("gui_urls")].toVariant().value<QStringList>();
+        for (const auto &str : urlStrings) {
+            const QUrl delegateUrl(str);
+
+            if (delegateUrl.isEmpty()) {
+                qWarning() << "Invalid mycroft.gui.show arrived with empty or malformed gui_urls:" << doc[QStringLiteral("gui_urls")];
+                return;
+            }
+            delegateUrls << delegateUrl;
+        }
+
+        if (delegateUrls.isEmpty()) {
+            qWarning() << "Invalid mycroft.gui.show arrived with empty or malformed gui_urls:" << doc[QStringLiteral("gui_urls")];
             return;
         }
 
-        AbstractDelegate *delegate = m_activeSkillsModel->delegateForSkill(skillId, delegateUrl);
+        QList <AbstractDelegate *> delegates;
+        for (const auto &delegateUrl : delegateUrls) {
+            AbstractDelegate *delegate = m_activeSkillsModel->delegateForSkill(skillId, delegateUrl);
 
-        if (delegate) {
-            emit delegate->currentRequested();
-        } else {
-            QQmlEngine *engine = qmlEngine(this);
-            QQmlContext *context = QQmlEngine::contextForObject(this);
-            //NOTE: this should happen only when running as autotest
-            //TODO: an ifdef?
-            if (!engine) {
-                engine = new QQmlEngine(this);
-                context = engine->rootContext();
-            }
-            QQmlComponent delegateComponent(engine, delegateUrl, this);
-            //TODO: separate context?
-            QObject *guiObject = delegateComponent.beginCreate(context);
-            delegate = qobject_cast<AbstractDelegate *>(guiObject);
-            if (delegateComponent.isError()) {
-                for (auto err : delegateComponent.errors()) {
-                    qWarning() << err.toString();
+            if (delegate) {
+                continue;
+            } else {
+                QQmlEngine *engine = qmlEngine(this);
+                QQmlContext *context = QQmlEngine::contextForObject(this);
+                //This class should be *ALWAYS* created from QML
+                Q_ASSERT(engine);
+                Q_ASSERT(context);
+
+                QQmlComponent delegateComponent(engine, delegateUrl, this);
+                //TODO: separate context?
+                QObject *guiObject = delegateComponent.beginCreate(context);
+                delegate = qobject_cast<AbstractDelegate *>(guiObject);
+                if (delegateComponent.isError()) {
+                    qWarning() << "ERROR Loading QML file" << delegateUrl;
+                    for (auto err : delegateComponent.errors()) {
+                        qWarning() << err.toString();
+                    }
+                    return;
                 }
-                return;
-            }
-            if (!delegate) {
-                qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
-                delegate->deleteLater();
-                return;
-            }
+                if (!delegate) {
+                    qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
+                    delegate->deleteLater();
+                    return;
+                }
 
-            delegate->setSkillId(skillId);
-            delegate->setQmlUrl(delegateUrl);
-            delegate->setSkillView(this);
-            delegate->setSessionData(sessionDataForSkill(skillId));
-            delegateComponent.completeCreate();
-            m_activeSkillsModel->insertDelegate(delegate);
-            emit delegate->currentRequested();
+                delegate->setSkillId(skillId);
+                delegate->setQmlUrl(delegateUrl);
+                delegate->setSkillView(this);
+                delegate->setSessionData(sessionDataForSkill(skillId));
+                delegateComponent.completeCreate();
+
+                delegates << delegate;
+            }
+        }
+
+        if (delegates.count() > 0) {
+            m_activeSkillsModel->insertDelegates(delegates);
+            //Activate only the first
+            emit delegates.first()->currentRequested();
         }
 //END SHOWGUI
 

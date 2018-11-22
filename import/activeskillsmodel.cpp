@@ -81,21 +81,27 @@ AbstractDelegate *ActiveSkillsModel::delegateForSkill(const QString &skillId, co
     return model->delegateForUrl(qmlUrl);
 }
 
-void ActiveSkillsModel::insertDelegate(AbstractDelegate *delegate)
+void ActiveSkillsModel::insertDelegates(QList<AbstractDelegate *> delegates)
 {
-    if (!m_skills.contains(delegate->skillId())) {
+    if (delegates.isEmpty()) {
         return;
     }
 
-    DelegatesModel *model = m_delegatesModels.value(delegate->skillId());
+    const QString skillId = delegates.first()->skillId();
+    //Assume all delegates have the same skillId, must be checked by the caller
+    if (!m_skills.contains(skillId)) {
+        return;
+    }
+
+    DelegatesModel *model = m_delegatesModels.value(skillId);
     if (!model) {
         model = new DelegatesModel(this);
-        m_delegatesModels[delegate->skillId()] = model;
-        const int row = m_skills.indexOf(delegate->skillId());
+        m_delegatesModels[skillId] = model;
+        const int row = m_skills.indexOf(skillId);
         emit dataChanged(index(row, 0), index(row, 0), {Delegates});
     }
 
-    model->insertDelegate(delegate);
+    model->insertDelegates(delegates);
 }
 
 QList<AbstractDelegate *> ActiveSkillsModel::delegatesForSkill(const QString &skillId)

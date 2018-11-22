@@ -53,7 +53,7 @@ public:
     /**
      * Adds to the bookeeping a new delegate corresponding to a given skill
      */
-    void insertDelegate(AbstractDelegate *delegate);
+    void insertDelegates(QList<AbstractDelegate *>delegates);
 
     /**
      * @returns all delegates existing for a given skill

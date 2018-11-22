@@ -37,10 +37,10 @@ public:
     virtual ~DelegatesModel();
 
     /**
-     * Insert a delegate after currentIndex
+     * Insert one or more delegates after currentIndex
      * TODO: more fine grained control on position?
      */
-    void insertDelegate(AbstractDelegate *delegate);
+    void insertDelegates(QList<AbstractDelegate *> delegates);
 
     /**
      * clears the whole model

@@ -129,4 +129,5 @@ It should always be an array, even if containing a single url. If multiple urls 
 
 The skill author to have that would just call a functin like self.show_gui("currentweather.qml") the construction of the proper message is done behind the scenes.
 
+TODO: mycroft.gui.replace, OR mycroft.gui.clear
 TODO: storing delegates order on the server, resting-faces, mini-faces

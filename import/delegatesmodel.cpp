@@ -31,21 +31,55 @@ DelegatesModel::~DelegatesModel()
     //TODO: delete everything?
 }
 
-void DelegatesModel::insertDelegate(AbstractDelegate *delegate)
+//FIXME: This implementation is very inefficient, if will take too much of a toll a more efficient one must be found
+//TODO: this needs extensive autotesting
+void DelegatesModel::insertDelegates(QList<AbstractDelegate *> delegates)
 {
-    if (m_delegates.contains(delegate) || m_delegateForUrl.contains(delegate->qmlUrl())) {
-        return;
+    //some of the delegates may already be present, the model must generate rowsInserted for the actually new ones, and rowsModed for the ones already present, moving them at the right new position
+    QList<AbstractDelegate *> missingDelegates;
+    QList<AbstractDelegate *> presentDelegates;
+
+    for (auto *delegate : delegates) {
+        if (m_delegates.contains(delegate)) {
+            presentDelegates << delegate;
+        } else {
+            missingDelegates << delegate;
+        }
     }
+
+    const int startPos = qMax(0, qMin(m_currentIndex + 1, m_delegates.count()));
+
+    if (!missingDelegates.isEmpty()) {
 //TODO: manage delegate destruction by somebody else
-    if (!m_delegates.isEmpty()) {
-        ++m_currentIndex;
+
+        beginInsertRows(QModelIndex(), startPos, startPos + missingDelegates.count() - 1);
+
+        int i = 0;
+        for (auto *delegate : missingDelegates) {
+            m_delegates.insert(startPos + i, delegate);
+            connect(delegate, &QObject::destroyed, this, [this](QObject *obj) {
+                const int index = m_delegates.indexOf(qobject_cast<AbstractDelegate *>(obj));
+                //if the delegate is in the list, remove it
+                if (index > -1) {
+                    removeRows(index, 1, QModelIndex());
+                }
+            });
+            m_delegateForUrl.insert(delegate->qmlUrl(), delegate);
+            ++i;
+        }
+
+        endInsertRows();
     }
-    beginInsertRows(QModelIndex(), qMax(0, m_currentIndex), qMin(m_delegates.count(), m_currentIndex));
 
-    m_delegates.insert(m_currentIndex, delegate);
-    m_delegateForUrl.insert(delegate->qmlUrl(), delegate);
+    if (!presentDelegates.isEmpty()) {
+        int i = 0;
+        for (auto *delegate : presentDelegates) {
+            moveRows(QModelIndex(), m_delegates.indexOf(delegate), 1, QModelIndex(), startPos + i);
+            ++i;
+        }
+    }
 
-    endInsertRows();
+    m_currentIndex = m_delegates.indexOf(delegates.first());
     emit currentIndexChanged();
 }
 

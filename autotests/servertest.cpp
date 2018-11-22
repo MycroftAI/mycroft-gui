@@ -415,7 +415,7 @@ void ServerTest::testShowGui()
 
     const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("currentweather.qml"));
 
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_url\": \"") + url.toString() + QStringLiteral("\"}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_urls\": [\"") + url.toString() + QStringLiteral("\"]}"));
 
     skillModelDataChangedSpy.wait();
 
@@ -447,7 +447,7 @@ void ServerTest::testShowSecondGuiPage()
     const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("forecast.qml"));
     //wait a moment before showing it there
     QTest::qWait(2000);
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_url\": \"") + url.toString() + QStringLiteral("\"}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_urls\": [\"") + url.toString() + QStringLiteral("\"]}"));
 
     skillModelDataChangedSpy.wait();
 
