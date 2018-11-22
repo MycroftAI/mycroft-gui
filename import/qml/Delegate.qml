@@ -47,8 +47,6 @@ Mycroft.AbstractDelegate {
     //To do some automatic responsive layouting
     readonly property bool wideMode: width > Kirigami.Units.gridUnit * 18
 
-    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-
     leftPadding: Kirigami.Units.largeSpacing
     topPadding: Kirigami.Units.largeSpacing
     rightPadding: Kirigami.Units.largeSpacing

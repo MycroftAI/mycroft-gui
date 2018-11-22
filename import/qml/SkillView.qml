@@ -22,8 +22,12 @@ import QtQuick.Controls 2.4 as Controls
 import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
+import "private" as Private
+
 Mycroft.AbstractSkillView {
     id: root
+
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
     property Item initialItem: null
     onInitialItemChanged: {
@@ -70,68 +74,8 @@ Mycroft.AbstractSkillView {
                 delegate: Item {
                     anchors.fill: parent
                     opacity: Math.min(1, restFaceSwipeView.contentItem.contentX/width)
-                    Item {
-                        id: backgroundImage
-                        anchors {
-                            top: parent.top
-                            bottom: parent.bottom
-                        }
-                        width: parent.width * 2
-                        x: -delegatesView.visibleArea.xPosition * 1.5 * parent.width
-
-                        property string source
-                        property Image currentImage: image1
-                        onSourceChanged: {
-                            if (backgroundImage.currentImage == image1) {
-                                image2.opacity = 0;
-                                image2.source = source;
-                                if (image2.status == Image.Ready) {
-                                    backgroundImage.setCurrent(image2);
-                                }
-                            } else {
-                                image1.opacity = 0;
-                                image1.source = source;
-                                if (image1.status == Image.Ready) {
-                                    backgroundImage.setCurrent(image1);
-                                }
-                            }
-                        }
-
-                        function setCurrent(image) {
-                            backgroundImage.currentImage = image;
-                            fadeAnim.restart();
-                        }
-                        
-                        Image {
-                            id: image1
-                            anchors.fill: parent
-                            z: backgroundImage.currentImage == image1 ? 1 : 0
-                            onStatusChanged: {
-                                if (backgroundImage.currentImage == image2 && status == Image.Ready) {
-                                    backgroundImage.setCurrent(image1);
-                                }
-                            }
-                        }
-                        Image {
-                            id: image2
-                            anchors.fill: parent
-                            z: backgroundImage.currentImage == image2 ? 1 : 0
-                            onStatusChanged: {
-                                if (backgroundImage.currentImage == image1 && status == Image.Ready) {
-                                    backgroundImage.setCurrent(image2);
-                                }
-                            }
-                        }
-                        SequentialAnimation {
-                            id: fadeAnim
-                            OpacityAnimator {
-                                target: backgroundImage.currentImage
-                                from: 0
-                                to: 1
-                                duration: 1000
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
+                    Private.ImageBackground {
+                        id: imageBackground
                     }
                     ListView {
                         id: delegatesView
@@ -154,7 +98,7 @@ Mycroft.AbstractSkillView {
                         onCurrentItemChanged: {
                             var background = currentItem.contentItem.skillBackgroundSource;
                             if (background.length > 0) {
-                                backgroundImage.source = background;
+                                imageBackground.source = background;
                             }
                         }
                         onMovementEnded: currentIndex = indexAt(contentX, 0);
