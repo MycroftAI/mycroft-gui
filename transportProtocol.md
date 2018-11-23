@@ -131,3 +131,15 @@ The skill author to have that would just call a functin like self.show_gui("curr
 
 TODO: mycroft.gui.replace, OR mycroft.gui.clear
 TODO: storing delegates order on the server, resting-faces, mini-faces
+
+# Change proposal for show gui
+* Use the MODELS api
+* the skill writer would still just see the simple show_gui(["foo.qml", "bar.qml"]) api, the model management would be completely under the hood.
+* use "system.gui" namespace
+* sync also the "current" page of the list
+* this makes it crash resistant, if a gui process starts after the skill is executed, will load the proper graphics from the get go (also useful for process-isolated guis)
+* "current" may be something transported by  another porotocol, or just a "role" in the model which both client and server can write i.e. `{"url": "file:///opt/mycroft...", "current": False}`
+* system.next and system.previous events would write to the currentIndex property
+* resting faces would use the same thing, with "system.resting_faces" namespace
+* "mini" faces would use "system.mini_faces" namespace
+
