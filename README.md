@@ -3,7 +3,7 @@
 #### Installation
 
 ```bash
-sudo apt install extra-cmake-modules, kio-dev, libkf5i18n-dev, libkf5notifications-dev, libkf5plasma-dev, libqt5websockets5-dev, libqt5webview5-dev, pkg-config, pkg-kde-tools, qtbase5-dev, qtdeclarative5-dev
+sudo apt install cmake, extra-cmake-modules, kio-dev, libkf5i18n-dev, libkf5notifications-dev, libkf5plasma-dev, libqt5websockets5-dev, libqt5webview5-dev, pkg-config, pkg-kde-tools, qtbase5-dev, qtdeclarative5-dev
 git clone https://github.com/MycroftAI/mycroft-gui
 cd mycroft-gui
 mkdir build-testing
@@ -18,7 +18,8 @@ Setup the platform file
 ```bash
 cd /etc
 sudo mkdir mycroft
-touch mycroft.conf
+cd mycroft
+sudo touch mycroft.conf
 kate mycroft.conf
 ```
 
@@ -27,9 +28,7 @@ Copy the below contents in mycroft.conf
 ```json
 {
     "enclosure": {
-        "platform": "mycroft_mark_2",
-        "update": true,
-        "test": false
+        "platform": "mycroft_mark_2"
     }
 }
 ```
