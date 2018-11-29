@@ -33,6 +33,18 @@ Copy the below contents in mycroft.conf
 }
 ```
 
+Installation for Lottie-Qml for animations
+
+```bash
+git clone https://github.com/kbroulik/lottie-qml
+cd lottie-qml
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+```
+
 #### Running
 
 ```bash
