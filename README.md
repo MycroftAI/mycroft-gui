@@ -3,7 +3,7 @@
 #### Installation
 
 ```bash
-sudo apt install cmake, extra-cmake-modules, kio-dev, libkf5i18n-dev, libkf5notifications-dev, libkf5plasma-dev, libqt5websockets5-dev, libqt5webview5-dev, pkg-config, pkg-kde-tools, qtbase5-dev, qtdeclarative5-dev, qml-module-qtquick-shapes
+sudo apt install cmake extra-cmake-modules kio-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libqt5websockets5-dev libqt5webview5-dev pkg-config pkg-kde-tools qtbase5-dev qtdeclarative5-dev qml-module-qtquick-shapes
 git clone https://github.com/MycroftAI/mycroft-gui
 cd mycroft-gui
 mkdir build-testing
