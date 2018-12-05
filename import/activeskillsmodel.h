@@ -62,6 +62,8 @@ public:
      */
     QList<AbstractDelegate *> delegatesForSkill(const QString &skillId);
 
+    DelegatesModel *delegatesModelForSkill(const QString &skillId);
+
 //REIMPLEMENTED
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;

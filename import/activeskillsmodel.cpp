@@ -126,6 +126,24 @@ QList<AbstractDelegate *> ActiveSkillsModel::delegatesForSkill(const QString &sk
     }
 }
 
+DelegatesModel *ActiveSkillsModel::delegatesModelForSkill(const QString &skillId)
+{
+
+    if (!skillId.isEmpty() && !m_skills.contains(skillId)) {
+        return nullptr;
+    }
+
+    DelegatesModel *model = m_delegatesModels.value(skillId);
+    if (!model) {
+        model = new DelegatesModel(this);
+        m_delegatesModels[skillId] = model;
+        const int row = m_skills.indexOf(skillId);
+        emit dataChanged(index(row, 0), index(row, 0), {Delegates});
+    }
+
+    return model;
+}
+
 bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
 {
     if (sourceParent.isValid() || destinationParent.isValid()) {

@@ -21,6 +21,7 @@
 #include "abstractdelegate.h"
 #include "sessiondatamap.h"
 #include "sessiondatamodel.h"
+#include "delegatesmodel.h"
 
 #include <QWebSocket>
 #include <QUuid>
@@ -500,6 +501,129 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         }
         m_activeSkillsModel->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
 //END ACTIVESKILLS
+
+
+
+//BEGIN GUI
+    // Insert new new gui delegates
+    } else if (type == QLatin1String("mycroft.session.list.insert") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.gui")) {
+        const QString skillId = doc[QStringLiteral("skill_id")].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill_id provided in mycroft.session.list.insert of mycroft.system.gui";
+            return;
+        }
+        const int position = doc[QStringLiteral("position")].toInt();
+
+        DelegatesModel *delegatesModel = m_activeSkillsModel->delegatesModelForSkill(skillId);
+        if (position < 0 || position > delegatesModel->rowCount()) {
+            qWarning() << "Error: Invalid position in mycroft.session.list.insert of mycroft.system.active_skills";
+            return;
+        }
+
+        const QStringList delegateUrls = jsonModelToStringList(QStringLiteral("url"), doc[QStringLiteral("data")]);
+
+        if (delegateUrls.isEmpty()) {
+            qWarning() << "Error: no valid skills received in mycroft.session.list.insert of GUIs";
+            return;
+        }
+
+        QList <AbstractDelegate *> delegates;
+        for (const auto &urlString : delegateUrls) {
+            //TODO: if we trust completely the server as a model, this is not necessary anymore
+            const QUrl delegateUrl = QUrl::fromUserInput(urlString);
+
+            QQmlEngine *engine = qmlEngine(this);
+            QQmlContext *context = QQmlEngine::contextForObject(this);
+            //This class should be *ALWAYS* created from QML
+            Q_ASSERT(engine);
+            Q_ASSERT(context);
+
+            QQmlComponent delegateComponent(engine, delegateUrl, this);
+            //TODO: separate context?
+            QObject *guiObject = delegateComponent.beginCreate(context);
+            AbstractDelegate *delegate = qobject_cast<AbstractDelegate *>(guiObject);
+            if (delegateComponent.isError()) {
+                qWarning() << "ERROR Loading QML file" << delegateUrl;
+                for (auto err : delegateComponent.errors()) {
+                    qWarning() << err.toString();
+                }
+                return;
+            }
+            if (!delegate) {
+                qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
+                delegate->deleteLater();
+                return;
+            }
+
+            delegate->setSkillId(skillId);
+            delegate->setQmlUrl(delegateUrl);
+            delegate->setSkillView(this);
+            delegate->setSessionData(sessionDataForSkill(skillId));
+            delegateComponent.completeCreate();
+
+            delegates << delegate;
+        }
+
+        if (delegates.count() > 0) {
+            m_activeSkillsModel->insertDelegates(delegates);
+            //Activate only the first
+            emit delegates.first()->currentRequested();
+        }
+
+
+    // Gui delegates removed
+    } else if (type == QLatin1String("mycroft.session.list.remove") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.gui")) {
+        const QString skillId = doc[QStringLiteral("skill_id")].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill_id provided in mycroft.session.list.remove of mycroft.system.gui";
+            return;
+        }
+
+        const int position = doc[QStringLiteral("position")].toInt();
+        const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
+
+        if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
+            qWarning() << "Error: Invalid position in mycroft.session.list.remove of mycroft.system.active_skills";
+            return;
+        }
+        DelegatesModel *delegatesModel = m_activeSkillsModel->delegatesModelForSkill(skillId);
+        if (itemsNumber < 0 || itemsNumber > delegatesModel->rowCount()) {
+            qWarning() << "Error: Invalid items_number in mycroft.session.list.remove of mycroft.gui";
+            return;
+        }
+
+        delegatesModel->removeRows(position, itemsNumber);
+
+    // Gui delegates moved
+    } else if (type == QLatin1String("mycroft.session.list.move") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.gui")) {
+
+        const QString skillId = doc[QStringLiteral("skill_id")].toString();
+        if (skillId.isEmpty()) {
+            qWarning() << "No skill_id provided in mycroft.session.list.remove of mycroft.system.gui";
+            return;
+        }
+
+        const int from = doc[QStringLiteral("from")].toInt();
+        const int to = doc[QStringLiteral("to")].toInt();
+        const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
+
+        DelegatesModel *delegatesModel = m_activeSkillsModel->delegatesModelForSkill(skillId);
+
+        if (from < 0 || from > delegatesModel->rowCount() - 1) {
+            qWarning() << "Error: Invalid from position in mycroft.session.list.move of mycroft.system.active_skills";
+            return;
+        }
+        if (to < 0 || to > delegatesModel->rowCount() - 1) {
+            qWarning() << "Error: Invalid to position in mycroft.session.list.move of mycroft.system.active_skills";
+            return;
+        }
+        if (itemsNumber <= 0 || itemsNumber > delegatesModel->rowCount() - from) {
+            qWarning() << "Error: Invalid items_number in mycroft.session.list.move of mycroft.system.active_skills";
+            return;
+        }
+        delegatesModel->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
+//END GUI
+
 
 //TODO: manage nested models?
 //BEGIN DATA MODELS
