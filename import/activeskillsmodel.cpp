@@ -158,7 +158,7 @@ bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow,
 
 bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (row <= 0 || count <= 0 || row + count > m_skills.count() || parent.isValid()) {
+    if (row < 0 || count <= 0 || row + count > m_skills.count() || parent.isValid()) {
         return false;
     }
 
