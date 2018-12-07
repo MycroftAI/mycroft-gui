@@ -71,6 +71,9 @@ public:
      */
     SessionDataMap *sessionDataForSkill(const QString &skillId);
 
+    void writeProperties(const QString &skillId, const QVariantMap &data);
+    void deleteProperty(const QString &skillId, const QString &property);
+
 Q_SIGNALS:
     //socket stuff
     void statusChanged();

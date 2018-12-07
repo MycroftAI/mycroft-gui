@@ -137,6 +137,38 @@ void AbstractSkillView::triggerEvent(const QString &skillId, const QString &even
     m_guiWebSocket->sendTextMessage(QString::fromUtf8(doc.toJson()));
 }
 
+void AbstractSkillView::writeProperties(const QString &skillId, const QVariantMap &data)
+{
+    if (m_guiWebSocket->state() != QAbstractSocket::ConnectedState) {
+        qWarning() << "Error: Mycroft gui connection not open!";
+        return;
+    }
+    QJsonObject root;
+
+    root[QStringLiteral("type")] = QStringLiteral("mycroft.session.set");
+    root[QStringLiteral("namespace")] = skillId;
+    root[QStringLiteral("data")] = QJsonObject::fromVariantMap(data);
+
+    QJsonDocument doc(root);
+    m_guiWebSocket->sendTextMessage(QString::fromUtf8(doc.toJson()));
+}
+
+void AbstractSkillView::deleteProperty(const QString &skillId, const QString &property)
+{
+    if (m_guiWebSocket->state() != QAbstractSocket::ConnectedState) {
+        qWarning() << "Error: Mycroft gui connection not open!";
+        return;
+    }
+    QJsonObject root;
+
+    root[QStringLiteral("type")] = QStringLiteral("mycroft.session.delete");
+    root[QStringLiteral("namespace")] = skillId;
+    root[QStringLiteral("property")] = property;
+
+    QJsonDocument doc(root);
+    m_guiWebSocket->sendTextMessage(QString::fromUtf8(doc.toJson()));
+}
+
 MycroftController::Status AbstractSkillView::status() const
 {
     if (m_reconnectTimer.isActive()) {
