@@ -40,7 +40,7 @@ git clone https://github.com/kbroulik/lottie-qml
 cd lottie-qml
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release   -DKDE_INSTALL_LIBDIR=lib -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
 make
 sudo make install
 ```
