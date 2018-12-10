@@ -24,6 +24,15 @@ import Mycroft 1.0 as Mycroft
 
 Mycroft.Delegate {
     skillBackgroundSource: "https://source.unsplash.com/1920x1080/?+sun"
+
+    function updateTemperature(temp) {
+        sessionData.temperature = temp;
+    }
+
+    function deleteProperty() {
+        sessionData.to_delete = null;
+    }
+
     ColumnLayout {
         Kirigami.Heading {
             text: "Today"

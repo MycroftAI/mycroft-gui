@@ -44,6 +44,7 @@ private Q_SLOTS:
     void testSessionData();
     void testChangeSessionData();
     void testShowGui();
+    void testClientToServerData();
     void testShowSecondGuiPage();
     void testEventsFromServer();
     void testEventsFromClient();
@@ -334,7 +335,7 @@ void ServerTest::testChangeSessionData()
     QSignalSpy modelDataInsertedSpy(dm, &SessionDataModel::rowsInserted);
     QSignalSpy modelDataMovedSpy(dm, &SessionDataModel::rowsMoved);
     QSignalSpy modelDataRemovedSpy(dm, &SessionDataModel::rowsRemoved);
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.update\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"position\": 1, \"data\": [{\"temperature\": \"30°C\", \"icon\": \"weather-clear\"}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.update\", \"namespace\": \"mycroft.weather\", \"property\": \"forecast\", \"position\": 1, \"data\": [{\"temperature\": \"30°C\", \"icon\": \"weather-clear\", \"to_delete\": \"value to delete\"}]}"));
     modelDataChangedSpy.wait();
 
     QCOMPARE(dm->data(dm->index(1, 0), dm->roleNames().key("temperature")).toString(), QStringLiteral("30°C"));
@@ -438,6 +439,33 @@ void ServerTest::testShowGui()
     new QAbstractItemModelTester(dm, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
     AbstractDelegate *delegate2 = dm->data(dm->index(0, 0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
     QCOMPARE(delegate, delegate2);
+}
+
+void ServerTest::testClientToServerData()
+{
+    const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("currentweather.qml"));
+    AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill(QStringLiteral("mycroft.weather"), url);
+    QVERIFY(delegate);
+
+    QSignalSpy propertySpy(m_guiWebSocket, &QWebSocket::textMessageReceived);
+
+    QMetaObject::invokeMethod(delegate, "updateTemperature", Qt::DirectConnection, Q_ARG(QVariant, QStringLiteral("21 °C")));
+    propertySpy.wait();
+
+    QJsonDocument doc = QJsonDocument::fromJson(propertySpy.first().first().toString().toUtf8());
+
+    QVERIFY(!doc.isEmpty());
+    QCOMPARE(doc[QStringLiteral("type")], QStringLiteral("mycroft.session.set"));
+    QCOMPARE(doc[QStringLiteral("namespace")], QStringLiteral("mycroft.weather"));
+    QCOMPARE(doc[QStringLiteral("data")][QStringLiteral("temperature")], QStringLiteral("21 °C"));
+
+    QMetaObject::invokeMethod(delegate, "deleteProperty");
+    propertySpy.wait();
+    doc = QJsonDocument::fromJson(propertySpy[1].first().toString().toUtf8());
+
+    QCOMPARE(doc[QStringLiteral("type")], QStringLiteral("mycroft.session.delete"));
+    QCOMPARE(doc[QStringLiteral("namespace")], QStringLiteral("mycroft.weather"));
+    QCOMPARE(doc[QStringLiteral("property")], QStringLiteral("to_delete"));
 }
 
 void ServerTest::testShowSecondGuiPage()

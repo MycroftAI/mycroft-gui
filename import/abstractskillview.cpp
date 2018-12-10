@@ -205,7 +205,7 @@ SessionDataMap *AbstractSkillView::sessionDataForSkill(const QString &skillId)
     if (m_skillData.contains(skillId)) {
         map = m_skillData[skillId];
     } else if (m_activeSkillsModel->skillIndex(skillId).isValid()) {
-        map = new SessionDataMap(this);
+        map = new SessionDataMap(skillId, this);
         m_skillData[skillId] = map;
     }
 

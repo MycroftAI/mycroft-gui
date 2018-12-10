@@ -16,23 +16,53 @@
  */
 
 #include "sessiondatamap.h"
+#include "abstractskillview.h"
+#include "sessiondatamodel.h"
 
 #include <QDebug>
 #include <QJSValue>
+#include <cstddef>
 
-SessionDataMap::SessionDataMap(QObject *parent)
-    : QQmlPropertyMap(this, parent)
+SessionDataMap::SessionDataMap(const QString &skillId, AbstractSkillView *parent)
+    : QQmlPropertyMap(this, parent),
+      m_skillId(skillId),
+      m_view(parent)
 {
+    m_updateTimer = new QTimer(this);
+    m_updateTimer->setSingleShot(true);
+    m_updateTimer->setInterval(250); //arbitrary
+    connect(m_updateTimer, &QTimer::timeout, this, [this]() {
+        if (!m_propertiesToUpdate.isEmpty()) {
+            m_view->writeProperties(m_skillId, m_propertiesToUpdate);
+        }
+        for (auto k : m_propertiesToDelete) {
+            m_view->deleteProperty(m_skillId, k);
+        }
+        m_propertiesToUpdate.clear();
+        m_propertiesToDelete.clear();
+    });
 }
 
 SessionDataMap::~SessionDataMap()
 {
 }
 
-QVariant SessionDataMap::updateValue(const QString &key, const QVariant &input)
+QVariant SessionDataMap::updateValue(const QString &key, const QVariant &newValue)
 {
-    //TODO: send modifications to the server, filter models etc
-    return QQmlPropertyMap::updateValue(key, input);
+    if (value(key).canConvert<SessionDataModel *>()) {
+        qWarning() << "Can't replace a model from the client side";
+        return value(key);
+    }
+
+    if (newValue.isNull() || !newValue.isValid() ) {
+        m_propertiesToDelete << key;
+    } else {
+        m_propertiesToUpdate[key] = newValue;
+    }
+
+    m_updateTimer->start();
+
+    return QQmlPropertyMap::updateValue(key, newValue);
 }
 
 void SessionDataMap::insertAndNotify(const QString &key, const QVariant &value)

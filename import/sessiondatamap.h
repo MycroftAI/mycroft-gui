@@ -19,13 +19,15 @@
 
 #include <QQmlPropertyMap>
 
+class QTimer;
+class AbstractSkillView;
 
 class SessionDataMap : public QQmlPropertyMap
 {
     Q_OBJECT
 
 public:
-    SessionDataMap(QObject *parent = nullptr);
+    SessionDataMap(const QString &skillId, AbstractSkillView *parent);
     ~SessionDataMap() override;
 
     /**
@@ -46,5 +48,12 @@ Q_SIGNALS:
 
 protected:
     QVariant updateValue(const QString &key, const QVariant &input) override;
+
+private:
+    QString m_skillId;
+    QVariantMap m_propertiesToUpdate;
+    QStringList m_propertiesToDelete;
+    QTimer *m_updateTimer;
+    AbstractSkillView *m_view;
 };
 
