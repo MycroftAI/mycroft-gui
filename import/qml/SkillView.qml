@@ -75,10 +75,17 @@ Mycroft.AbstractSkillView {
             Repeater {
                 id: activeSkillsRepeater
                 model: activeSkills
-                
+
                 delegate: Item {
                     anchors.fill: parent
-                    opacity: Math.min(1, restFaceSwipeView.contentItem.contentX/width)
+                    //opacity: Math.min(1, restFaceSwipeView.contentItem.contentX/width)
+                    opacity: index == 0
+                    Behavior on opacity {
+                        OpacityAnimator {
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.InOutCubic
+                        }
+                    }
                     Private.ImageBackground {
                         id: imageBackground
                     }
