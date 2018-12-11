@@ -30,21 +30,24 @@ Kirigami.ScrollablePage {
     ColumnLayout {
         id: settingsLayout
         anchors.fill: parent
+        Layout.fillWidth: true
+        width: parent.width
         
         Controls.Label {
             id: websocketLabel 
-            text: "Websocket Address"
+            text: "<h1>Websocket Address</h1> Example: <tt>ws://192.168.1.1</tt>"
         }
         
         Controls.TextField {
             id: webSocketAddressField
+            width: parent.width
             Layout.fillWidth: true
-            
+            Layout.columnSpan: 2
             Component.onCompleted:{
                 webSocketAddressField.text = Mycroft.GlobalSettings.webSocketAddress
             }
         }
-        
+
         Controls.Button{
             id: applySettings
             Layout.fillWidth: true
