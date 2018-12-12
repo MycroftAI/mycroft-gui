@@ -76,13 +76,13 @@ void ModelTest::testActiveSkillsModel()
 void ModelTest::testDelegatesModel()
 {
     new QAbstractItemModelTester(m_delegatesModel, QAbstractItemModelTester::FailureReportingMode::QtTest, this);
-    m_delegatesModel->insertDelegates({new AbstractDelegate(), new AbstractDelegate(), new AbstractDelegate(), new AbstractDelegate()});
+    m_delegatesModel->insertDelegates(0, {new AbstractDelegate(), new AbstractDelegate(), new AbstractDelegate(), new AbstractDelegate()});
     m_delegatesModel->moveRows(QModelIndex(), 2, 1, QModelIndex(), 1);
     m_delegatesModel->moveRows(QModelIndex(), 2, 2, QModelIndex(), 1);
     m_delegatesModel->moveRows(QModelIndex(), 0, 2, QModelIndex(), 3);
     m_delegatesModel->moveRows(QModelIndex(), 0, 1, QModelIndex(), 4);
     m_delegatesModel->removeRows(1, 2);
-    m_delegatesModel->insertDelegates({new AbstractDelegate()});
+    m_delegatesModel->insertDelegates(0, {new AbstractDelegate()});
 }
 
 void ModelTest::testSessionDataModel()

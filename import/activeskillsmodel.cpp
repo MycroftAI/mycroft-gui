@@ -101,7 +101,7 @@ void ActiveSkillsModel::insertDelegates(QList<AbstractDelegate *> delegates)
         emit dataChanged(index(row, 0), index(row, 0), {Delegates});
     }
 
-    model->insertDelegates(delegates);
+    model->insertDelegates(0, delegates);
 }
 
 QList<AbstractDelegate *> ActiveSkillsModel::delegatesForSkill(const QString &skillId)

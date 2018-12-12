@@ -33,50 +33,29 @@ DelegatesModel::~DelegatesModel()
 
 //FIXME: This implementation is very inefficient, if will take too much of a toll a more efficient one must be found
 //TODO: this needs extensive autotesting
-void DelegatesModel::insertDelegates(QList<AbstractDelegate *> delegates)
+void DelegatesModel::insertDelegates(int position, QList<AbstractDelegate *> delegates)
 {
-    //some of the delegates may already be present, the model must generate rowsInserted for the actually new ones, and rowsModed for the ones already present, moving them at the right new position
-    QList<AbstractDelegate *> missingDelegates;
-    QList<AbstractDelegate *> presentDelegates;
+    if (position < 0 || position > m_delegates.count()) {
+        return;
+    }
 
+    beginInsertRows(QModelIndex(), position, position + delegates.count() - 1);
+
+    int i = 0;
     for (auto *delegate : delegates) {
-        if (m_delegates.contains(delegate)) {
-            presentDelegates << delegate;
-        } else {
-            missingDelegates << delegate;
-        }
+        m_delegates.insert(position + i, delegate);
+        connect(delegate, &QObject::destroyed, this, [this](QObject *obj) {
+            const int index = m_delegates.indexOf(qobject_cast<AbstractDelegate *>(obj));
+            //if the delegate is in the list, remove it
+            if (index > -1) {
+                removeRows(index, 1, QModelIndex());
+            }
+        });
+        m_delegateForUrl.insert(delegate->qmlUrl(), delegate);
+        ++i;
     }
 
-    const int startPos = qMax(0, qMin(m_currentIndex + 1, m_delegates.count()));
-
-    if (!missingDelegates.isEmpty()) {
-
-        beginInsertRows(QModelIndex(), startPos, startPos + missingDelegates.count() - 1);
-
-        int i = 0;
-        for (auto *delegate : missingDelegates) {
-            m_delegates.insert(startPos + i, delegate);
-            connect(delegate, &QObject::destroyed, this, [this](QObject *obj) {
-                const int index = m_delegates.indexOf(qobject_cast<AbstractDelegate *>(obj));
-                //if the delegate is in the list, remove it
-                if (index > -1) {
-                    removeRows(index, 1, QModelIndex());
-                }
-            });
-            m_delegateForUrl.insert(delegate->qmlUrl(), delegate);
-            ++i;
-        }
-
-        endInsertRows();
-    }
-
-    if (!presentDelegates.isEmpty()) {
-        int i = 0;
-        for (auto *delegate : presentDelegates) {
-            moveRows(QModelIndex(), m_delegates.indexOf(delegate), 1, QModelIndex(), startPos + i);
-            ++i;
-        }
-    }
+    endInsertRows();
 
     m_currentIndex = m_delegates.indexOf(delegates.first());
     emit currentIndexChanged();
@@ -87,9 +66,9 @@ void DelegatesModel::clear()
     beginResetModel();
     //TODO: how is the ownership? should we delete them at all or should be QML?
     //if we delete them, after a timeout to give it time to animate?
-    for (auto *delegate : m_delegates) {
+   /* for (auto *delegate : m_delegates) {
         delegate->deleteLater();
-    }
+    }*/
     m_delegates.clear();
     m_delegateForUrl.clear();
     endResetModel();
@@ -148,10 +127,10 @@ bool DelegatesModel::removeRows(int row, int count, const QModelIndex &parent)
     m_delegates.erase(m_delegates.begin() + row, m_delegates.begin() + row + count);
     //TODO: how is the ownership? should we delete them at all or should be QML?
     //if we delete them, after a timeout to give it time to animate?
-    for (auto *delegate : toDelete) {
+   /* for (auto *delegate : toDelete) {
         m_delegateForUrl.remove(delegate->qmlUrl());
         delegate->deleteLater();
-    }
+    }*/
     endRemoveRows();
 }
 

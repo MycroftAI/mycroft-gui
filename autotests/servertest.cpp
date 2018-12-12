@@ -416,7 +416,7 @@ void ServerTest::testShowGui()
 
     const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("currentweather.qml"));
 
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.show\", \"namespace\": \"mycroft.weather\", \"gui_urls\": [\"") + url.toString() + QStringLiteral("\"]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.weather\", \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\", \"visibility_hint\": true}]}"));
 
     skillModelDataChangedSpy.wait();
 
