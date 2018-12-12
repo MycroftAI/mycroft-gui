@@ -1,58 +1,84 @@
-### Mycroft GUI
+Mycroft GUI
+===========
+The KDE-based visual interface for working with [Mycroft](https://github.com/MycroftAI/mycroft-core)
 
-#### Installation
 
+
+# Getting Started
+
+## Foolproof Setup Instructions(tm)
+
+1) Download and Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+2) Download an ISO from [KDE Neon Developer Edition, Git Unstable](https://neon.kde.org/download).  Any build >= 2057.
+3) Open VirtualBox and create a Neon installation
+   TODO: More detailed installations?
+4) Within the VM, open a terminal session and type:
+   * ```cd ~```
+   * ```git clone https://github.com/mycroftai/mycroft-gui```
+   * ```cd mycroft-gui```
+   * ```bash dev_setup.sh```
+5) Run and configure
+   * ```mycroft-gui-app```
+   * Click on the hamburger menu in the lower left
+   * Select 'Settings'
+   * Enter the IP address of your device.  If your device is at 192.168.2.2, enter 'ws://192.168.2.2'
+   * Close
+
+## Normal use
+
+1) Invoke using ```mycroft-gui-app```
+2) Click *Start* button in the middle of the window
+     Note: Boot your device or run ```./start-mycroft.sh all && ./start-mycroft.sh enclosure``` prior to doing this.
+3) Talk to your Mycroft!
+
+After any code changes (if you are developing) or git pull, simply rerun ```bash dev_setup.sh``` to rebuild.
+
+
+## QML synchronization
+
+At this point, the paths to skill QML on the Mycroft must precisely match the path on the mycroft-gui-app host machine.  The
+simplest way to achieve this is to run rsync.  This simple script can perform this synchronization, hanldling synchronization
+with different devices (e.g. for a developer who does work both at home and at an office).
+
+**sync.sh**
 ```bash
-sudo apt install cmake extra-cmake-modules kio-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libqt5websockets5-dev libqt5webview5-dev pkg-config pkg-kde-tools qtbase5-dev qtdeclarative5-dev qml-module-qtquick-shapes
-git clone https://github.com/MycroftAI/mycroft-gui
-cd mycroft-gui
-mkdir build-testing
-cd build-testing
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release   -DKDE_INSTALL_LIBDIR=lib -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
-make -j4
-sudo make install 
-```
-
-Setup the platform file
-
-```bash
-cd /etc
-sudo mkdir mycroft
-cd mycroft
-sudo touch mycroft.conf
-kate mycroft.conf
-```
-
-Copy the below contents in mycroft.conf
-
-```json
-{
-    "enclosure": {
-        "platform": "mycroft_mark_2"
-    }
+function is_online() {
+    ping -q -w 1 -c 1 "$1" > /dev/null
+    if [ $? -eq 0 ]; then
+        rsync -av pi@$1:/opt/mycroft/skills/ /opt/mycroft/skills/
+        echo "Synched!"
+        return 0
+    else
+        return 1
+    fi
 }
+
+# Attempt sync with office Mark 1
+is_online 10.10.41.86
+if [ $? -ne 0 ]; then
+    # Attempt sync with house Mark 1
+    is_online 192.168.2.165
+fi
 ```
 
-Installation for Lottie-Qml for animations
+## Gotchas
 
-```bash
-git clone https://github.com/kbroulik/lottie-qml
-cd lottie-qml
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release   -DKDE_INSTALL_LIBDIR=lib -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
-make
-sudo make install
-```
+* For a Mark 1, but sure to disable the firewall on the Raspberry Pi.  You can do this via ```sudo ufw disable```
+* Generally, the GUI interaction is managed by an enclosure-specific skill that orchestrates things.  For example, the Mark 2 uses skill-mark-2.
+* Lightweight debugging can be done from Mycroft's CLI.  You can see commands being sent to GUI clients by hitting Ctrl+G within the CLI
+* Multiple GUIs can safely run against a single Mycroft Core instance.
 
-#### Running
+## Debugging Tips
 
-```bash
-mycroft-gui-app
-# Please note: run "./start-mycroft.sh all && ./start-mycroft.sh enclosure" prior to running the above 
-```
+* Debug output can be seen by running the mycroft-enclosure directly from inside an SSH session.  On a Mark 1:
+  - SSH to the Mark 1
+  - ```sudo service mycroft-enclosure-client stop```
+  - ```sudo su mycroft```
+  - ```mycroft-enclosure-client```
+  This will start the client and show Debug() messages on the console.
 
-#### Skill Testing
+
+## Skill Testing
 
 ```bash
 cd /opt/mycroft/skills
