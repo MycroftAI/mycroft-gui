@@ -48,6 +48,8 @@ private Q_SLOTS:
     void testShowSecondGuiPage();
     void testEventsFromServer();
     void testEventsFromClient();
+    void testMoveGuiPage();
+    void testRemoveGuiPage();
 
 private:
     //Client
@@ -551,9 +553,58 @@ void ServerTest::testEventsFromClient()
     eventSpy.wait(1000);
 
     QCOMPARE(eventSpy.count(), 2);
-    //Wait a moment before closing the program
+    //Wait a moment before messing with the gui
     QTest::qWait(2000);
 }
+
+
+void ServerTest::testMoveGuiPage()
+{
+    QUrl currentUrl = QUrl::fromLocalFile(QFINDTESTDATA("currentweather.qml"));
+    QUrl forecastUrl = QUrl::fromLocalFile(QFINDTESTDATA("forecast.qml"));
+
+    DelegatesModel *delegatesModel = m_view->activeSkills()->delegatesModelForSkill(QStringLiteral("mycroft.weather"));
+    QVERIFY(delegatesModel);
+    
+    QSignalSpy rowsMovedSpy(delegatesModel, &DelegatesModel::rowsMoved);
+
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.move\", \"namespace\": \"mycroft.weather\", \"items_number\": 1, \"from\": 1, \"to\": 0}"));
+    QTest::qWait(2000);
+
+    rowsMovedSpy.wait();
+
+    AbstractDelegate *delegate = delegatesModel->data(delegatesModel->index(0,0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
+    QVERIFY(delegate);
+    QCOMPARE(delegate->qmlUrl(), forecastUrl);
+
+    AbstractDelegate *delegate2 = delegatesModel->data(delegatesModel->index(1,0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
+    QVERIFY(delegate2);
+    QCOMPARE(delegate2->qmlUrl(), currentUrl);
+}
+
+void ServerTest::testRemoveGuiPage()
+{
+    QUrl currentUrl = QUrl::fromLocalFile(QFINDTESTDATA("currentweather.qml"));
+
+    DelegatesModel *delegatesModel = m_view->activeSkills()->delegatesModelForSkill(QStringLiteral("mycroft.weather"));
+    QVERIFY(delegatesModel);
+    QCOMPARE(delegatesModel->rowCount(), 2);
+    
+    QSignalSpy rowsRemovedSpy(delegatesModel, &DelegatesModel::rowsRemoved);
+
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.remove\", \"namespace\": \"mycroft.weather\", \"items_number\": 1, \"position\": 0}"));
+    QTest::qWait(2000);
+
+    rowsRemovedSpy.wait();
+
+    QCOMPARE(delegatesModel->rowCount(), 1);
+    AbstractDelegate *delegate = delegatesModel->data(delegatesModel->index(0,0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
+    QVERIFY(delegate);
+    QCOMPARE(delegate->qmlUrl(), currentUrl);
+
+    QTest::qWait(2000);
+}
+
 
 QTEST_MAIN(ServerTest);
 

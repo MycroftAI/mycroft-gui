@@ -21,6 +21,8 @@
 #include <QHash>
 #include <QUrl>
 
+class QTimer;
+
 class AbstractDelegate;
 
 class DelegatesModel : public QAbstractListModel
@@ -30,7 +32,7 @@ class DelegatesModel : public QAbstractListModel
 
 public:
     enum Roles {
-        DelegateUi = Qt::UserRole + 1,
+        DelegateUi = Qt::UserRole + 1
     };
 
     explicit DelegatesModel(QObject *parent = nullptr);
@@ -68,5 +70,7 @@ Q_SIGNALS:
 private:
     QList<AbstractDelegate *> m_delegates;
     QHash<QUrl, AbstractDelegate *> m_delegateForUrl;
+    QList<AbstractDelegate *>m_delegatesToDelete;
+    QTimer *m_deleteTimer;
     int m_currentIndex = 0;
 };

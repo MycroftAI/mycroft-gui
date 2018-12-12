@@ -17,22 +17,33 @@
 #include "delegatesmodel.h"
 #include "abstractdelegate.h"
 
+#include <QTimer>
 #include <QDebug>
 
 
 DelegatesModel::DelegatesModel(QObject *parent)
     : QAbstractListModel(parent)
 {
+    m_deleteTimer = new QTimer(this);
+    m_deleteTimer->setSingleShot(true);
+    m_deleteTimer->setInterval(2000);
 
+    connect(m_deleteTimer, &QTimer::timeout, this, [this]() {
+        for (auto d : m_delegatesToDelete) {
+            d->deleteLater();
+        }
+        m_delegatesToDelete.clear();
+    });
 }
 
 DelegatesModel::~DelegatesModel()
 {
-    //TODO: delete everything?
+    //TODO: necessary?
+    for (auto d : m_delegatesToDelete) {
+        d->deleteLater();
+    }
 }
 
-//FIXME: This implementation is very inefficient, if will take too much of a toll a more efficient one must be found
-//TODO: this needs extensive autotesting
 void DelegatesModel::insertDelegates(int position, QList<AbstractDelegate *> delegates)
 {
     if (position < 0 || position > m_delegates.count()) {
@@ -63,12 +74,10 @@ void DelegatesModel::insertDelegates(int position, QList<AbstractDelegate *> del
 
 void DelegatesModel::clear()
 {
+    
     beginResetModel();
-    //TODO: how is the ownership? should we delete them at all or should be QML?
-    //if we delete them, after a timeout to give it time to animate?
-   /* for (auto *delegate : m_delegates) {
-        delegate->deleteLater();
-    }*/
+    m_delegatesToDelete = m_delegates;
+    m_deleteTimer->start();
     m_delegates.clear();
     m_delegateForUrl.clear();
     endResetModel();
@@ -116,21 +125,16 @@ bool DelegatesModel::moveRows(const QModelIndex &sourceParent, int sourceRow, in
 
 bool DelegatesModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (row <= 0 || count <= 0 || row + count > m_delegates.count() || parent.isValid()) {
+    if (row < 0 || count <= 0 || row + count > m_delegates.count() || parent.isValid()) {
         return false;
     }
 
     beginRemoveRows(parent, row, row + count - 1);
-    QList<AbstractDelegate *> toDelete;
     std::copy(m_delegates.begin() + row, m_delegates.begin() + row + count,
-              std::back_inserter(toDelete));
+              std::back_inserter(m_delegatesToDelete));
+    m_deleteTimer->start();
     m_delegates.erase(m_delegates.begin() + row, m_delegates.begin() + row + count);
-    //TODO: how is the ownership? should we delete them at all or should be QML?
-    //if we delete them, after a timeout to give it time to animate?
-   /* for (auto *delegate : toDelete) {
-        m_delegateForUrl.remove(delegate->qmlUrl());
-        delegate->deleteLater();
-    }*/
+
     endRemoveRows();
 }
 

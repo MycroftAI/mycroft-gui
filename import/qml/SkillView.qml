@@ -60,13 +60,6 @@ Mycroft.AbstractSkillView {
             id: restFaceParent
             width: restFaceSwipeView.width
             height: restFaceSwipeView.height
-            Text {
-                text: "13:37"
-                color: "white"
-                font.pointSize: 44
-                style: Text.Outline
-                anchors.centerIn: parent
-            }
         }
 
         Item {
@@ -104,6 +97,47 @@ Mycroft.AbstractSkillView {
                         highlightFollowsCurrentItem: true
                         model: delegates
                         visible: index == 0
+
+                        move: Transition {
+                            XAnimator {
+                                duration: Kirigami.Units.longDuration
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                        displaced: Transition {
+                            XAnimator {
+                                duration: Kirigami.Units.longDuration
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                        moveDisplaced: Transition {
+                            XAnimator {
+                                duration: Kirigami.Units.longDuration
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                        removeDisplaced: Transition {
+                            XAnimator {
+                                duration: Kirigami.Units.longDuration
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                        remove: Transition {
+                            ParallelAnimation {
+                                OpacityAnimator {
+                                    from: 1
+                                    to: 0
+                                    duration: Kirigami.Units.longDuration
+                                    easing.type: Easing.InQuad
+                                }
+                                YAnimator {
+                                    from: 0
+                                    to: -delegatesView.height / 3
+                                    duration: Kirigami.Units.longDuration
+                                    easing.type: Easing.InQuad
+                                }
+                            }
+                        }
 
                         onCurrentIndexChanged: {
                             delegates.currentIndex = currentIndex

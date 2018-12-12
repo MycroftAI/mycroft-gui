@@ -520,16 +520,18 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         const int position = doc[QStringLiteral("position")].toInt();
         const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
-        if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
-            qWarning() << "Error: Invalid position in mycroft.gui.list.remove";
-            return;
-        }
         //TODO: try with lifecycle managed by the view?
         DelegatesModel *delegatesModel = m_activeSkillsModel->delegatesModelForSkill(skillId);
         if (!delegatesModel) {
             qWarning() << "Error: no delegates model for skill" << skillId;
             return;
         }
+
+        if (position < 0 || position > delegatesModel->rowCount() - 1) {
+            qWarning() << "Error: Invalid position in mycroft.gui.list.remove";
+            return;
+        }
+
         if (itemsNumber < 0 || itemsNumber > delegatesModel->rowCount()) {
             qWarning() << "Error: Invalid items_number in mycroft.gui.list.remove";
             return;
@@ -753,6 +755,8 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         for (auto *delegate : delegates) {
             emit delegate->event(eventName, data);
         }
+    } else {
+        qWarning() << "Unrecognized operation" << type;
     }
 //END EVENTS
 }
