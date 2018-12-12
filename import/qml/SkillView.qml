@@ -93,7 +93,7 @@ Mycroft.AbstractSkillView {
                         id: delegatesView
                         interactive: true
                         clip: true
-                        cacheBuffer: contentWidth * 2
+                        cacheBuffer: width * 2
                         anchors.fill: parent
                         orientation: ListView.Horizontal
                         boundsBehavior: Flickable.StopAtBounds
