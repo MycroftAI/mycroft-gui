@@ -116,30 +116,39 @@ Values is an ordered dict, for a shopping cart it would need multiple roles like
 }
 ```
 
-# SHOW GUI
+# GUI MODEL
+Each active skill is associated with a model with urls to the QML files of all gui items that are supposed to be visible.
+
+## Inserts new GUI items at position
 ```javascript
 {
-    "type": "mycroft.gui.show",
-    "namespace": "weather.mycroft"
-    "gui_urls": ["file:///opt/mycroft/weather.mycroft/ui/currentweather.qml", "..."]
+    "type": "mycroft.gui.list.insert",
+    "namespace": "mycroft.weather"
+    "position": 2
+    "values": [{"url": "file://..../currentWeather.qml"}, ...] //values must always be in array form
 }
 ```
 
-It should always be an array, even if containing a single url. If multiple urls are provided, the GUI is guaranteed to show the first one, with the possibility of seeing the other pages as well, for instance with an horizontal swipe.
+## Move items within the list
+```javascript
+{
+    "type": "mycroft.gui.list.move",
+    "namespace": "mycroft.weather"
+    "from": 2
+    "to": 5
+    "items_number": 2 //optional in case we want to move a big chunk of list at once
+}
+```
 
-The skill author to have that would just call a functin like self.show_gui("currentweather.qml") the construction of the proper message is done behind the scenes.
+## Remove items from the list
+```javascript
+{
+    "type": "mycroft.gui.list.remove",
+    "namespace": "mycroft.weather"
+    "position": 2
+    "items_number": 5 //optional in case we want to get rid a big chunk of list at once
+}
+```
 
-TODO: mycroft.gui.replace, OR mycroft.gui.clear
-TODO: storing delegates order on the server, resting-faces, mini-faces
 
-# Change proposal for show gui
-* Use the MODELS api
-* the skill writer would still just see the simple show_gui(["foo.qml", "bar.qml"]) api, the model management would be completely under the hood.
-* use "system.gui" namespace
-* sync also the "current" page of the list
-* this makes it crash resistant, if a gui process starts after the skill is executed, will load the proper graphics from the get go (also useful for process-isolated guis)
-* "current" may be something transported by  another porotocol, or just a "role" in the model which both client and server can write i.e. `{"url": "file:///opt/mycroft...", "current": False}`
-* system.next and system.previous events would write to the currentIndex property
-* resting faces would use the same thing, with "system.resting_faces" namespace
-* "mini" faces would use "system.mini_faces" namespace
-
+TODO: Active page in the gui

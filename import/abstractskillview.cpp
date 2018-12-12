@@ -750,7 +750,18 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         // data can also be empty
         const QVariantMap data = doc[QStringLiteral("data")].toVariant().toMap();
 
-        QList<AbstractDelegate *> delegates = m_activeSkillsModel->delegatesForSkill(skillOrSystem == QLatin1String("system") ? QString() : skillOrSystem);
+        QList<AbstractDelegate *> delegates;
+
+        if (skillOrSystem == QLatin1String("system")) {
+            for (auto *delegatesModel : activeSkills()->delegatesModels()) {
+                delegates << delegatesModel->delegates();
+            }
+        } else {
+            DelegatesModel *delegatesModel = activeSkills()->delegatesModelForSkill(skillOrSystem);
+            if (delegatesModel) {
+                delegates << delegatesModel->delegates();
+            }
+        }
 
         for (auto *delegate : delegates) {
             emit delegate->event(eventName, data);

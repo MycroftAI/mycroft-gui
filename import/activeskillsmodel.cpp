@@ -71,61 +71,6 @@ QModelIndex ActiveSkillsModel::skillIndex(const QString &skillId)
     return QModelIndex();
 }
 
-AbstractDelegate *ActiveSkillsModel::delegateForSkill(const QString &skillId, const QUrl &qmlUrl) const
-{
-    DelegatesModel *model = m_delegatesModels.value(skillId);
-    if (!model) {
-        return nullptr;
-    }
-
-    return model->delegateForUrl(qmlUrl);
-}
-
-void ActiveSkillsModel::insertDelegates(QList<AbstractDelegate *> delegates)
-{
-    if (delegates.isEmpty()) {
-        return;
-    }
-
-    const QString skillId = delegates.first()->skillId();
-    //Assume all delegates have the same skillId, must be checked by the caller
-    if (!m_skills.contains(skillId)) {
-        return;
-    }
-
-    DelegatesModel *model = m_delegatesModels.value(skillId);
-    if (!model) {
-        model = new DelegatesModel(this);
-        m_delegatesModels[skillId] = model;
-        const int row = m_skills.indexOf(skillId);
-        emit dataChanged(index(row, 0), index(row, 0), {Delegates});
-    }
-
-    model->insertDelegates(0, delegates);
-}
-
-QList<AbstractDelegate *> ActiveSkillsModel::delegatesForSkill(const QString &skillId)
-{
-    QList<AbstractDelegate *> list;
-
-    if (!skillId.isEmpty() && !m_skills.contains(skillId)) {
-        return list;
-    }
-
-    if (skillId.isEmpty()) {
-        for (auto *model : m_delegatesModels.values()) {
-            list << model->delegates();
-        }
-        return list;
-    } else {
-        DelegatesModel *model = m_delegatesModels.value(skillId);
-        if (!model) {
-            return list;
-        }
-        return model->delegates();
-    }
-}
-
 DelegatesModel *ActiveSkillsModel::delegatesModelForSkill(const QString &skillId)
 {
 
@@ -142,6 +87,11 @@ DelegatesModel *ActiveSkillsModel::delegatesModelForSkill(const QString &skillId
     }
 
     return model;
+}
+
+QList<DelegatesModel *> ActiveSkillsModel::delegatesModels() const
+{
+    return m_delegatesModels.values();
 }
 
 bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)

@@ -49,11 +49,6 @@ public:
     void clear();
 
     /**
-     * @returns the delegate generated with the given qml file url, if any
-     */
-    AbstractDelegate *delegateForUrl(const QUrl &url);
-
-    /**
      * @returns the complete delegate set
      */
     QList<AbstractDelegate *> delegates() const;
@@ -69,7 +64,6 @@ Q_SIGNALS:
 
 private:
     QList<AbstractDelegate *> m_delegates;
-    QHash<QUrl, AbstractDelegate *> m_delegateForUrl;
     QList<AbstractDelegate *>m_delegatesToDelete;
     QTimer *m_deleteTimer;
     int m_currentIndex = 0;

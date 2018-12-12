@@ -62,7 +62,6 @@ void DelegatesModel::insertDelegates(int position, QList<AbstractDelegate *> del
                 removeRows(index, 1, QModelIndex());
             }
         });
-        m_delegateForUrl.insert(delegate->qmlUrl(), delegate);
         ++i;
     }
 
@@ -79,13 +78,7 @@ void DelegatesModel::clear()
     m_delegatesToDelete = m_delegates;
     m_deleteTimer->start();
     m_delegates.clear();
-    m_delegateForUrl.clear();
     endResetModel();
-}
-
-AbstractDelegate *DelegatesModel::delegateForUrl(const QUrl &url)
-{
-    return m_delegateForUrl.value(url);
 }
 
 QList<AbstractDelegate *> DelegatesModel::delegates() const

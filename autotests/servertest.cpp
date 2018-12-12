@@ -52,6 +52,9 @@ private Q_SLOTS:
     void testRemoveGuiPage();
 
 private:
+    AbstractDelegate *delegateForSkill(const QString &skill, const QUrl &url);
+    QList <AbstractDelegate *>delegatesForSkill(const QString &skill);
+
     //Client
     MycroftController *m_controller;
     AbstractSkillView *m_view;
@@ -65,6 +68,7 @@ private:
     QWebSocket *m_mainWebSocket;
     QWebSocket *m_guiWebSocket;
 };
+
 
 static QObject *fileReaderSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -90,6 +94,32 @@ static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine
     return MycroftController::instance();
 }
 
+
+
+AbstractDelegate *ServerTest::delegateForSkill(const QString &skill, const QUrl &url)
+{
+    DelegatesModel *delegatesModel = m_view->activeSkills()->delegatesModelForSkill(skill);
+    if (!delegatesModel) {
+        return nullptr;
+    }
+
+    AbstractDelegate *delegate = nullptr;
+    for (auto d : delegatesModel->delegates()) {
+        if (d->qmlUrl() == url) {
+            return d;
+        }
+    }
+}
+
+QList <AbstractDelegate *>ServerTest::delegatesForSkill(const QString &skill)
+{
+    DelegatesModel *delegatesModel = m_view->activeSkills()->delegatesModelForSkill(skill);
+
+    if (!delegatesModel) {
+        return {};
+    }
+    return delegatesModel->delegates();
+}
 
 void ServerTest::initTestCase()
 {
@@ -422,7 +452,7 @@ void ServerTest::testShowGui()
 
     skillModelDataChangedSpy.wait();
 
-    AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill(QStringLiteral("mycroft.weather"), url);
+    AbstractDelegate *delegate = delegateForSkill(QStringLiteral("mycroft.weather"), url);
     QVERIFY(delegate);
     QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
     QCOMPARE(delegate->qmlUrl(), url);
@@ -446,7 +476,7 @@ void ServerTest::testShowGui()
 void ServerTest::testClientToServerData()
 {
     const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("currentweather.qml"));
-    AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill(QStringLiteral("mycroft.weather"), url);
+    AbstractDelegate *delegate = delegateForSkill(QStringLiteral("mycroft.weather"), url);
     QVERIFY(delegate);
 
     QSignalSpy propertySpy(m_guiWebSocket, &QWebSocket::textMessageReceived);
@@ -482,7 +512,7 @@ void ServerTest::testShowSecondGuiPage()
 
     skillModelDataChangedSpy.wait();
 
-    AbstractDelegate *delegate = m_view->activeSkills()->delegateForSkill(QStringLiteral("mycroft.weather"), url);
+    AbstractDelegate *delegate = delegateForSkill(QStringLiteral("mycroft.weather"), url);
     QVERIFY(delegate);
     QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
     QCOMPARE(delegate->qmlUrl(), url);
@@ -490,7 +520,7 @@ void ServerTest::testShowSecondGuiPage()
 
 void ServerTest::testEventsFromServer()
 {
-    AbstractDelegate *delegate = m_view->activeSkills()->delegatesForSkill(QStringLiteral("mycroft.weather")).first();
+    AbstractDelegate *delegate = delegatesForSkill(QStringLiteral("mycroft.weather")).first();
     QVERIFY(delegate);
     QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
 
@@ -521,7 +551,7 @@ void ServerTest::testEventsFromServer()
 
 void ServerTest::testEventsFromClient()
 {
-    AbstractDelegate *delegate = m_view->activeSkills()->delegatesForSkill(QStringLiteral("mycroft.weather")).first();
+    AbstractDelegate *delegate = delegatesForSkill(QStringLiteral("mycroft.weather")).first();
     QVERIFY(delegate);
     QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
 
@@ -585,12 +615,16 @@ void ServerTest::testMoveGuiPage()
 void ServerTest::testRemoveGuiPage()
 {
     QUrl currentUrl = QUrl::fromLocalFile(QFINDTESTDATA("currentweather.qml"));
+    QUrl forecastUrl = QUrl::fromLocalFile(QFINDTESTDATA("forecast.qml"));
+
+    AbstractDelegate *delegate = delegateForSkill(QStringLiteral("mycroft.weather"), forecastUrl);
 
     DelegatesModel *delegatesModel = m_view->activeSkills()->delegatesModelForSkill(QStringLiteral("mycroft.weather"));
     QVERIFY(delegatesModel);
     QCOMPARE(delegatesModel->rowCount(), 2);
     
     QSignalSpy rowsRemovedSpy(delegatesModel, &DelegatesModel::rowsRemoved);
+    QSignalSpy destroyedSpy(delegate, &QObject::destroyed);
 
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.remove\", \"namespace\": \"mycroft.weather\", \"items_number\": 1, \"position\": 0}"));
     QTest::qWait(2000);
@@ -598,11 +632,12 @@ void ServerTest::testRemoveGuiPage()
     rowsRemovedSpy.wait();
 
     QCOMPARE(delegatesModel->rowCount(), 1);
-    AbstractDelegate *delegate = delegatesModel->data(delegatesModel->index(0,0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
+    delegate = delegatesModel->data(delegatesModel->index(0,0), DelegatesModel::DelegateUi).value<AbstractDelegate *>();
     QVERIFY(delegate);
     QCOMPARE(delegate->qmlUrl(), currentUrl);
 
-    QTest::qWait(2000);
+    destroyedSpy.wait();
+    QCOMPARE(destroyedSpy.count(), 1);
 }
 
 
