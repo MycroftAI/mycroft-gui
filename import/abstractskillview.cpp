@@ -469,7 +469,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             }
 
             QQmlEngine *engine = qmlEngine(this);
-            QQmlContext *context = QQmlEngine::contextForObject(this);
+            QQmlContext *context = new QQmlContext(QQmlEngine::contextForObject(this), this);
             //This class should be *ALWAYS* created from QML
             Q_ASSERT(engine);
             Q_ASSERT(context);
@@ -488,6 +488,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             if (!delegate) {
                 qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
                 delegate->deleteLater();
+                context->deleteLater();
                 return;
             }
 
@@ -498,6 +499,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             delegateComponent.completeCreate();
             delegate->setVisibleHint(map.value(QStringLiteral("visibility_hint")).toBool());
 
+            connect(delegate, &QObject::destroyed, this, [this, context] {context->deleteLater();});
             //TODO: client->server visibility hint setting
             delegates << delegate;
         }
