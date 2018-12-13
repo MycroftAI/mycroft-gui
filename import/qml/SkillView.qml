@@ -49,132 +49,160 @@ Mycroft.AbstractSkillView {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
         }
+        
         width: height * (sourceSize.width / sourceSize.height)
         source: "https://source.unsplash.com/1920x1080/?+mountains"
     }
 
-    Controls.SwipeView {
-        id: restFaceSwipeView
-        anchors.fill: parent
-        Item {
-            id: restFaceParent
-            width: restFaceSwipeView.width
-            height: restFaceSwipeView.height
+    Timer {
+        id: eventCompression
+        interval: 500
+        property Item delegate
+        onTriggered: {
+            mainStack.replace(delegate);
         }
+    }
+    Controls.StackView {
+        id: mainStack
+        anchors.fill: parent
+        initialItem: Item {}
+        replaceEnter: Transition {
+            ParallelAnimation {
+                NumberAnimation {
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InOutQuad
+                }
+                YAnimator {
+                    from: mainStack.height / 4
+                    to: 0
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
+        replaceExit: Transition {
+            PauseAnimation {
+                duration: Kirigami.Units.longDuration
+            }
+            OpacityAnimator {
+                from: 1
+                to: 0
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+        }
+    }
+    Repeater {
+        id: activeSkillsRepeater
+        model: activeSkills
 
-        Item {
-            width: restFaceSwipeView.width
-            height: restFaceSwipeView.height
-            Repeater {
-                id: activeSkillsRepeater
-                model: activeSkills
+        delegate: Item {
+            id: delegate
+            readonly property bool current: index == 0
+            onCurrentChanged: {
+                if (index == 0) {
+                    eventCompression.delegate = delegate;
+                    eventCompression.restart();
+                }
+            }
 
-                delegate: Item {
-                    anchors.fill: parent
-                    //opacity: Math.min(1, restFaceSwipeView.contentItem.contentX/width)
-                    opacity: index == 0
-                    Behavior on opacity {
-                        OpacityAnimator {
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InOutCubic
-                        }
-                    }
-                    Private.ImageBackground {
-                        id: imageBackground
-                    }
-                    ListView {
-                        id: delegatesView
-                        interactive: true
-                        clip: true
-                        cacheBuffer: width * 2
-                        anchors.fill: parent
-                        orientation: ListView.Horizontal
-                        boundsBehavior: Flickable.StopAtBounds
-                        snapMode: ListView.SnapToItem
-                        preferredHighlightBegin: 0
-                        preferredHighlightEnd: 0
-                        highlightMoveDuration: Kirigami.Units.longDuration
-                        highlightFollowsCurrentItem: true
-                        model: delegates
-                        visible: index == 0
+            Private.ImageBackground {
+                id: imageBackground
+            }
+            ListView {
+                id: delegatesView
+                interactive: true
+                clip: true
+                cacheBuffer: width * 2
+                anchors.fill: parent
+                orientation: ListView.Horizontal
+                boundsBehavior: Flickable.StopAtBounds
+                snapMode: ListView.SnapToItem
+                preferredHighlightBegin: 0
+                preferredHighlightEnd: 0
+                highlightMoveDuration: Kirigami.Units.longDuration
+                highlightFollowsCurrentItem: true
+                model: delegates
+                visible: index == 0
 
-                        move: Transition {
-                            XAnimator {
-                                duration: Kirigami.Units.longDuration
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-                        displaced: Transition {
-                            XAnimator {
-                                duration: Kirigami.Units.longDuration
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-                        moveDisplaced: Transition {
-                            XAnimator {
-                                duration: Kirigami.Units.longDuration
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-                        removeDisplaced: Transition {
-                            XAnimator {
-                                duration: Kirigami.Units.longDuration
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-                        remove: Transition {
-                            ParallelAnimation {
-                                OpacityAnimator {
-                                    from: 1
-                                    to: 0
-                                    duration: Kirigami.Units.longDuration
-                                    easing.type: Easing.InQuad
-                                }
-                                YAnimator {
-                                    from: 0
-                                    to: -delegatesView.height / 3
-                                    duration: Kirigami.Units.longDuration
-                                    easing.type: Easing.InQuad
-                                }
-                            }
-                        }
-
-                        onCurrentIndexChanged: {
-                            delegates.currentIndex = currentIndex
-                        }
-                        onCurrentItemChanged: {
-                            var background = currentItem.contentItem.skillBackgroundSource;
-                            if (background.length > 0) {
-                                imageBackground.source = background;
-                            }
-                        }
-                        onMovementEnded: currentIndex = indexAt(contentX, 0);
-                        onFlickEnded: movementEnded()
-                        Connections {
-                            target: delegates
-                            onCurrentIndexChanged: {
-                                delegatesView.currentIndex = delegates.currentIndex
-                            }
-                        }
-                        delegate: Controls.Control {
-                            width: Math.max(0, restFaceSwipeView.width /  Math.min(delegatesView.count, Math.ceil(restFaceSwipeView.width / (Kirigami.Units.gridUnit * 30))))
-                            height: parent.height
-                            contentItem: model.delegateUi
-                            Component.onCompleted: restFaceSwipeView.currentIndex = 1
-                        }
-                    }
-                    Controls.PageIndicator {
-                        visible: delegatesView.count > 1
-                        z: 999
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter
-                            bottom: parent.bottom
-                            margins: Kirigami.Units.largeSpacing
-                        }
-                        count: delegatesView.count
-                        currentIndex: delegatesView.currentIndex
+                move: Transition {
+                    XAnimator {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.InOutQuad
                     }
                 }
+                displaced: Transition {
+                    XAnimator {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+                moveDisplaced: Transition {
+                    XAnimator {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+                removeDisplaced: Transition {
+                    XAnimator {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+                remove: Transition {
+                    ParallelAnimation {
+                        OpacityAnimator {
+                            from: 1
+                            to: 0
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.InQuad
+                        }
+                        YAnimator {
+                            from: 0
+                            to: -delegatesView.height / 3
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.InQuad
+                        }
+                    }
+                }
+
+                onCurrentIndexChanged: {
+                    delegates.currentIndex = currentIndex
+                }
+                onCurrentItemChanged: {
+                    var background = currentItem.contentItem.skillBackgroundSource;
+                    if (background.length > 0) {
+                        imageBackground.source = background;
+                    }
+                }
+                onMovementEnded: currentIndex = indexAt(contentX, 0);
+                onFlickEnded: movementEnded()
+                Connections {
+                    target: delegates
+                    onCurrentIndexChanged: {
+                        delegatesView.currentIndex = delegates.currentIndex
+                    }
+                }
+                delegate: Controls.Control {
+                    width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / (Kirigami.Units.gridUnit * 30))))
+                    height: parent.height
+                    contentItem: model.delegateUi
+                    Component.onCompleted: delegatesView.currentIndex = 1
+                }
+            }
+            Controls.PageIndicator {
+                visible: delegatesView.count > 1
+                z: 999
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom
+                    margins: Kirigami.Units.largeSpacing
+                }
+                count: delegatesView.count
+                currentIndex: delegatesView.currentIndex
             }
         }
     }
