@@ -69,13 +69,6 @@ void AbstractDelegate::contentData_append(QQmlListProperty<QObject> *prop, QObje
 
     QQuickItem *item = qobject_cast<QQuickItem *>(object);
     delegate->m_contentData.append(object);
-    if (item) {
-        if (!delegate->m_contentItem) {
-            //qWarning()<<"Creting default contentItem";
-            delegate->m_contentItem = new QQuickItem(delegate);
-        }
-        item->setParentItem(delegate->m_contentItem);
-    }
 }
 
 int AbstractDelegate::contentData_count(QQmlListProperty<QObject> *prop)
@@ -124,6 +117,25 @@ void AbstractDelegate::geometryChanged(const QRectF &newGeometry, const QRectF &
 {
     syncChildItemsGeometry(newGeometry.size());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
+
+void AbstractDelegate::componentComplete()
+{
+    if (!m_contentItem) {
+        //qWarning()<<"Creting default contentItem";
+        m_contentItem = new QQuickItem(this);
+    }
+
+    QQuickItem *item;
+    for (auto *o : m_contentData) {
+        item = qobject_cast<QQuickItem *>(o);
+        if (item) {
+            item->setParentItem(m_contentItem);
+        } else {
+            o->setParent(this);
+        }
+    }
+    QQuickItem::componentComplete();
 }
 
 QQuickItem *AbstractDelegate::contentItem() const

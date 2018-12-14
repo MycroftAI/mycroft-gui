@@ -25,6 +25,7 @@ import Mycroft 1.0 as Mycroft
 Mycroft.Delegate {
     skillBackgroundSource: "https://source.unsplash.com/1920x1080/?+clouds"
     ColumnLayout {
+        anchors.fill: parent
         Repeater {
             model: sessionData.forecast
             ColumnLayout {
@@ -47,6 +48,9 @@ Mycroft.Delegate {
                     }
                 }
             }
+        }
+        Item {
+            Layout.fillHeight: true
         }
     }
 }

@@ -31,8 +31,10 @@ Item {
     width: height * (currentImage.sourceSize.width / currentImage.sourceSize.height)
     x: -delegatesView.visibleArea.xPosition * 1.5 * parent.width
 
-    property string source
+    property ListView delegatesView
+    property string source: delegatesView ? delegatesView.currentItem.contentItem.skillBackgroundSource : ""
     property Image currentImage: image1
+
     onSourceChanged: {
         if (backgroundImage.currentImage == image1) {
             image2.opacity = 0;

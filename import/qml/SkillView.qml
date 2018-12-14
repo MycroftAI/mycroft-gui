@@ -29,29 +29,14 @@ Mycroft.AbstractSkillView {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    property Item initialItem: null
-    onInitialItemChanged: {
-        initialItem.parent = restFaceParent;
-        initialItem.anchors.fill = restFaceParent;
-    }
-
     readonly property Item currentItem: null
 
     function goBack() {
         
     }
 
-    //FIXME: placeholder, to remove
-    Image {
-        id: image1
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-        
-        width: height * (sourceSize.width / sourceSize.height)
-        source: "https://source.unsplash.com/1920x1080/?+mountains"
+    Private.ImageBackground {
+        delegatesView: mainStack.currentItem ? mainStack.currentItem.view : null
     }
 
     Timer {
@@ -59,13 +44,15 @@ Mycroft.AbstractSkillView {
         interval: 500
         property Item delegate
         onTriggered: {
+            delegate.visible = true;
             mainStack.replace(delegate);
         }
     }
+
     Controls.StackView {
         id: mainStack
         anchors.fill: parent
-        initialItem: Item {}
+        //initialItem: Item {}
         replaceEnter: Transition {
             ParallelAnimation {
                 NumberAnimation {
@@ -84,9 +71,6 @@ Mycroft.AbstractSkillView {
             }
         }
         replaceExit: Transition {
-            PauseAnimation {
-                duration: Kirigami.Units.longDuration
-            }
             OpacityAnimator {
                 from: 1
                 to: 0
@@ -102,6 +86,7 @@ Mycroft.AbstractSkillView {
         delegate: Item {
             id: delegate
             readonly property bool current: index == 0
+            property alias view: delegatesView
             onCurrentChanged: {
                 if (index == 0) {
                     eventCompression.delegate = delegate;
@@ -109,9 +94,6 @@ Mycroft.AbstractSkillView {
                 }
             }
 
-            Private.ImageBackground {
-                id: imageBackground
-            }
             ListView {
                 id: delegatesView
                 interactive: true
@@ -126,8 +108,6 @@ Mycroft.AbstractSkillView {
                 highlightMoveDuration: Kirigami.Units.longDuration
                 highlightFollowsCurrentItem: true
                 model: delegates
-                visible: index == 0
-
                 move: Transition {
                     XAnimator {
                         duration: Kirigami.Units.longDuration
@@ -172,12 +152,7 @@ Mycroft.AbstractSkillView {
                 onCurrentIndexChanged: {
                     delegates.currentIndex = currentIndex
                 }
-                onCurrentItemChanged: {
-                    var background = currentItem.contentItem.skillBackgroundSource;
-                    if (background.length > 0) {
-                        imageBackground.source = background;
-                    }
-                }
+
                 onMovementEnded: currentIndex = indexAt(contentX, 0);
                 onFlickEnded: movementEnded()
                 Connections {

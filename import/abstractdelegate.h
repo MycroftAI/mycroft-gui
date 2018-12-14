@@ -18,7 +18,7 @@
 #pragma once
 
 #include <QQuickItem>
-
+#include <QQmlParserStatus>
 #include <QQmlPropertyMap>
 #include <QPointer>
 
@@ -30,6 +30,8 @@ class MycroftController;
 class AbstractDelegate: public QQuickItem
 {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+
     /**
      * The skill data sent by the server.
      */
@@ -132,6 +134,9 @@ public Q_SLOTS:
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+    protected:
+    //void classBegin() override;
+    void componentComplete() override;
 
 Q_SIGNALS:
     /**

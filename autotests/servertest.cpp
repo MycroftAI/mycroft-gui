@@ -50,6 +50,7 @@ private Q_SLOTS:
     void testEventsFromClient();
     void testMoveGuiPage();
     void testRemoveGuiPage();
+    void testSwitchSkill();
 
 private:
     AbstractDelegate *delegateForSkill(const QString &skill, const QUrl &url);
@@ -584,7 +585,7 @@ void ServerTest::testEventsFromClient()
 
     QCOMPARE(eventSpy.count(), 2);
     //Wait a moment before messing with the gui
-    QTest::qWait(2000);
+    QTest::qWait(1000);
 }
 
 
@@ -640,6 +641,36 @@ void ServerTest::testRemoveGuiPage()
     QCOMPARE(destroyedSpy.count(), 1);
 }
 
+void ServerTest::testSwitchSkill()
+{
+    SessionDataMap *map = m_view->sessionDataForSkill(QStringLiteral("mycroft.wiki"));
+    QVERIFY(map);
+
+    DelegatesModel *delegatesModel = m_view->activeSkills()->delegatesModelForSkill(QStringLiteral("mycroft.wiki"));
+    QVERIFY(delegatesModel);
+
+    QSignalSpy dataChangedSpy(map, &SessionDataMap::valueChanged);
+    QSignalSpy skillMovedSpy(m_view->activeSkills(), &ActiveSkillsModel::rowsMoved);
+    QSignalSpy delegateInsertedSpy(delegatesModel, &DelegatesModel::rowsInserted);
+
+    QUrl url = QUrl::fromLocalFile(QFINDTESTDATA("wiki.qml"));
+
+    //set wiki skill as active
+     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 2, \"to\": 0, \"items_number\": 1}"));
+    skillMovedSpy.wait();
+
+    //set data for wiki skill
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.set\", \"namespace\": \"mycroft.wiki\", \"data\": {\"title\": \"Mycroft\", \"text\": \"Mycroft is a free and open-source voice assistant for Linux-based operating systems that uses a natural language user interface.\", \"image\":\"https://upload.wikimedia.org/wikipedia/en/f/f1/Mycroft_logo.png\"}}"));
+    dataChangedSpy.wait();
+
+    //show wiki gui
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.wiki\", \"position\": 0, \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\", \"visibility_hint\": true}]}"));
+    delegateInsertedSpy.wait();
+    
+
+    //wait a moment before quitting
+    QTest::qWait(5000);
+}
 
 QTEST_MAIN(ServerTest);
 

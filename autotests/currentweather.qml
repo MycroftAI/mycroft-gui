@@ -34,6 +34,7 @@ Mycroft.Delegate {
     }
 
     ColumnLayout {
+        anchors.fill: parent
         Kirigami.Heading {
             text: "Today"
         }
@@ -47,6 +48,9 @@ Mycroft.Delegate {
         }
         Controls.Label {
             text: "temperature: " + sessionData.temperature
+        }
+        Item {
+            Layout.fillHeight: true
         }
     }
 }

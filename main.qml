@@ -129,9 +129,14 @@ Kirigami.ApplicationWindow {
                 id: mainView
                 Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
                 anchors.fill: parent
-                initialItem: Idler {}
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+            }
+            Button {
+                anchors.centerIn: parent
+                text: "start"
+                visible: Mycroft.MycroftController.status == Mycroft.MycroftController.Closed
+                onClicked: Mycroft.MycroftController.start();
             }
 
             Mycroft.StatusIndicator {
