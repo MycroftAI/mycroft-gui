@@ -18,6 +18,7 @@
 
 import QtQuick 2.4
 import QtQuick.Layouts 1.2
+import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.4 as Controls
 import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
@@ -184,20 +185,42 @@ Mycroft.AbstractSkillView {
                     SequentialAnimation {
                         id: focusAnim
                         NumberAnimation {
-                            target: delegate
+                            target: model.delegateUi
                             property: "scale"
                             from: 1
                             to: 1.1
                             duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InOutBack
+                            easing.type: Easing.InOutQuad
                         }
                         NumberAnimation {
-                            target: delegate
+                            target: model.delegateUi
                             property: "scale"
                             from: 1.1
                             to: 1
-                            duration: Kirigami.Units.longDuration *2
-                            easing.type: Easing.OutBounce
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                    RadialGradient {
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                            bottom: parent.bottom
+                        }
+                        height: Kirigami.Units.gridUnit
+                        verticalOffset: height/2
+                        gradient: Gradient {
+                            GradientStop { position: 0.0; color: Kirigami.Theme.highlightColor }
+                            GradientStop { position: 0.5; color: "transparent" }
+                        }
+                        visible: root.width >= root.switchWidth && delegatesView.count > 1
+                        opacity: delegatesView.currentIndex == index
+                        Behavior on opacity {
+                            NumberAnimation {
+                                property: "scale"
+                                duration: Kirigami.Units.longDuration
+                                easing.type: Easing.InOutQuad
+                            }
                         }
                     }
                 }
