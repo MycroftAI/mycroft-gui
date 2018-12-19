@@ -548,9 +548,12 @@ void ServerTest::testEventsFromServer()
 
     eventSpy.wait(1000);
     QCOMPARE(eventSpy.count(), 2);
-qWarning()<<"SDIGHEZZO";
+
     //view switches again to current
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.events.triggered\", \"namespace\": \"mycroft.weather\", \"event_name\": \"page_gained_focus\", \"data\": {\"number\": 0}}"));
+
+    //Wait a moment before messing with the gui
+    QTest::qWait(1000);
 }
 
 void ServerTest::testEventsFromClient()
@@ -582,10 +585,6 @@ void ServerTest::testEventsFromClient()
     QCOMPARE(doc[QStringLiteral("event_name")], QStringLiteral("system.next"));
     QCOMPARE(doc[QStringLiteral("namespace")], QStringLiteral("system"));
 
-    //event from another skill: will get blocked and *not* sent
-    delegate->triggerEvent(QStringLiteral("timer.pause"), QVariantMap());
-    eventSpy.wait(1000);
-
     QCOMPARE(eventSpy.count(), 2);
     //Wait a moment before messing with the gui
     QTest::qWait(1000);
@@ -603,7 +602,7 @@ void ServerTest::testMoveGuiPage()
     QSignalSpy rowsMovedSpy(delegatesModel, &DelegatesModel::rowsMoved);
 
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.move\", \"namespace\": \"mycroft.weather\", \"items_number\": 1, \"from\": 1, \"to\": 0}"));
-    QTest::qWait(2000);
+    QTest::qWait(1000);
 
     rowsMovedSpy.wait();
 
@@ -631,7 +630,7 @@ void ServerTest::testRemoveGuiPage()
     QSignalSpy destroyedSpy(delegate, &QObject::destroyed);
 
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.remove\", \"namespace\": \"mycroft.weather\", \"items_number\": 1, \"position\": 0}"));
-    QTest::qWait(2000);
+    QTest::qWait(1000);
 
     rowsRemovedSpy.wait();
 
@@ -672,7 +671,7 @@ void ServerTest::testSwitchSkill()
     
 
     //wait a moment before quitting
-    QTest::qWait(5000);
+    QTest::qWait(3000);
 }
 
 QTEST_MAIN(ServerTest);

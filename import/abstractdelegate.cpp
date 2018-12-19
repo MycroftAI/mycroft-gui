@@ -18,6 +18,9 @@
 #include "abstractdelegate.h"
 #include "mycroftcontroller.h"
 
+#include <QQmlEngine>
+#include <QQmlContext>
+
 AbstractDelegate::AbstractDelegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
@@ -39,10 +42,8 @@ void AbstractDelegate::triggerEvent(const QString &eventName, const QVariantMap 
 
     if (eventName.startsWith(QStringLiteral("system."))) {
         m_skillView->triggerEvent(QStringLiteral("system"), eventName, parameters);
-    } else if (eventName.startsWith(m_skillId + QStringLiteral("."))) {
-        m_skillView->triggerEvent(m_skillId, eventName, parameters);
     } else {
-        qWarning() << "Warning: you can only trigger system events or events belonging to the skill" << m_skillId;
+        m_skillView->triggerEvent(m_skillId, eventName, parameters);
     }
 }
 
@@ -152,6 +153,29 @@ bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
 void AbstractDelegate::mousePressEvent(QMouseEvent *event)
 {
     forceActiveFocus(Qt::MouseFocusReason);
+}
+
+void AbstractDelegate::focusInEvent(QFocusEvent *event)
+{
+    //if the focus came from the server, don't ask the server again
+    if (event->reason() == (Qt::FocusReason)AbstractSkillView::ServerEventFocusReason) {
+        return;
+    }
+
+    if (!parentItem()) {
+        return;
+    }
+
+    QQmlContext *context = QQmlEngine::contextForObject(parentItem());
+
+    if (!context) {
+        return;
+    }
+
+    int index = context->contextProperty(QStringLiteral("index")).toInt();
+    if (index >= 0) {
+        triggerEvent(QStringLiteral("page_gained_focus"), QVariantMap({{QStringLiteral("number"), index}}));
+    }
 }
 
 QQuickItem *AbstractDelegate::contentItem() const

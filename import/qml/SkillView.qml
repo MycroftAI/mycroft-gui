@@ -108,18 +108,21 @@ Mycroft.AbstractSkillView {
                 highlightFollowsCurrentItem: true
                 model: delegates
                 move: Transition {
+                    enabled: root.width > root.switchWidth
                     XAnimator {
                         duration: Kirigami.Units.longDuration
                         easing.type: Easing.InOutQuad
                     }
                 }
                 displaced: Transition {
+                    enabled: root.width > root.switchWidth
                     XAnimator {
                         duration: Kirigami.Units.longDuration
                         easing.type: Easing.InOutQuad
                     }
                 }
                 moveDisplaced: Transition {
+                    enabled: root.width > root.switchWidth
                     XAnimator {
                         duration: Kirigami.Units.longDuration
                         easing.type: Easing.InOutQuad
@@ -168,25 +171,16 @@ Mycroft.AbstractSkillView {
                     contentItem: model.delegateUi
                     Connections {
                         target: model.delegateUi
-                        onEvent: {
-                            if (eventName == "page_gained_focus" && data.number == index) {
-                                delegatesView.currentIndex = index;
-                            }
-                        }
                         onFocusChanged: {
                             if (model.delegateUi.focus) {
                                 delegatesView.currentIndex = index;
+                                if (root.width >= root.switchWidth) {
+                                    focusAnim.restart();
+                                }
                             }
                         }
                     }
-                    Connections {
-                        target: delegatesView
-                        onCurrentIndexChanged: {
-                            if (index == delegatesView.currentIndex && root.width >= root.switchWidth) {
-                                focusAnim.restart();
-                            }
-                        }
-                    }
+
                     SequentialAnimation {
                         id: focusAnim
                         NumberAnimation {

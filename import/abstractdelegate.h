@@ -136,6 +136,7 @@ protected:
     void componentComplete() override;
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
 
 Q_SIGNALS:
     /**

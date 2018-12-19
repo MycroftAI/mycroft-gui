@@ -502,7 +502,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         if (delegates.count() > 0) {
             delegatesModel->insertDelegates(position, delegates);
             //give the focus to the first
-            delegates.first()->forceActiveFocus();
+            delegates.first()->forceActiveFocus((Qt::FocusReason)ServerEventFocusReason);
         }
 
 
@@ -760,8 +760,18 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             }
         }
 
-        for (auto *delegate : delegates) {
-            emit delegate->event(eventName, data);
+        // page_gained_focus is special: interests only one single delegate
+        if (eventName == QStringLiteral("page_gained_focus")) {
+            int pos = data.value(QStringLiteral("number")).toInt();
+            if (pos >= 0 && pos < delegates.count()) {
+                AbstractDelegate *delegate = delegates[pos];
+                delegate->forceActiveFocus((Qt::FocusReason)ServerEventFocusReason);
+                emit delegate->event(eventName, data);
+            }
+        } else {
+            for (auto *delegate : delegates) {
+                emit delegate->event(eventName, data);
+            }
         }
     } else {
         qWarning() << "Unrecognized operation" << type;

@@ -15,6 +15,19 @@ Recent skills are ordered from the last used to the oldest, so the first item of
 * event names that start with "system." are available to all skills, like previous/next/pick. the skill author can have as many custom events as he wants
 * same message format goes both ways python->gui and gui->python
 
+## SPECIAL EVENT: page_gained_focus
+```javascript
+{
+    "type": "mycroft.events.triggered",
+    "namespace": "mycroft.weather",
+    "event_name": "page_gained_focus",
+    "data": {"number": 0}
+}
+```
+This event is used when the server wants a page of the gui model of a particular skill to gain user attention focus and become the current active view and "focus of attention" of the user. This event is supported on both directions of communication between server and gui.
+The parameter "number" is the position (starting from zero) of the page in the gui model (see the section gui model).
+
+
 # SKILL DATA
 
 At the center of data sharing there is a key/value dictionary that is kept synchronized between the server and the GUI client.

@@ -35,6 +35,10 @@ class AbstractSkillView: public QQuickItem
     Q_PROPERTY(ActiveSkillsModel *activeSkills READ activeSkills CONSTANT)
 
 public:
+    enum CustomFocusReasons {
+        ServerEventFocusReason = Qt::OtherFocusReason
+    };
+
     AbstractSkillView(QQuickItem *parent = nullptr);
     ~AbstractSkillView();
 
