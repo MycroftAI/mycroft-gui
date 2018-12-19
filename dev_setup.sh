@@ -25,13 +25,17 @@ sudo make install
 
 # Setup the platform file
 if [[ ! -f /etc/mycroft/mycroft.conf ]] ; then
-   if [[ ! -d mycroft ]] ; then
+   if [[ ! -d /etc/mycroft ]] ; then
       sudo mkdir /etc/mycroft
    fi
-   sudo echo "{" > /etc/mycroft/mycroft.conf
-   sudo echo '  "enclosure": { ' >> /etc/mycroft/mycroft.conf
-   sudo echo '     "platform": "mycroft_mark_2"' >> /etc/mycroft/mycroft.conf
-   sudo echo ' }' >> /etc/mycroft/mycroft.conf
+
+cat <<EOF | sudo tee /etc/mycroft/mycroft.conf
+{
+  "enclosure": {
+     "platform": "mycroft_mark_2"
+  }
+}
+EOF
 fi
 
 
