@@ -49,12 +49,4 @@ Mycroft.AbstractDelegate {
     topPadding: Kirigami.Units.largeSpacing
     rightPadding: Kirigami.Units.largeSpacing
     bottomPadding: Kirigami.Units.largeSpacing
-
-    //TODO: make this background an internal component
-    //so the implementation can do background.image: "foo" background.dim: 0.6 etc as grouped properties
-    background: Rectangle {
-        //TODO: api for having skills that just fill a solid color
-        color: "black"
-        opacity: 0.4
-    }
 }

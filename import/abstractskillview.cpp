@@ -501,8 +501,8 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
         if (delegates.count() > 0) {
             delegatesModel->insertDelegates(position, delegates);
-            //Activate only the first
-            emit delegates.first()->currentRequested();
+            //give the focus to the first
+            delegates.first()->forceActiveFocus();
         }
 
 

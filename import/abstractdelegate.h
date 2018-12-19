@@ -134,14 +134,10 @@ protected:
     protected:
     //void classBegin() override;
     void componentComplete() override;
+    bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 Q_SIGNALS:
-    /**
-     * Emitted when the delegate asks to be the "current" in the view
-     *TODO: maybe abuse focus instead?
-     */
-    void currentRequested();
-
     /**
      * Emitted when the server triggered an event.
      * It is guaranteed the event will be either a system event or an event belonging to our skill, but never to another skill.

@@ -29,13 +29,13 @@ Mycroft.AbstractSkillView {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    readonly property Item currentItem: null
+    readonly property Item currentItem: mainStack.currentItem ? mainStack.currentItem.view.currentItem : null
+    property int switchWidth: Kirigami.Units.gridUnit * 30
 
-    function goBack() {
-        
-    }
+    property alias backgroundVisible: background.visible
 
     Private.ImageBackground {
+        id: background
         delegatesView: mainStack.currentItem ? mainStack.currentItem.view : null
     }
 
@@ -52,7 +52,6 @@ Mycroft.AbstractSkillView {
     Controls.StackView {
         id: mainStack
         anchors.fill: parent
-        //initialItem: Item {}
         replaceEnter: Transition {
             ParallelAnimation {
                 NumberAnimation {
@@ -162,10 +161,51 @@ Mycroft.AbstractSkillView {
                     }
                 }
                 delegate: Controls.Control {
-                    width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / (Kirigami.Units.gridUnit * 30))))
+                    id: delegate
+                    width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / root.switchWidth)))
                     height: parent.height
+                    z: delegatesView.currentIndex == index ? 1 : 0
                     contentItem: model.delegateUi
-                    Component.onCompleted: delegatesView.currentIndex = 1
+                    Connections {
+                        target: model.delegateUi
+                        onEvent: {
+                            if (eventName == "page_gained_focus" && data.number == index) {
+                                delegatesView.currentIndex = index;
+                            }
+                        }
+                        onFocusChanged: {
+                            if (model.delegateUi.focus) {
+                                delegatesView.currentIndex = index;
+                            }
+                        }
+                    }
+                    Connections {
+                        target: delegatesView
+                        onCurrentIndexChanged: {
+                            if (index == delegatesView.currentIndex && root.width >= root.switchWidth) {
+                                focusAnim.restart();
+                            }
+                        }
+                    }
+                    SequentialAnimation {
+                        id: focusAnim
+                        NumberAnimation {
+                            target: delegate
+                            property: "scale"
+                            from: 1
+                            to: 1.1
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.InOutBack
+                        }
+                        NumberAnimation {
+                            target: delegate
+                            property: "scale"
+                            from: 1.1
+                            to: 1
+                            duration: Kirigami.Units.longDuration *2
+                            easing.type: Easing.OutBounce
+                        }
+                    }
                 }
             }
             Controls.PageIndicator {

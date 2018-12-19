@@ -55,7 +55,14 @@ Item {
         backgroundImage.currentImage = image;
         fadeAnim.restart();
     }
-    
+
+    Rectangle {
+        z: 10
+        anchors.fill: parent
+        //TODO: api to control the dim
+        color: "black"
+        opacity: 0.4
+    }
     Image {
         id: image1
         anchors.fill: parent

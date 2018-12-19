@@ -548,6 +548,9 @@ void ServerTest::testEventsFromServer()
 
     eventSpy.wait(1000);
     QCOMPARE(eventSpy.count(), 2);
+qWarning()<<"SDIGHEZZO";
+    //view switches again to current
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.events.triggered\", \"namespace\": \"mycroft.weather\", \"event_name\": \"page_gained_focus\", \"data\": {\"number\": 0}}"));
 }
 
 void ServerTest::testEventsFromClient()

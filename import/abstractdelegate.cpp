@@ -21,6 +21,9 @@
 AbstractDelegate::AbstractDelegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
+    setFiltersChildMouseEvents(true);
+    setFlags(QQuickItem::ItemIsFocusScope);
+    setAcceptedMouseButtons(Qt::LeftButton);
 }
 
 AbstractDelegate::~AbstractDelegate()
@@ -136,6 +139,19 @@ void AbstractDelegate::componentComplete()
         }
     }
     QQuickItem::componentComplete();
+}
+
+bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) {
+        forceActiveFocus(Qt::MouseFocusReason);
+    }
+    return QQuickItem::childMouseEventFilter(item, event);
+}
+
+void AbstractDelegate::mousePressEvent(QMouseEvent *event)
+{
+    forceActiveFocus(Qt::MouseFocusReason);
 }
 
 QQuickItem *AbstractDelegate::contentItem() const
