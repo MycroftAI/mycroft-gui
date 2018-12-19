@@ -449,20 +449,16 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             return;
         }
 
-        QList<QVariantMap> list = variantListToOrderedMap(doc[QStringLiteral("data")].toVariant().value<QVariantList>());
+        const QStringList delegateUrls = jsonModelToStringList(QStringLiteral("url"), doc[QStringLiteral("data")]);
 
-        if (list.isEmpty()) {
-            qWarning() << "Error: no valid skills received in mycroft.gui.list.insert ";
+        if (delegateUrls.isEmpty()) {
+            qWarning() << "Error: no valid skills received in mycroft.gui.list.insert";
             return;
         }
 
         QList <AbstractDelegate *> delegates;
-        for (const auto &map : list) {
-            if (!map.contains(QStringLiteral("url"))) {
-                continue;
-            }
-            //TODO: if we trust completely the server as a model, this is not necessary anymore
-            const QUrl delegateUrl = QUrl::fromUserInput(map[QStringLiteral("url")].toString());
+        for (const auto &urlString : delegateUrls) {
+            const QUrl delegateUrl = QUrl::fromUserInput(urlString);
 
             if (!delegateUrl.isValid()) {
                 continue;
@@ -497,7 +493,6 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             delegate->setSkillView(this);
             delegate->setSessionData(sessionDataForSkill(skillId));
             delegateComponent.completeCreate();
-            delegate->setVisibleHint(map.value(QStringLiteral("visibility_hint")).toBool());
 
             connect(delegate, &QObject::destroyed, this, [this, context] {context->deleteLater();});
             //TODO: client->server visibility hint setting

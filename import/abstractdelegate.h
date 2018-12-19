@@ -122,9 +122,6 @@ public:
     void setSkillId(const QString &skillId);
     QString skillId() const;
 
-    bool visibleHint() const;
-    void setVisibleHint(bool visible);
-    
 public Q_SLOTS:
     /**
      * Trigger an event either for this skill or a system one
@@ -204,7 +201,5 @@ private:
     int m_rightPadding = 0;
     int m_topPadding = 0;
     int m_bottomPadding = 0;
-
-    bool m_visibleHint = false;
 };
 

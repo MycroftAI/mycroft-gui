@@ -449,7 +449,7 @@ void ServerTest::testShowGui()
 
     const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("currentweather.qml"));
 
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.weather\", \"position\": 0, \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\", \"visibility_hint\": true}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.weather\", \"position\": 0, \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\"}]}"));
 
     skillModelDataChangedSpy.wait();
 
@@ -509,7 +509,7 @@ void ServerTest::testShowSecondGuiPage()
     //wait a moment before showing it there
     QTest::qWait(2000);
     
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.weather\", \"position\": 1, \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\", \"visibility_hint\": true}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.weather\", \"position\": 1, \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\"}]}"));
 
     skillModelDataChangedSpy.wait();
 
@@ -664,7 +664,7 @@ void ServerTest::testSwitchSkill()
     dataChangedSpy.wait();
 
     //show wiki gui
-    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.wiki\", \"position\": 0, \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\", \"visibility_hint\": true}]}"));
+    m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.gui.list.insert\", \"namespace\": \"mycroft.wiki\", \"position\": 0, \"data\": [{\"url\": \"") + url.toString() + QStringLiteral("\"}]}"));
     delegateInsertedSpy.wait();
     
 

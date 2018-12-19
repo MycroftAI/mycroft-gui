@@ -290,16 +290,6 @@ void AbstractDelegate::setSkillId(const QString &skillId)
     m_skillId = skillId;
 }
 
-bool AbstractDelegate::visibleHint() const
-{
-    return m_visibleHint;
-}
-
-void AbstractDelegate::setVisibleHint(bool visible)
-{
-    m_visibleHint = visible;
-}
-
 QString AbstractDelegate::skillId() const
 {
     return m_skillId;
