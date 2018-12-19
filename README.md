@@ -1,5 +1,9 @@
-Mycroft GUI
+Mycroft GUI 
 ===========
+```diff
+- NOTE:  This is pre-Alpha and likely to break at any time!
+```
+
 The KDE-based visual interface for working with [Mycroft](https://github.com/MycroftAI/mycroft-core)
 
 
