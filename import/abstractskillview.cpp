@@ -278,6 +278,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     }
 
     auto type = doc[QStringLiteral("type")].toString();
+    qInfo() << "GUI:       [ " << type << " ]";
 
     if (type.isEmpty()) {
         qWarning() << "Empty type in the JSON message on the gui socket";
