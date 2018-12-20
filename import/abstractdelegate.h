@@ -49,7 +49,14 @@ class AbstractDelegate: public QQuickItem
      * The view may or may not decide to display it, if different delegates of the same skill have different skillBackgrounds, it will fade between them when the current delegate changes.
      * Both relative paths and remote urls are supported
      */
-    Q_PROPERTY(QString skillBackgroundSource MEMBER m_backgroundSource NOTIFY backgroundSourceChanged)
+    Q_PROPERTY(QString skillBackgroundSource MEMBER m_backgroundSource NOTIFY skillBackgroundSourceChanged)
+
+    /**
+     * Color to be used as an overlay for the skill-wide background.
+     * If you are using skillBackgroundSource as well, consider using a semi transparent color.
+     * By default is completely transparent on this implementation and Delegate has a slightly translucent black or white depending on the color scheme
+     */
+    Q_PROPERTY(QColor skillBackgroundColorOverlay MEMBER m_skillBackgroundColorOverlay NOTIFY skillBackgroundColorOverlayChanged)
 
     Q_PROPERTY(QQuickItem *contentItem READ contentItem WRITE setContentItem NOTIFY contentItemChanged)
     Q_PROPERTY(QQuickItem *background READ background WRITE setBackground NOTIFY backgroundChanged)
@@ -157,7 +164,8 @@ Q_SIGNALS:
     void event(const QString &eventName, const QVariantMap &data);
 
     //QML property notifiers
-    void backgroundSourceChanged();
+    void skillBackgroundSourceChanged();
+    void skillBackgroundColorOverlayChanged();
     void backgroundChanged();
     void contentItemChanged();
     void timeoutChanged();
@@ -189,6 +197,7 @@ private:
     QString m_skillId;
 
     QString m_backgroundSource;
+    QColor m_skillBackgroundColorOverlay = Qt::transparent;
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
 
     /**

@@ -541,7 +541,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
         const QString skillId = doc[QStringLiteral("namespace")].toString();
         if (skillId.isEmpty()) {
-            qWarning() << "No skill_id provided in mycroft.gui.list.remove";
+            qWarning() << "No skill_id provided in mycroft.gui.list.move";
             return;
         }
 

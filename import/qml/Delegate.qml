@@ -28,6 +28,8 @@ Mycroft.AbstractDelegate {
 
     signal backRequested
 
+    skillBackgroundColorOverlay: Kirigami.Theme.textColor.hsvValue > 0.5 ? Qt.rgba(0,0,0, 0.4) : Qt.rgba(1,1,1, 0.4)
+
     property Component controlBar: Controls.RoundButton {
         z: 99999
         anchors {

@@ -59,9 +59,7 @@ Item {
     Rectangle {
         z: 10
         anchors.fill: parent
-        //TODO: api to control the dim
-        color: "black"
-        opacity: 0.4
+        color: delegatesView ? delegatesView.currentItem.contentItem.skillBackgroundColorOverlay : "transparent"
     }
     Image {
         id: image1
