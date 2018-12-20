@@ -112,9 +112,11 @@ install( PROGRAMS net.bs.mycroft.gui.device2.desktop DESTINATION  ${KDE_INSTALL_
 install( PROGRAMS net.bs.mycroft.gui.device3.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
 
 
-install( DIRECTORY skills DESTINATION ${MYCROFT_CORE_DIR}/skills/ui
-    PATTERN "*.qmlc" EXCLUDE
-)
+# SSP: Disabled, now syncing with mycroft-core instance via sync_skills.sh
+#
+# install( DIRECTORY skills DESTINATION ${MYCROFT_CORE_DIR}/skills/ui
+#     PATTERN "*.qmlc" EXCLUDE
+# )
 
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})
