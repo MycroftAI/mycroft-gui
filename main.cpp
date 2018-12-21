@@ -53,8 +53,10 @@ int main(int argc, char *argv[])
     auto widthOption = QCommandLineOption(QStringLiteral("width"), QStringLiteral("width"), QStringLiteral("width"));
     auto heightOption = QCommandLineOption(QStringLiteral("height"), QStringLiteral("height"), QStringLiteral("height"));
     auto hideTextInputOption = QCommandLineOption(QStringLiteral("hideTextInput"));
+    auto maximizeOption = QCommandLineOption(QStringLiteral("maximize"), QStringLiteral("maximize"));
+    auto autoconnectOption = QCommandLineOption(QStringLiteral("autoconnect"), QStringLiteral("autoconnect"));
     auto dpiOption = QCommandLineOption(QStringLiteral("dpi"), QStringLiteral("dpi"), QStringLiteral("dpi"));
-    parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption});
+    parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption, maximizeOption, autoconnectOption});
 
     parser.process(arguments);
 
@@ -72,10 +74,14 @@ int main(int argc, char *argv[])
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
+    bool maximize = parser.isSet(maximizeOption);
+    bool autoconnect = parser.isSet(autoconnectOption);
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("deviceWidth"), width);
     engine.rootContext()->setContextProperty(QStringLiteral("deviceHeight"), height);
+    engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
+    engine.rootContext()->setContextProperty(QStringLiteral("deviceAutoConnect"), autoconnect);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
 
     qmlRegisterType<SpeechIntent>("org.kde.private.mycroftgui", 1, 0, "SpeechIntent");

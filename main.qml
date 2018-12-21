@@ -45,6 +45,12 @@ Kirigami.ApplicationWindow {
         var panel = component.createObject(root);
         panel.Kirigami.Theme.colorSet = Kirigami.Theme.Complementary;
         panel.width = Qt.binding(function(){return root.width});
+
+        // Maximize and auto connect if set
+        if (deviceMaximized)
+            showMaximized()
+        if (deviceAutoConnect)
+            Mycroft.MycroftController.start();
     }
 
     // Uses Android's voice popup for speech recognition
