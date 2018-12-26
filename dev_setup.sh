@@ -12,8 +12,26 @@ if [ $(id -u) -eq 0 ] ; then
     return 1
 fi
 
+function found_exe() {
+   hash "$1" 2>/dev/null
+}
 
-# Installation
+# Package installation
+if [ ! -f .installed ] || ! md5sum -c &> /dev/null < .installed ; then
+   # Update package dependencies whenever this file changes
+   if found_exe apt-get ; then
+      sudo apt-get install -y git-core g++ cmake extra-cmake-modules kio-dev gettext pkg-config
+      sudo apt-get install -y pkg-kde-tools qtbase5-dev qtdeclarative5-dev kio-dev
+      sudo apt-get install -y libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libkf5kio-dev libqt5webview5-dev
+   else
+      # TODO: Support for other package managers
+      echo "You must manually install necessary packages for this platform"
+   fi
+
+   md5sum dev_setup.sh > .installed
+fi
+
+
 if [[ ! -d build-testing ]] ; then
    mkdir build-testing
 fi
