@@ -278,7 +278,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     }
 
     auto type = doc[QStringLiteral("type")].toString();
-    qInfo() << "GUI:       [ " << type << " ]";
+    qInfo() << "GUI: [ " << type << " ]";
 
     if (type.isEmpty()) {
         qWarning() << "Empty type in the JSON message on the gui socket";
@@ -302,13 +302,13 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             return;
         }
         if (data.isEmpty()) {
-            qWarning() << "Empty dtata in mycroft.session.set";
+            qWarning() << "Empty data in mycroft.session.set";
             return;
         }
 
         //we already checked, assume *map is valid
         SessionDataMap *map = sessionDataForSkill(skillId);
-         QVariantMap::const_iterator i;
+        QVariantMap::const_iterator i;
         for (i = data.constBegin(); i != data.constEnd(); ++i) {
             //insert it as a model
             QList<QVariantMap> list = variantListToOrderedMap(i.value().value<QVariantList>());
@@ -330,6 +330,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 }
                 map->insertAndNotify(i.key(), i.value());
             }
+            qDebug() << "             " << i.key() << " = " << i.value();
         }
 
     // The SkillData was removed by the server
@@ -604,7 +605,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         }
 
         QList<QVariantMap> list = variantListToOrderedMap(doc[QStringLiteral("data")].toVariant().value<QVariantList>());
-        
+
         if (list.isEmpty()) {
             qWarning() << "Error: invalid data in mycroft.session.list.insert:" << doc[QStringLiteral("data")];
             return;
@@ -641,7 +642,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         }
 
         QList<QVariantMap> list = variantListToOrderedMap(doc[QStringLiteral("data")].toVariant().value<QVariantList>());
-        
+
         if (list.isEmpty()) {
             qWarning() << "Error: invalid data in mycroft.session.list.insert:" << doc[QStringLiteral("data")];
             return;

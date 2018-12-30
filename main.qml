@@ -130,6 +130,7 @@ Kirigami.ApplicationWindow {
         Image {
             source: "background.png"
             anchors.fill: parent
+            rotation: globalScreenRotation || 0
 
             Mycroft.SkillView {
                 id: mainView

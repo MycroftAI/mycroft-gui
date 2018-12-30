@@ -131,7 +131,10 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     if (type.startsWith(QStringLiteral("enclosure")) || type.startsWith(QStringLiteral("mycroft-date"))) {
         return;
     }
+
+#ifdef DEBUG_MYCROFT_MESSAGEBUS
     qDebug() << "type" << type;
+#endif
 
     emit intentRecevied(type, doc[QStringLiteral("data")].toVariant().toMap());
 

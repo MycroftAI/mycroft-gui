@@ -50,15 +50,18 @@ int main(int argc, char *argv[])
 
     QCommandLineParser parser;
 
-    auto widthOption = QCommandLineOption(QStringLiteral("width"), QStringLiteral("width"), QStringLiteral("width"));
-    auto heightOption = QCommandLineOption(QStringLiteral("height"), QStringLiteral("height"), QStringLiteral("height"));
-    auto hideTextInputOption = QCommandLineOption(QStringLiteral("hideTextInput"));
-    auto maximizeOption = QCommandLineOption(QStringLiteral("maximize"), QStringLiteral("maximize"));
-    auto autoconnectOption = QCommandLineOption(QStringLiteral("autoconnect"), QStringLiteral("autoconnect"));
+    auto widthOption = QCommandLineOption(QStringLiteral("width"), QStringLiteral("Width of the screen"), QStringLiteral("width"));
+    auto heightOption = QCommandLineOption(QStringLiteral("height"), QStringLiteral("Height of the screen"), QStringLiteral("height"));
+    auto hideTextInputOption = QCommandLineOption(QStringLiteral("hideTextInput"), QStringLiteral("Hide the input box"));
     auto dpiOption = QCommandLineOption(QStringLiteral("dpi"), QStringLiteral("dpi"), QStringLiteral("dpi"));
-    parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption, maximizeOption, autoconnectOption});
-
+    auto maximizeOption = QCommandLineOption(QStringLiteral("maximize"), QStringLiteral("When set, start maximized."));
+    auto autoconnectOption = QCommandLineOption(QStringLiteral("autoconnect"), QStringLiteral("When set, autoconnect to the GUI client."));
+    auto rotateScreen = QCommandLineOption(QStringLiteral("rotateScreen"), QStringLiteral("When set, rotate the screen 180 degrees."));
+    auto helpOption = QCommandLineOption(QStringLiteral("help"), QStringLiteral("Show this help message"));
+    parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption,
+                      maximizeOption, autoconnectOption, rotateScreen, helpOption});
     parser.process(arguments);
+
 
     qputenv("QT_WAYLAND_FORCE_DPI", parser.value(dpiOption).toLatin1());
 
@@ -67,6 +70,14 @@ int main(int argc, char *argv[])
 #else
     QApplication app(argc, argv);
 #endif
+
+    // NOTE: Have to manually implement a --help option because the parser.addHelpOption() would
+    //       be triggered at parser.process() time, but it requires the QApplication. But the
+    //       'dpi' option for the GUI creates a chicken-and-the-egg issue.
+    if (parser.isSet(helpOption)) {
+        parser.showHelp();
+        return 0;
+    }
 
     QtWebView::initialize();
 
@@ -83,6 +94,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
     engine.rootContext()->setContextProperty(QStringLiteral("deviceAutoConnect"), autoconnect);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
+    engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
 
     qmlRegisterType<SpeechIntent>("org.kde.private.mycroftgui", 1, 0, "SpeechIntent");
 
