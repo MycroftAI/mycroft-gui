@@ -22,7 +22,7 @@
 #include <QQmlContext>
 #include <QtQml>
 #include <QDebug>
-
+#include <QCursor>
 #include <QtWebView/QtWebView>
 
 #ifdef Q_OS_ANDROID
@@ -56,10 +56,12 @@ int main(int argc, char *argv[])
     auto dpiOption = QCommandLineOption(QStringLiteral("dpi"), QStringLiteral("dpi"), QStringLiteral("dpi"));
     auto maximizeOption = QCommandLineOption(QStringLiteral("maximize"), QStringLiteral("When set, start maximized."));
     auto autoconnectOption = QCommandLineOption(QStringLiteral("autoconnect"), QStringLiteral("When set, autoconnect to the GUI client."));
+    auto hidemouseOption = QCommandLineOption(QStringLiteral("hide-mouse"), QStringLiteral("When set, the mouse cursor won't be drawn when over the app."));
     auto rotateScreen = QCommandLineOption(QStringLiteral("rotateScreen"), QStringLiteral("When set, rotate the screen 180 degrees."));
     auto helpOption = QCommandLineOption(QStringLiteral("help"), QStringLiteral("Show this help message"));
-    parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption,
-                      maximizeOption, autoconnectOption, rotateScreen, helpOption});
+    parser.addOptions({widthOption, heightOption, hideTextInputOption,
+                       dpiOption, maximizeOption, autoconnectOption,
+                       rotateScreen, hidemouseOption, helpOption});
     parser.process(arguments);
 
 
@@ -87,6 +89,7 @@ int main(int argc, char *argv[])
     int height = parser.value(heightOption).toInt();
     bool maximize = parser.isSet(maximizeOption);
     bool autoconnect = parser.isSet(autoconnectOption);
+    bool hidemouse = parser.isSet(hidemouseOption);
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("deviceWidth"), width);
@@ -100,5 +103,10 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+    if (hidemouse) {
+        QCursor cursor(Qt::BlankCursor);
+        QApplication::setOverrideCursor(cursor);
+        QApplication::changeOverrideCursor(cursor);
+    }
     return app.exec();
 }
