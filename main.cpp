@@ -22,7 +22,7 @@
 #include <QQmlContext>
 #include <QtQml>
 #include <QDebug>
-
+#include <QCursor>
 #include <QtWebView/QtWebView>
 
 #ifdef Q_OS_ANDROID
@@ -50,13 +50,20 @@ int main(int argc, char *argv[])
 
     QCommandLineParser parser;
 
-    auto widthOption = QCommandLineOption(QStringLiteral("width"), QStringLiteral("width"), QStringLiteral("width"));
-    auto heightOption = QCommandLineOption(QStringLiteral("height"), QStringLiteral("height"), QStringLiteral("height"));
-    auto hideTextInputOption = QCommandLineOption(QStringLiteral("hideTextInput"));
+    auto widthOption = QCommandLineOption(QStringLiteral("width"), QStringLiteral("Width of the screen"), QStringLiteral("width"));
+    auto heightOption = QCommandLineOption(QStringLiteral("height"), QStringLiteral("Height of the screen"), QStringLiteral("height"));
+    auto hideTextInputOption = QCommandLineOption(QStringLiteral("hideTextInput"), QStringLiteral("Hide the input box"));
     auto dpiOption = QCommandLineOption(QStringLiteral("dpi"), QStringLiteral("dpi"), QStringLiteral("dpi"));
-    parser.addOptions({widthOption, heightOption, hideTextInputOption, dpiOption});
-
+    auto maximizeOption = QCommandLineOption(QStringLiteral("maximize"), QStringLiteral("When set, start maximized."));
+    auto autoconnectOption = QCommandLineOption(QStringLiteral("autoconnect"), QStringLiteral("When set, autoconnect to the GUI client."));
+    auto hidemouseOption = QCommandLineOption(QStringLiteral("hide-mouse"), QStringLiteral("When set, the mouse cursor won't be drawn when over the app."));
+    auto rotateScreen = QCommandLineOption(QStringLiteral("rotateScreen"), QStringLiteral("When set, rotate the screen 180 degrees."));
+    auto helpOption = QCommandLineOption(QStringLiteral("help"), QStringLiteral("Show this help message"));
+    parser.addOptions({widthOption, heightOption, hideTextInputOption,
+                       dpiOption, maximizeOption, autoconnectOption,
+                       rotateScreen, hidemouseOption, helpOption});
     parser.process(arguments);
+
 
     qputenv("QT_WAYLAND_FORCE_DPI", parser.value(dpiOption).toLatin1());
 
@@ -66,21 +73,40 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 #endif
 
+    // NOTE: Have to manually implement a --help option because the parser.addHelpOption() would
+    //       be triggered at parser.process() time, but it requires the QApplication. But the
+    //       'dpi' option for the GUI creates a chicken-and-the-egg issue.
+    if (parser.isSet(helpOption)) {
+        parser.showHelp();
+        return 0;
+    }
+
     QtWebView::initialize();
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
+    bool maximize = parser.isSet(maximizeOption);
+    bool autoconnect = parser.isSet(autoconnectOption);
+    bool hidemouse = parser.isSet(hidemouseOption);
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("deviceWidth"), width);
     engine.rootContext()->setContextProperty(QStringLiteral("deviceHeight"), height);
+    engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
+    engine.rootContext()->setContextProperty(QStringLiteral("deviceAutoConnect"), autoconnect);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
+    engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
 
     qmlRegisterType<SpeechIntent>("org.kde.private.mycroftgui", 1, 0, "SpeechIntent");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+    if (hidemouse) {
+        QCursor cursor(Qt::BlankCursor);
+        QApplication::setOverrideCursor(cursor);
+        QApplication::changeOverrideCursor(cursor);
+    }
     return app.exec();
 }
