@@ -18,10 +18,16 @@ The KDE-based visual interface for working with [Mycroft](https://github.com/Myc
    TODO: More detailed installations?
 4) Within the VM, open a terminal session and type:
    * ```cd ~```
+   * ```sudo apt-get install git -y```
    * ```git clone https://github.com/mycroftai/mycroft-gui```
    * ```cd mycroft-gui```
    * ```bash dev_setup.sh```
-5) Run and configure
+5) (Optional) Customize Plasma settings for GUI debugging purposes
+   * Disable screensaver
+     - Click the > icon, type: Screen Locking
+     - Untick "Lock screen automatically after:"
+     - Click OK
+6) Run and configure
    * ```mycroft-gui-app```
    * Click on the hamburger menu in the lower left
    * Select 'Settings'
