@@ -32,6 +32,7 @@ Mycroft.AbstractDelegate {
 
     property Component controlBar: Controls.RoundButton {
         z: 99999
+        visible: false
         anchors {
             left: parent.left
             bottom: parent.bottom
