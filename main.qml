@@ -146,16 +146,6 @@ Kirigami.ApplicationWindow {
                 onClicked: Mycroft.MycroftController.start();
             }
 
-            Mycroft.StatusIndicator {
-                id: si
-                visible: true
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    bottom: parent.bottom
-                    bottomMargin: Kirigami.Units.largeSpacing
-                }
-                z: 999
-            }
         }
 
         //Note: a custom control as ToolBar on Android has a funny color
