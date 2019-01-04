@@ -226,7 +226,8 @@ Mycroft.AbstractSkillView {
                 }
             }
             Controls.PageIndicator {
-                visible: delegatesView.count > 1
+                //visible: delegatesView.count > 1
+                visible: false
                 z: 999
                 anchors {
                     horizontalCenter: parent.horizontalCenter

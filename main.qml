@@ -148,7 +148,7 @@ Kirigami.ApplicationWindow {
 
             Mycroft.StatusIndicator {
                 id: si
-                visible: true
+                visible: false
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     bottom: parent.bottom

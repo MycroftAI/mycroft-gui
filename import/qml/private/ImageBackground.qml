@@ -29,7 +29,8 @@ Item {
         bottom: parent.bottom
     }
     width: height * (currentImage.sourceSize.width / currentImage.sourceSize.height)
-    x: -delegatesView.visibleArea.xPosition * 1.5 * parent.width
+    //x: -delegatesView.visibleArea.xPosition * 1.5 * parent.width
+    x: 0
 
     property ListView delegatesView
     property string source: delegatesView ? delegatesView.currentItem.contentItem.skillBackgroundSource : ""
