@@ -23,3 +23,18 @@ GlobalSettings::GlobalSettings(QObject *parent) :
     QObject(parent)
 {
 }
+
+bool GlobalSettings::autoConnect() const
+{
+    return m_settings.value(QStringLiteral("autoConnect"), true).toBool();
+}
+
+void GlobalSettings::setAutoConnect(bool autoConnect)
+{
+    if (GlobalSettings::autoConnect() == autoConnect) {
+        return;
+    }
+
+    m_settings.setValue(QStringLiteral("autoConnect"), autoConnect);
+    emit autoConnectChanged();
+}

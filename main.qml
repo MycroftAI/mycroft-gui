@@ -49,8 +49,6 @@ Kirigami.ApplicationWindow {
         // Maximize and auto connect if set
         if (deviceMaximized)
             showMaximized()
-        if (deviceAutoConnect)
-            Mycroft.MycroftController.start();
     }
 
     // Uses Android's voice popup for speech recognition
@@ -111,8 +109,22 @@ Kirigami.ApplicationWindow {
                 }
             }
         ]
+        Switch {
+            text: "Connect Automatically"
+            checked: Mycroft.GlobalSettings.autoConnect
+            onCheckedChanged: Mycroft.GlobalSettings.autoConnect = checked
+        }
     }
 
+    Timer {
+        interval: 20000
+        running: Mycroft.GlobalSettings.autoConnect && Mycroft.MycroftController.status != Mycroft.MycroftController.Open
+        triggeredOnStart: true
+        onTriggered: {
+            print("Trying to connect to Mycroft");
+            Mycroft.MycroftController.start();
+        }
+    }
 
     pageStack.globalToolBar.style: pageStack.layers.depth == 1 ? Kirigami.ApplicationHeaderStyle.None : Kirigami.ApplicationHeaderStyle.Auto
 

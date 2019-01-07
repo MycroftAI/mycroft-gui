@@ -23,14 +23,15 @@
 #include <QDebug>
 
 #define SettingPropertyKey(type, name, setOption, signalName, settingKey, defaultValue) \
-    inline type name() const { return _settings.value(settingKey, defaultValue).value<type>(); } \
-    inline void setOption (const type &value) { _settings.setValue(settingKey, value); emit signalName(); qDebug() << "emitted"; }
+    inline type name() const { return m_settings.value(settingKey, defaultValue).value<type>(); } \
+    inline void setOption (const type &value) { m_settings.setValue(settingKey, value); emit signalName(); qDebug() << "emitted"; }
 
 class QSettings;
 class GlobalSettings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString webSocketAddress READ webSocketAddress WRITE setWebSocketAddress NOTIFY webSocketChanged)
+    Q_PROPERTY(bool autoConnect READ autoConnect WRITE setAutoConnect NOTIFY autoConnectChanged)
     
 public:
     explicit GlobalSettings(QObject *parent=0);
@@ -39,11 +40,16 @@ public:
 #else
     SettingPropertyKey(QString, webSocketAddress, setWebSocketAddress, webSocketChanged, QStringLiteral("webSocketAddress"), QStringLiteral("ws://46.101.212.234"))
 #endif
-    QSettings _settings;
-    
-signals:
-    void webSocketChanged();
 
+    bool autoConnect() const;
+    void setAutoConnect(bool autoconnect);
+
+Q_SIGNALS:
+    void webSocketChanged();
+    void autoConnectChanged();
+
+private:
+    QSettings m_settings;
 };
 
 #endif // GLOBALSETTINGS_H

@@ -95,7 +95,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("deviceWidth"), width);
     engine.rootContext()->setContextProperty(QStringLiteral("deviceHeight"), height);
     engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
-    engine.rootContext()->setContextProperty(QStringLiteral("deviceAutoConnect"), autoconnect);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
     engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
 
