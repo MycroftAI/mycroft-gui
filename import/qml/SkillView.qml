@@ -92,6 +92,7 @@ Mycroft.AbstractSkillView {
             width: parent.width
             height: parent.height
             opacity: 0
+            z: current ? 1 : 0
             onCurrentChanged: {
                 if (index == 0) {
                     activeSkillsRepeater.oldDelegate = activeSkillsRepeater.currentDelegate;
