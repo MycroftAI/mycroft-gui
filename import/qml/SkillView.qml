@@ -30,14 +30,15 @@ Mycroft.AbstractSkillView {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-    readonly property Item currentItem: mainStack.currentItem ? mainStack.currentItem.view.currentItem : null
+    readonly property Item currentItem: activeSkillsRepeater.currentDelegate ? activeSkillsRepeater.currentDelegate.view.currentItem : null
+    
     property int switchWidth: Kirigami.Units.gridUnit * 30
 
     property alias backgroundVisible: background.visible
 
     Private.ImageBackground {
         id: background
-        delegatesView: mainStack.currentItem ? mainStack.currentItem.view : null
+        delegatesView: activeSkillsRepeater.currentDelegate ? activeSkillsRepeater.currentDelegate.view : null
     }
 
     Timer {
@@ -45,51 +46,56 @@ Mycroft.AbstractSkillView {
         interval: 500
         property Item delegate
         onTriggered: {
-            delegate.visible = true;
-            mainStack.replace(delegate);
+            enterAnimation.restart();
+            exitAnimation.restart();
+            print(enterAnimation.target)
         }
     }
 
-    Controls.StackView {
-        id: mainStack
-        anchors.fill: parent
-        replaceEnter: Transition {
-            ParallelAnimation {
-                NumberAnimation {
-                    property: "opacity"
-                    from: 0
-                    to: 1
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InOutQuad
-                }
-                YAnimator {
-                    from: mainStack.height / 4
-                    to: 0
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InOutQuad
-                }
-            }
+    ParallelAnimation {
+        id: enterAnimation
+        NumberAnimation {
+            target: activeSkillsRepeater.currentDelegate
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: Kirigami.Units.longDuration
+            easing.type: Easing.InOutQuad
         }
-        replaceExit: Transition {
-            OpacityAnimator {
-                from: 1
-                to: 0
-                duration: Kirigami.Units.longDuration
-                easing.type: Easing.InOutQuad
-            }
+        YAnimator {
+            target: activeSkillsRepeater.currentDelegate
+            from: root.height / 4
+            to: 0
+            duration: Kirigami.Units.longDuration
+            easing.type: Easing.InOutQuad
         }
     }
+    OpacityAnimator {
+        id: exitAnimation
+        target: activeSkillsRepeater.oldDelegate
+        from: 1
+        to: 0
+        duration: Kirigami.Units.longDuration
+        easing.type: Easing.InOutQuad
+    }
+
     Repeater {
         id: activeSkillsRepeater
+        property Item currentDelegate
+        property Item oldDelegate
         model: activeSkills
 
         delegate: Item {
             id: delegate
             readonly property bool current: index == 0
             property alias view: delegatesView
+            width: parent.width
+            height: parent.height
+            opacity: 0
             onCurrentChanged: {
                 if (index == 0) {
-                    eventCompression.delegate = delegate;
+                    activeSkillsRepeater.oldDelegate = activeSkillsRepeater.currentDelegate;
+                    activeSkillsRepeater.currentDelegate = delegate;
                     eventCompression.restart();
                 }
             }
