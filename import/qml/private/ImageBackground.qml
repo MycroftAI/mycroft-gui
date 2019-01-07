@@ -24,13 +24,7 @@ import org.kde.kirigami 2.4 as Kirigami
 
 Item {
     id: backgroundImage
-    anchors {
-        top: parent.top
-        bottom: parent.bottom
-    }
-    width: height * (currentImage.sourceSize.width / currentImage.sourceSize.height)
-    //x: -delegatesView.visibleArea.xPosition * 1.5 * parent.width
-    x: 0
+    anchors.fill: parent
 
     property ListView delegatesView
     property string source: delegatesView ? delegatesView.currentItem.contentItem.skillBackgroundSource : ""
@@ -66,6 +60,7 @@ Item {
         id: image1
         anchors.fill: parent
         z: backgroundImage.currentImage == image1 ? 1 : 0
+        fillMode: Image.PreserveAspectCrop
         onStatusChanged: {
             if (backgroundImage.currentImage == image2 && status == Image.Ready) {
                 backgroundImage.setCurrent(image1);
@@ -76,6 +71,7 @@ Item {
         id: image2
         anchors.fill: parent
         z: backgroundImage.currentImage == image2 ? 1 : 0
+        fillMode: Image.PreserveAspectCrop
         onStatusChanged: {
             if (backgroundImage.currentImage == image1 && status == Image.Ready) {
                 backgroundImage.setCurrent(image2);
