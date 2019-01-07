@@ -39,6 +39,11 @@ Kirigami.ApplicationWindow {
     //HACK!! needs proper api in kirigami
     Component.onCompleted: {
         globalDrawer.handle.handleAnchor = handleAnchor;
+        // Maximize and auto connect if set
+        if (deviceMaximized)
+            showMaximized()
+        if (deviceAutoConnect)
+            Mycroft.MycroftController.start();
         
         //HACK for the hacky top panel, on android will fail silently
         var component = Qt.createComponent(Qt.resolvedUrl("containments/panel/package/contents/ui/SlidingPanel.qml"));
@@ -46,11 +51,6 @@ Kirigami.ApplicationWindow {
         panel.Kirigami.Theme.colorSet = Kirigami.Theme.Complementary;
         panel.width = Qt.binding(function(){return root.width});
 
-        // Maximize and auto connect if set
-        if (deviceMaximized)
-            showMaximized()
-        if (deviceAutoConnect)
-            Mycroft.MycroftController.start();
     }
 
     // Uses Android's voice popup for speech recognition
