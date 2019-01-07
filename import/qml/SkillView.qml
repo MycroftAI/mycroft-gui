@@ -18,6 +18,7 @@
 
 import QtQuick 2.4
 import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.4 as Controls
 import org.kde.kirigami 2.4 as Kirigami
@@ -27,11 +28,10 @@ import "private" as Private
 
 Mycroft.AbstractSkillView {
     id: root
-
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
     readonly property Item currentItem: mainStack.currentItem ? mainStack.currentItem.view.currentItem : null
-    property int switchWidth: Kirigami.Units.gridUnit * 30
+    property int switchWidth: Window.width
 
     property alias backgroundVisible: background.visible
 
