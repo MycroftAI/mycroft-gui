@@ -31,10 +31,14 @@ Mycroft.AbstractSkillView {
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
     readonly property Item currentItem: activeSkillsRepeater.currentDelegate ? activeSkillsRepeater.currentDelegate.view.currentItem : null
-    
-    property int switchWidth: Kirigami.Units.gridUnit * 30
 
+    property int switchWidth: Kirigami.Units.gridUnit * 30
     property alias backgroundVisible: background.visible
+
+    property int leftPadding
+    property int topPadding
+    property int rightPadding
+    property int bottomPadding
 
     Private.ImageBackground {
         id: background
@@ -65,7 +69,7 @@ Mycroft.AbstractSkillView {
         YAnimator {
             target: activeSkillsRepeater.currentDelegate
             from: root.height / 4
-            to: 0
+            to: root.topPadding
             duration: Kirigami.Units.longDuration
             easing.type: Easing.InOutQuad
         }
@@ -89,8 +93,10 @@ Mycroft.AbstractSkillView {
             id: delegate
             readonly property bool current: index == 0
             property alias view: delegatesView
-            width: parent.width
-            height: parent.height
+            width: root.width - root.leftPadding - root.rightPadding
+            height: root.height - root.topPadding - root.bottomPadding
+            x: root.leftPadding
+            y: root.topPadding
             opacity: 0
             z: current ? 1 : 0
             onCurrentChanged: {

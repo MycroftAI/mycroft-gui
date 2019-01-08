@@ -161,19 +161,21 @@ Item {
     PlasmaCore.ColorScope {
         id: initialScreen
 
+        anchors.fill: parent
         colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
         Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
         Flickable {
             id: appletsView
+            opacity: !skillView.currentItem
             anchors {
                 left: parent.left
                 right: parent.right
                 top: parent.top
                 property int extraMargin: root.smallScreenMode ? 0 : Kirigami.Units.largeSpacing
-                topMargin: mainStack.topPadding + extraMargin
-                leftMargin: mainStack.leftPadding + extraMargin
-                rightMargin: mainStack.rightPadding + extraMargin
+                topMargin: skillView.topPadding + extraMargin
+                leftMargin: skillView.leftPadding + extraMargin
+                rightMargin: skillView.rightPadding + extraMargin
             }
             flickableDirection: Flickable.HorizontalFlick
             boundsBehavior: Flickable.StopAtBounds
@@ -185,117 +187,19 @@ Item {
                 height: parent.height
             }
         }
-
-        Loader {
-            id: dashbardView
-            anchors {
-                left: parent.left
-                right: parent.right
-                bottom: parent.bottom
-                leftMargin: mainStack.leftPadding + extraMargin
-                bottomMargin: mainStack.bottomMargin + extraMargin
-                rightMargin: mainStack.rightPadding + extraMargin
-            }
-            height: (parent.height / 3) * 2
-            active: !root.smallScreenMode
-            source: Qt.resolvedUrl("./mycroft/Dashboard.qml")
-        }
     }
 
     Mycroft.SkillView {
-        id: mainStack
+        id: skillView
         anchors.fill: parent
+        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
         topPadding: plasmoid.availableScreenRect.y
         bottomPadding: root.height - plasmoid.availableScreenRect.y - plasmoid.availableScreenRect.height
         leftPadding: plasmoid.availableScreenRect.x
         rightPadding: root.width - plasmoid.availableScreenRect.x - plasmoid.availableScreenRect.width
-
-        initialItem: initialScreen
-        popEnter: Transition {
-            OpacityAnimator {
-                from: 0
-                to: 1
-                duration: Kirigami.Units.longDuration
-                easing.type: Easing.InOutCubic
-            }
-        }
-        popExit: Transition {
-            ParallelAnimation {
-                OpacityAnimator {
-                    from: 1
-                    to: 0
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InOutCubic
-                }
-                YAnimator {
-                    from: 0
-                    to: height/4
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InCubic
-                }
-            }
-        }
-
-        pushEnter: Transition {
-            ParallelAnimation {
-                OpacityAnimator {
-                    from: 0
-                    to: 1
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InOutCubic
-                }
-                YAnimator {
-                    from: height/4
-                    to: 0
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.OutCubic 
-                }
-            }
-        }
-
-        pushExit: Transition {
-            OpacityAnimator {
-                from: 1
-                to: 0
-                duration: Kirigami.Units.longDuration
-                easing.type: Easing.InCubic 
-            }
-        }
-        replaceEnter: Transition {
-            ParallelAnimation {
-                OpacityAnimator {
-                    from: 0
-                    to: 1
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InOutCubic
-                }
-                YAnimator {
-                    from: height/4
-                    to: 0
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.OutCubic 
-                }
-            }
-        }
-
-        replaceExit: Transition {
-            ParallelAnimation {
-                OpacityAnimator {
-                    from: 1
-                    to: 0
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InOutCubic
-                }
-                YAnimator {
-                    from: 0
-                    to: -height/4
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.InCubic
-                }
-            }
-        }
     }
+
 
     Mycroft.StatusIndicator {
         anchors {
