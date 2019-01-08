@@ -109,7 +109,7 @@ Mycroft.AbstractSkillView {
                 anchors.fill: parent
                 orientation: ListView.Horizontal
                 boundsBehavior: Flickable.StopAtBounds
-                snapMode: ListView.SnapToItem
+                snapMode: ListView.SnapOneItem
                 preferredHighlightBegin: 0
                 preferredHighlightEnd: 0
                 highlightMoveDuration: Kirigami.Units.longDuration
