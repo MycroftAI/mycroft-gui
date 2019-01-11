@@ -139,17 +139,27 @@ Kirigami.ApplicationWindow {
                 mainView.goBack();
             }
         }
-        Image {
-            source: "background.png"
-            anchors.fill: parent
+        Rectangle {
+            color: "black"
             rotation: globalScreenRotation || 0
+            anchors.fill: parent
+            Image {
+                source: "background.png"
+                fillMode: Image.PreserveAspectFit
+                anchors.fill: parent
+                opacity: !mainView.currentItem
+                Behavior on opacity {
+                    OpacityAnimator {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.InQuad
+                    }
+                }
+            }
 
             Mycroft.SkillView {
                 id: mainView
                 Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
                 anchors.fill: parent
-                Layout.fillHeight: true
-                Layout.fillWidth: true
             }
             Button {
                 anchors.centerIn: parent

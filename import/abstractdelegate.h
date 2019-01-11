@@ -59,6 +59,8 @@ class AbstractDelegate: public QQuickItem
     Q_PROPERTY(QColor skillBackgroundColorOverlay MEMBER m_skillBackgroundColorOverlay NOTIFY skillBackgroundColorOverlayChanged)
 
     Q_PROPERTY(QQuickItem *contentItem READ contentItem WRITE setContentItem NOTIFY contentItemChanged)
+    Q_PROPERTY(bool contentItemAutoHeight MEMBER m_contentItemAutoHeight NOTIFY contentItemAutoHeightChanged)
+    Q_PROPERTY(bool contentItemAutoWidth MEMBER m_contentItemAutoWidth NOTIFY contentItemAutoWidthChanged)
     Q_PROPERTY(QQuickItem *background READ background WRITE setBackground NOTIFY backgroundChanged)
 
     /**
@@ -68,6 +70,12 @@ class AbstractDelegate: public QQuickItem
     Q_PROPERTY(int rightPadding READ rightPadding WRITE setRightPadding NOTIFY rightPaddingChanged)
     Q_PROPERTY(int topPadding READ topPadding WRITE setTopPadding NOTIFY topPaddingChanged)
     Q_PROPERTY(int bottomPadding READ bottomPadding WRITE setBottomPadding NOTIFY bottomPaddingChanged)
+
+    /**
+     * The size of the contents: the size of this item minux the padding
+     */
+    Q_PROPERTY(int contentWidth READ contentWidth NOTIFY contentWidthChanged)
+    Q_PROPERTY(int contentHeight READ contentHeight NOTIFY contentHeightChanged)
 
     Q_PROPERTY(QQmlListProperty<QObject> contentData READ contentData FINAL)
    // Q_CLASSINFO("DeferredPropertyNames", "background,contentItem")
@@ -105,6 +113,10 @@ public:
 
     int bottomPadding() const;
     void setBottomPadding(int padding);
+
+    int contentWidth() const;
+    int contentHeight() const;
+
 /*
  * @internal All the following API is meant to be used only by AbstractSkillView during initialization, *NOT* QML from where is not accessible at all.
  */
@@ -168,11 +180,15 @@ Q_SIGNALS:
     void skillBackgroundColorOverlayChanged();
     void backgroundChanged();
     void contentItemChanged();
+    void contentItemAutoWidthChanged();
+    void contentItemAutoHeightChanged();
     void timeoutChanged();
     void leftPaddingChanged();
     void rightPaddingChanged();
     void topPaddingChanged();
     void bottomPaddingChanged();
+    void contentWidthChanged();
+    void contentHeightChanged();
 
 private:
     void syncChildItemsGeometry(const QSizeF &size);
@@ -207,5 +223,8 @@ private:
     int m_rightPadding = 0;
     int m_topPadding = 0;
     int m_bottomPadding = 0;
+
+    bool m_contentItemAutoWidth = true;
+    bool m_contentItemAutoHeight = true;
 };
 

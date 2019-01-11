@@ -52,8 +52,14 @@ void AbstractDelegate::syncChildItemsGeometry(const QSizeF &size)
     if (m_contentItem) {
         m_contentItem->setX(m_leftPadding);
         m_contentItem->setY(m_topPadding);
-        m_contentItem->setSize(QSizeF(size.width() - m_leftPadding - m_rightPadding,
+        if (m_contentItemAutoWidth && m_contentItemAutoHeight) {
+            m_contentItem->setSize(QSizeF(size.width() - m_leftPadding - m_rightPadding,
                 size.height() - m_topPadding - m_bottomPadding));
+        } else if (m_contentItemAutoWidth) {
+            m_contentItem->setWidth(size.width() - m_leftPadding - m_rightPadding);
+        } else if (m_contentItemAutoHeight) {
+            m_contentItem->setHeight(size.height() - m_topPadding - m_bottomPadding);
+        }
     }
 
     if (m_backgroundItem) {
@@ -121,6 +127,8 @@ void AbstractDelegate::geometryChanged(const QRectF &newGeometry, const QRectF &
 {
     syncChildItemsGeometry(newGeometry.size());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
+    emit contentWidthChanged();
+    emit contentHeightChanged();
 }
 
 void AbstractDelegate::componentComplete()
@@ -193,8 +201,15 @@ void AbstractDelegate::setContentItem(QQuickItem *item)
     item->setParentItem(this);
     m_contentItem->setX(m_leftPadding);
     m_contentItem->setY(m_topPadding);
-    m_contentItem->setSize(QSizeF(width() - m_leftPadding - m_rightPadding,
-                                  height() - m_topPadding - m_bottomPadding));
+
+    if (m_contentItemAutoWidth && m_contentItemAutoHeight) {
+        m_contentItem->setSize(QSizeF(width() - m_leftPadding - m_rightPadding,
+            height() - m_topPadding - m_bottomPadding));
+    } else if (m_contentItemAutoWidth) {
+        m_contentItem->setWidth(width() - m_leftPadding - m_rightPadding);
+    } else if (m_contentItemAutoHeight) {
+        m_contentItem->setHeight(height() - m_topPadding - m_bottomPadding);
+    }
 
     emit contentItemChanged();
 }
@@ -233,6 +248,7 @@ void AbstractDelegate::setLeftPadding(int padding)
     m_leftPadding = padding;
     syncChildItemsGeometry(size());
     emit leftPaddingChanged();
+    emit contentWidthChanged();
 }
 
 
@@ -250,6 +266,7 @@ void AbstractDelegate::setTopPadding(int padding)
     m_topPadding = padding;
     syncChildItemsGeometry(size());
     emit topPaddingChanged();
+    emit contentHeightChanged();
 }
 
 
@@ -267,6 +284,7 @@ void AbstractDelegate::setRightPadding(int padding)
     m_rightPadding = padding;
     syncChildItemsGeometry(size());
     emit rightPaddingChanged();
+    emit contentWidthChanged();
 }
 
 
@@ -284,7 +302,19 @@ void AbstractDelegate::setBottomPadding(int padding)
     m_bottomPadding = padding;
     syncChildItemsGeometry(size());
     emit bottomPaddingChanged();
+    emit contentHeightChanged();
 }
+
+int AbstractDelegate::contentWidth() const
+{
+    return width() - m_leftPadding - m_rightPadding;
+}
+
+int AbstractDelegate::contentHeight() const
+{
+    return height() - m_topPadding - m_bottomPadding;
+}
+
 
 
 void AbstractDelegate::setSkillView(AbstractSkillView *view)
