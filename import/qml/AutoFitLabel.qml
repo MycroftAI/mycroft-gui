@@ -31,7 +31,7 @@ Label {
     //TODO: to remove, all of that should end up in the device system setup
     font.family: "Noto Sans Display"
 
-    //fontSizeMode: Text.Fit;
+    fontSizeMode: Text.Fit;
     TextMetrics {
         id: metrics
         font {
@@ -52,7 +52,7 @@ Label {
     Layout.preferredHeight: paintedHeight
     font.pixelSize: height
 
-    onHeightChanged: {
+    /*onHeightChanged: {print(height)
         metrics.font.pixelSize = height*1.2;
         while ((metrics.tightBoundingRect.width > width || metrics.tightBoundingRect.height > height) && metrics.font.pixelSize > 8) {
             --metrics.font.pixelSize;
@@ -60,6 +60,7 @@ Label {
         font.pixelSize = metrics.font.pixelSize
     }
     onWidthChanged: heightChanged();
+*/
 
     renderType: height > 40
         ? Text.QtRendering

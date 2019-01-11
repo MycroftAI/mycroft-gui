@@ -483,6 +483,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 }
                 return;
             }
+qWarning()<<"AAAAAA"<<delegate;
             if (!delegate) {
                 qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
                 delegate->deleteLater();
