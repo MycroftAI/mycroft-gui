@@ -184,7 +184,7 @@ Mycroft.AbstractSkillView {
                     z: delegatesView.currentIndex == index ? 1 : 0
                     contentItem: model.delegateUi
                     padding: 0
-                    property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height * 2 : 0
+                    property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height : 0
                     Connections {
                         target: model.delegateUi
                         onFocusChanged: {
