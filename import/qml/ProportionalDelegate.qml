@@ -24,23 +24,26 @@ import Mycroft 1.0 as Mycroft
 Delegate {
     id: root
 
-    property int unitDensity: 10
-    property int proportionalGridUnit: Math.floor(root.contentHeight / unitDensity)
+    property int unitDensity: 100
+    property real proportionalGridUnit: root.contentHeight / unitDensity
     property alias spacing: layout.spacing
 
-    leftPadding: Math.min(root.width, root.height)/10
-    topPadding: Math.min(root.width, root.height)/10
-    rightPadding: Math.min(root.width, root.height)/10
-    bottomPadding: Math.min(root.width, root.height)/10
+    leftPadding: Math.min(root.width, root.height)/15
+    topPadding: Math.min(root.width, root.height)/15
+    rightPadding: Math.min(root.width, root.height)/15
+    bottomPadding: Math.min(root.width, root.height)/15 + root.parent.extraBottomPadding
 
     contentItemAutoHeight: false
     contentItem: ColumnLayout {
         id: layout
 
-        anchors.verticalCenter: root.verticalCenter
+        anchors {
+            verticalCenter: root.verticalCenter
+            verticalCenterOffset: (topPadding - bottomPadding) / 2
+        }
         height: implicitHeight
 
         //TODO: default to zero?
-        spacing: proportionalGridUnit
+        spacing: proportionalGridUnit * 10
     }
 }

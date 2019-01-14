@@ -32,7 +32,7 @@ Mycroft.AbstractSkillView {
 
     readonly property Item currentItem: activeSkillsRepeater.currentDelegate ? activeSkillsRepeater.currentDelegate.view.currentItem : null
 
-    property int switchWidth: Kirigami.Units.gridUnit * 30
+    property int switchWidth: Kirigami.Units.gridUnit * 45
     property alias backgroundVisible: background.visible
 
     property int leftPadding
@@ -183,6 +183,8 @@ Mycroft.AbstractSkillView {
                     height: parent.height
                     z: delegatesView.currentIndex == index ? 1 : 0
                     contentItem: model.delegateUi
+                    padding: 0
+                    property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height * 2 : 0
                     Connections {
                         target: model.delegateUi
                         onFocusChanged: {
@@ -239,6 +241,7 @@ Mycroft.AbstractSkillView {
                 }
             }
             Controls.PageIndicator {
+                id: pageIndicator
                 visible: delegatesView.count > 1
                 z: 999
                 anchors {

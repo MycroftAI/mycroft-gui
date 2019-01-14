@@ -31,6 +31,8 @@ Label {
     //TODO: to remove, all of that should end up in the device system setup
     font.family: "Noto Sans Display"
 
+    //HACK: needs a better way to fit its box
+    scale: 1.3
     fontSizeMode: Text.Fit;
     TextMetrics {
         id: metrics

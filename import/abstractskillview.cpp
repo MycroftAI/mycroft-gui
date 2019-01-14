@@ -461,7 +461,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         QList <AbstractDelegate *> delegates;
         for (const auto &urlString : delegateUrls) {
             const QUrl delegateUrl = QUrl::fromUserInput(urlString);
-
+qWarning()<<"asked for delegate url"<<delegateUrl;
             if (!delegateUrl.isValid()) {
                 continue;
             }
@@ -483,7 +483,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 }
                 return;
             }
-qWarning()<<"AAAAAA"<<delegate;
+qWarning()<<"Created delegate"<<delegate;
             if (!delegate) {
                 qWarning()<<"ERROR: QML gui not a Mycroft.AbstractDelegate instance";
                 delegate->deleteLater();
