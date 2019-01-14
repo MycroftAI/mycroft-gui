@@ -270,15 +270,15 @@ QStringList jsonModelToStringList(const QString &key, const QJsonValue &data)
 
 void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 {
-    auto doc = QJsonDocument::fromJson(message.toUtf8());
+    QJsonParseError parseError;
+    auto doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
 
     if (doc.isEmpty()) {
-        qWarning() << "Empty or invalid JSON message arrived on the gui socket:" << message;
+        qWarning() << "Empty or invalid JSON message arrived on the gui socket:" << message << "Error:" << parseError.errorString();
         return;
     }
 
     auto type = doc[QStringLiteral("type")].toString();
-    qInfo() << "GUI: [ " << type << " ]";
 
     if (type.isEmpty()) {
         qWarning() << "Empty type in the JSON message on the gui socket";
@@ -330,7 +330,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 }
                 map->insertAndNotify(i.key(), i.value());
             }
-            qDebug() << "             " << i.key() << " = " << i.value();
+            //qDebug() << "             " << i.key() << " = " << i.value();
         }
 
     // The SkillData was removed by the server

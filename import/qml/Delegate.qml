@@ -30,20 +30,13 @@ Mycroft.AbstractDelegate {
 
     skillBackgroundColorOverlay: Kirigami.Theme.textColor.hsvValue > 0.5 ? Qt.rgba(0,0,0, 0.4) : Qt.rgba(1,1,1, 0.4)
 
-    property Component controlBar: Controls.RoundButton {
-        z: 99999
-        visible: false
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-            leftMargin: control.leftPadding
-            bottomMargin: control.bottomPadding
-        }
-        icon.name: "go-previous-symbolic"
-        onClicked: control.backRequested();
-    }
+    property Component controlBar
 
-    readonly property Item controlBarItem: controlBar.createObject(control);
+    readonly property Item controlBarItem: {
+        if (controlBar) {
+            controlBar.createObject(control);
+        }
+    }
 
     //To do some automatic responsive layouting
     readonly property bool wideMode: width > Kirigami.Units.gridUnit * 18
