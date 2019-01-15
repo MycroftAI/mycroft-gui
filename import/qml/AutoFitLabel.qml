@@ -31,6 +31,7 @@ Label {
     //TODO: to remove, all of that should end up in the device system setup
     font.family: "Noto Sans Display"
 
+    color: "white"
     //HACK: needs a better way to fit its box
     //scale: 1.3
     topPadding: -height/5
