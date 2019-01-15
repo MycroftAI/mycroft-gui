@@ -26,13 +26,15 @@ Label {
     Layout.alignment: Qt.AlignCenter
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
-    font.capitalization: Font.AllUppercase
+    //font.capitalization: Font.AllUppercase
 
     //TODO: to remove, all of that should end up in the device system setup
     font.family: "Noto Sans Display"
 
     //HACK: needs a better way to fit its box
-    scale: 1.3
+    //scale: 1.3
+    topPadding: -height/5
+    bottomPadding: -height/5
     fontSizeMode: Text.Fit;
     TextMetrics {
         id: metrics
