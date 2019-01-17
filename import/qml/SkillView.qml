@@ -50,6 +50,7 @@ Mycroft.AbstractSkillView {
         interval: 500
         property Item delegate
         onTriggered: {
+            activeSkillsRepeater.currentDelegate.visible = true;
             enterAnimation.restart();
             exitAnimation.restart();
             print(enterAnimation.target)
@@ -74,13 +75,18 @@ Mycroft.AbstractSkillView {
             easing.type: Easing.InOutQuad
         }
     }
-    OpacityAnimator {
+    SequentialAnimation {
         id: exitAnimation
-        target: activeSkillsRepeater.oldDelegate
-        from: 1
-        to: 0
-        duration: Kirigami.Units.longDuration
-        easing.type: Easing.InOutQuad
+        OpacityAnimator {
+            target: activeSkillsRepeater.oldDelegate
+            from: 1
+            to: 0
+            duration: Kirigami.Units.longDuration
+            easing.type: Easing.InOutQuad
+        }
+        ScriptAction {
+            script: activeSkillsRepeater.oldDelegate.visible = false;
+        }
     }
 
     Repeater {
@@ -111,7 +117,8 @@ Mycroft.AbstractSkillView {
                 id: delegatesView
                 interactive: true
                 clip: true
-                cacheBuffer: width * 2
+                //NOTE: no delegate items should ever be deleted or we will get a crash
+                cacheBuffer: contentWidth * 2
                 anchors.fill: parent
                 orientation: ListView.Horizontal
                 boundsBehavior: Flickable.StopAtBounds

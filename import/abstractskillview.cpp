@@ -467,7 +467,7 @@ qWarning()<<"asked for delegate url"<<delegateUrl;
             }
 
             QQmlEngine *engine = qmlEngine(this);
-            QQmlContext *context = new QQmlContext(QQmlEngine::contextForObject(this), this);
+            QQmlContext *context = QQmlEngine::contextForObject(this);
             //This class should be *ALWAYS* created from QML
             Q_ASSERT(engine);
             Q_ASSERT(context);
