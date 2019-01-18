@@ -118,6 +118,8 @@ install( PROGRAMS net.bs.mycroft.gui.device3.desktop DESTINATION  ${KDE_INSTALL_
 #     PATTERN "*.qmlc" EXCLUDE
 # )
 
+plasma_install_package(lookandfeel org.mycroft.mark2 look-and-feel lookandfeel)
+
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})
 
