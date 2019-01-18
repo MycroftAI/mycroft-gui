@@ -56,6 +56,19 @@ Item {
 
 //END slots
 
+    Image {
+        source: "background.png"
+        fillMode: Image.PreserveAspectFit
+        anchors.fill: parent
+        opacity: !skillView.currentItem
+        Behavior on opacity {
+            OpacityAnimator {
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InQuad
+            }
+        }
+    }
+
     Panel.SlidingPanel {
         id: panel
         z: 999
