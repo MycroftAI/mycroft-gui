@@ -96,6 +96,7 @@ private:
     QWebSocket m_mainWebSocket;
 
     QTimer m_reconnectTimer;
+    QTimer m_reannounceGuiTimer;
     GlobalSettings *m_appSettingObj;
 
     //TODO: remove

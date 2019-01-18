@@ -59,10 +59,12 @@ MycroftController::MycroftController(QObject *parent)
             [this] (QAbstractSocket::SocketState state) {
                 emit socketStatusChanged();
                 if (state == QAbstractSocket::ConnectedState) {
+                    qWarning() << "Main Socket connected, trying to connect gui";
                     for (const auto &guiId : m_views.keys()) {
                         sendRequest(QStringLiteral("mycroft.gui.connected"),
                                     QVariantMap({{QStringLiteral("gui_id"), guiId}}));
                     }
+                    m_reannounceGuiTimer.start();
                 }
             });
 
@@ -72,6 +74,20 @@ MycroftController::MycroftController(QObject *parent)
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
         QString socket = m_appSettingObj->webSocketAddress() + QStringLiteral(":8181/core");
         m_mainWebSocket.open(QUrl(socket));
+    });
+
+    m_reannounceGuiTimer.setInterval(10000);
+    connect(&m_reannounceGuiTimer, &QTimer::timeout, this, [this]() {
+        if (m_mainWebSocket.state() != QAbstractSocket::ConnectedState) {
+            return;
+        }
+        for (const auto &guiId : m_views.keys()) {
+            if (m_views[guiId]->status() != Open) {
+                qWarning()<<"Retrying to announce gui";
+                sendRequest(QStringLiteral("mycroft.gui.connected"),
+                            QVariantMap({{QStringLiteral("gui_id"), guiId}}));
+            }
+        }
     });
 
 #ifdef Q_OS_ANDROID
@@ -116,14 +132,14 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     auto doc = QJsonDocument::fromJson(message.toUtf8());
 
     if (doc.isEmpty()) {
-        qWarning() << "Empty or invalid JSON message arrived on the gui socket:" << message;
+        qWarning() << "Empty or invalid JSON message arrived on the main socket:" << message;
         return;
     }
 
     auto type = doc[QStringLiteral("type")].toString();
 
     if (type.isEmpty()) {
-        qWarning() << "Empty type in the JSON message on the gui socket";
+        qWarning() << "Empty type in the JSON message on the main socket";
         return;
     }
 
@@ -195,6 +211,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
             return;
         }
 
+        qWarning() << "Received port" << port << "for gui" << guiId;
         if (!m_views.contains(guiId)) {
             qWarning() << "Unknown guiId from mycroft.gui.port";
             return;

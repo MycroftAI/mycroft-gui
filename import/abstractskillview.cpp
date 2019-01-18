@@ -67,16 +67,16 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
                 }
             });
 
+    connect(m_guiWebSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this,
+            [this](QAbstractSocket::SocketError error) {
+                qWarning() << "Gui socket Connection Error:" << error;
+                m_reconnectTimer.start();
+            });
 
 
     connect(m_controller, &MycroftController::socketStatusChanged, this,
             [this]() {
-                if (m_controller->status() == MycroftController::Open) {
-                    if (m_url.isValid()) {
-                        m_guiWebSocket->close();
-                        m_guiWebSocket->open(m_url);
-                    }
-                } else if (status() != MycroftController::Open) {
+                if (m_controller->status() != MycroftController::Open) {
                     m_guiWebSocket->close();
                     //don't assume the url will be still valid
                     m_url = QUrl();
