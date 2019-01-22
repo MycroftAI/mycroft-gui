@@ -219,6 +219,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
 
         QUrl url(QStringLiteral("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
         m_views[guiId]->setUrl(url);
+        m_reannounceGuiTimer.stop();
     }
 }
 
