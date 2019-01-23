@@ -63,6 +63,7 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         readonly property bool horizontal: sourceSize.width / sourceSize.height > root.width / root.height
+        //Transforms the speed into duration
         readonly property real duration: horizontal
             ? ((image.width - root.width) / (root.speed * Kirigami.Units.gridUnit)) * 1000
             : ((image.height - root.height) / (root.speed * Kirigami.Units.gridUnit)) * 1000
