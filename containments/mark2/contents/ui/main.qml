@@ -89,7 +89,7 @@ Item {
         anchors.fill: parent
         Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-        topPadding: panel.dragMargin
+  //      topPadding: panel.dragMargin
     }
 
     Controls.Button {
