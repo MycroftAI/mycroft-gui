@@ -5,7 +5,7 @@ widgetStyle=breeze
 Containment=org.kde.mycroft.mark2
 
 [kdeglobals][General]
-ColorScheme=Breeze
+ColorScheme=MycroftMark2
 
 [kdeglobals][Icons]
 Theme=breeze
