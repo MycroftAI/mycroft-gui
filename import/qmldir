@@ -7,7 +7,7 @@ classname MycroftPlugin
 StatusIndicator 1.0 StatusIndicator.qml
 Delegate 1.0 Delegate.qml
 AutoFitLabel 1.0 AutoFitLabel.qml
-PaginatedDelegate 1.0 PaginatedDelegate.qml
+PaginatedText 1.0 PaginatedText.qml
 ProportionalDelegate 1.0 ProportionalDelegate.qml
 ScrollableDelegate 1.0 ScrollableDelegate.qml
 SkillView 1.0 SkillView.qml
