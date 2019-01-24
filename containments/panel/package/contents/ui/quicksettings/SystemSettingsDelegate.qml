@@ -18,10 +18,11 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.1
 import org.kde.kirigami 2.5 as Kirigami
+import Mycroft 1.0 as Mycroft
 
 Delegate {
     iconSource: "configure"
     text: i18n("Settings")
-    onClicked: plasmoid.nativeInterface.executeCommand("plasma-settings");
+    onClicked: Mycroft.MycroftController.sendRequest("mycroft.device.settings", {});
 }
 
