@@ -110,7 +110,8 @@ install( PROGRAMS net.bs.mycroft.gui.desktop DESTINATION  ${KDE_INSTALL_APPDIR} 
 install( PROGRAMS net.bs.mycroft.gui.device.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
 install( PROGRAMS net.bs.mycroft.gui.device2.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
 install( PROGRAMS net.bs.mycroft.gui.device3.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
-
+install(FILES MycroftMark2.colors
+        DESTINATION ${DATA_INSTALL_DIR}/color-schemes/)
 
 # SSP: Disabled, now syncing with mycroft-core instance via sync_skills.sh
 #
