@@ -72,6 +72,14 @@ Item {
     }
 //END NetworkManager
 
+
+//BEGIN VirtualKeyboard
+    VirtualKeyboardLoader {
+        id: virtualKeyboard
+        z: 1000
+    }
+//END VirtualKeyboard
+
     Image {
         source: "background.png"
         fillMode: Image.PreserveAspectFit
@@ -105,7 +113,7 @@ Item {
         anchors.fill: parent
         Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-  //      topPadding: panel.dragMargin
+        bottomPadding: virtualKeyboard.state == "visible" ? virtualKeyboard.height : 0
     }
 
     Controls.Button {
