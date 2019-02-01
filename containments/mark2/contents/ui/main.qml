@@ -24,6 +24,8 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 
 import org.kde.kirigami 2.5 as Kirigami
 
+import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
+
 import "../../../org.kde.mycroft.panel/contents/ui" as Panel
 
 import Mycroft 1.0 as Mycroft
@@ -55,6 +57,28 @@ Item {
     }
 
 //END slots
+
+//BEGIN NetworkManager
+    PlasmaNM.NetworkStatus {
+        id: networkStatus
+    }
+
+    PlasmaNM.ConnectionIcon {
+        id: connectionIconProvider
+    }
+
+    PlasmaNM.Handler {
+        id: handler
+    }
+//END NetworkManager
+
+
+//BEGIN VirtualKeyboard
+    VirtualKeyboardLoader {
+        id: virtualKeyboard
+        z: 1000
+    }
+//END VirtualKeyboard
 
     Image {
         source: "background.png"
@@ -89,7 +113,7 @@ Item {
         anchors.fill: parent
         Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-  //      topPadding: panel.dragMargin
+        bottomPadding: virtualKeyboard.state == "visible" ? virtualKeyboard.height : 0
     }
 
     Controls.Button {
