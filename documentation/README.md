@@ -1,4 +1,4 @@
-**Draft Version: 0.1 | Document Author: Aditya Mehra | Status: Incomplete | Last Modified: 1st Feb 2019**
+**Draft Version: 0.1 | Document Author: Aditya Mehra | Status: Incomplete | Last Modified: 5th Feb 2019**
 
 In the age of information visualization is eminently essential to grab attention and create a promising communication strategy. Visual content that supports your spoken content can make it easier to present information well and more engaging for your audience and users.
 
@@ -64,7 +64,7 @@ Let's walk you through some basics of writing your QML user interface, this sect
 
 - Handling Data Models
 
-- Event Handling 
+- [Event Handling] (#Event-Handling)
 
 ##### Importing Modules
 
@@ -397,6 +397,88 @@ Mycroft.ProportionalDelegate {
         Layout.fillWidth: true
         Layout.preferredHeight: proportionalGridUnit * 40
         text: sessionData.day
+    }
+}
+```
+
+##### Event Handling
+
+Mycroft GUI API provides an Event Handling Protocol between the skill and QML display which allow Skill Authors to forward events in either direction to an event consumer. Skill Authors have the ability to create any amount of custom events. Event names that start with "system." are available to all skills, like previous/next/pick.
+
+**Simple Event Trigger Example From QML Display To Skill**
+
+**Python Skill Example**
+
+```python
+    def initialize(self):
+    # Initialize...
+        self.gui.register_handler('skill.foo.event', self.handle_foo_event)
+...
+    def handle_foo_event(self, message):
+        self.speak(message.data["string"])
+...
+...
+```
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.Delegate {
+    id: root
+
+    Button {
+        anchors.fill: parent
+        text: "Click Me"
+        onClicked: {
+            triggerEvent("skill.foo.event", {"string": "Lorem ipsum dolor sit amet"})
+        }
+    }
+}
+```
+
+
+
+**Simple Event Trigger Example From Skill To QML Display**
+
+**Python Skill Example**
+
+```python
+...
+    def handle_foo_intent(self, message):
+        self.gui['foobar']: message.data.get("utterance")
+        self.gui['color']: "blue"
+        self.gui.show_page("foo.qml")
+...
+...
+```
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.Delegate {
+    id: root
+    property var fooString: sessionData.foobar
+
+    onFooStringChanged: {
+        fooRect.color = sessionData.color 
+    }
+
+    Rectangle {
+        id: fooRect
+        anchors.fill: parent
+        color: "#fff"
     }
 }
 ```
