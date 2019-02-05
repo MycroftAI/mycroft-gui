@@ -64,7 +64,7 @@ Let's walk you through some basics of writing your QML user interface, this sect
 
 - Handling Data Models
 
-- [Event Handling] (#Event-Handling)
+- [Event Handling](#Event-Handling)
 
 ##### Importing Modules
 
