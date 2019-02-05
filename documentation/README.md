@@ -215,14 +215,14 @@ import Mycroft 1.0 as Mycroft
 import org.kde.lottie 1.0
 
 Mycroft.Delegate {
-    LottieAnimation {     
-        id: fancyAnimation 
-        anchors.fill: parent
-        source: Qt.resolvedUrl("animations/fancy_animation.json")
-        loops: Animation.Infinite
-        fillMode: Image.PreserveAspectFit    
-        running: true
-    }    
+    LottieAnimation {     
+        id: fancyAnimation 
+        anchors.fill: parent
+        source: Qt.resolvedUrl("animations/fancy_animation.json")
+        loops: Animation.Infinite
+        fillMode: Image.PreserveAspectFit    
+        running: true
+    }    
 }
 ```
 
@@ -242,9 +242,9 @@ import Mycroft 1.0 as Mycroft
 Mycroft.Delegate {
      background: Mycroft.SlidingImage {
      source: "foo.jpg" 
-     running: bool    //If true the sliding animation is active
-     speed: 1         //Animation speed in Kirigami.Units.gridUnit / second
-   }
+     running: bool    //If true the sliding animation is active
+     speed: 1         //Animation speed in Kirigami.Units.gridUnit / second
+   }
 }
 ```
 
@@ -262,16 +262,18 @@ import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 Mycroft.Delegate {
-     Mycroft.PaginatedText {
-         text: string      //The text that should be displayed
-         currentIndex: 0   //The currently visible page number (starting from 0)
-     }
+     Mycroft.PaginatedText {
+         text: string      //The text that should be displayed
+         currentIndex: 0   //The currently visible page number (starting from 0)
+     }
 }
 ```
 
+**Display A Vertical ListView With Information Cards**
 
+Kirigami CardsListView is a ListView which can have AbstractCard as its delegate: it will automatically assign the proper spacings and margins around the cards adhering to the design guidelines. 
 
-**Displaying list of restaurants mycroft skill intent example:**
+**Python Skill Example**
 
 ```python
 ...
@@ -291,7 +293,7 @@ import QtQuick.Layouts 1.4
 import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
 
-Mycroft.ProportionalDelegate{
+Mycroft.Delegate{
     id: root
     property var foodPlacesModel: sessionData.foodPlacesBlob
 
@@ -359,6 +361,42 @@ Mycroft.ProportionalDelegate{
                 }
             }
         }
+    }
+}
+```
+
+**Using Proportional Delegate For Simple Display Skills & Auto Layout**
+
+**ProportionalDelegate** is a delegate which has proportional paddings and a columnlayout as mainItem. The delegate supports a proportionalGridUnit which is based upon its size and the contents are supposed to be scaled proportionally to the delegate size either directly or using the proportionalGridUnit.
+
+**AutoFitLabel** is a label that will always scale its text size according to the item size rather than the other way around
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.ProportionalDelegate {
+    id: root
+
+    Mycroft.AutoFitLabel {
+        id: monthLabel
+        font.weight: Font.Bold
+        Layout.fillWidth: true
+        Layout.preferredHeight: proportionalGridUnit * 40
+        text: sessionData.month
+    }
+
+    Mycroft.AutoFitLabel {
+        id: dayLabel
+        font.weight: Font.Bold
+        Layout.fillWidth: true
+        Layout.preferredHeight: proportionalGridUnit * 40
+        text: sessionData.day
     }
 }
 ```
