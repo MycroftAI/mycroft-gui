@@ -1,7 +1,5 @@
 **Draft Version: 0.1 | Document Author: Aditya Mehra | Status: Incomplete | Last Modified: 1st Feb 2019**
 
-
-
 In the age of information visualization is eminently essential to grab attention and create a promising communication strategy. Visual content that supports your spoken content can make it easier to present information well and more engaging for your audience and users.
 
 <img src="https://images.theconversation.com/files/205921/original/file-20180212-58348-1sbutu2.jpg?ixlib=rb-1.1.0&rect=0%2C604%2C3994%2C1994&q=45&auto=format&w=1356&h=668&fit=crop" />
@@ -80,6 +78,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.4
 import org.kde.kirigami 2.4 as Kirigami
 import Mycroft 1.0 as Mycroft
+import org.kde.lottie 1.0
 ```
 
 ###### QTQuick Module:
@@ -101,6 +100,10 @@ QtQuick Layouts are a set of QML types used to arrange items in a user interface
 ###### Mycroft Module:
 
 Mycroft GUI frameworks provides a set of high level components and events system for aiding in the development of mycroft visual skills. One of the controls provided by Mycroft GUI frameworks are Mycroft-GUI Framework Base Delegates [Mycroft-GUI Framework Base Delegates Documentation](#)
+
+###### QML Lottie Module:
+
+This provides a QML `Item` to render Adobe® After Effects™ animations exported as JSON with Bodymovin using the Lottie Web library. For list of all properties supported refer [Lottie QML](https://github.com/kbroulik/lottie-qml)
 
 ##### Using Mycroft-GUI Framework Base Delegates
 
@@ -197,6 +200,77 @@ self.gui.show_image("https://source.unsplash.com/1920x1080/?+autumn")
 
 #### Advanced skill displays using QML
 
+**Display Lottie Animations**:
+
+You can use the `LottieAnimation` item just like any other `QtQuick` element, such as an `Image` and place it in your scene any way you please.
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+import org.kde.lottie 1.0
+
+Mycroft.Delegate {
+    LottieAnimation {     
+        id: fancyAnimation 
+        anchors.fill: parent
+        source: Qt.resolvedUrl("animations/fancy_animation.json")
+        loops: Animation.Infinite
+        fillMode: Image.PreserveAspectFit    
+        running: true
+    }    
+}
+```
+
+**Display Sliding Images**
+
+Contains an image that will slowly scroll in order to be shown completely
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.Delegate {
+     background: Mycroft.SlidingImage {
+     source: "foo.jpg" 
+     running: bool    //If true the sliding animation is active
+     speed: 1         //Animation speed in Kirigami.Units.gridUnit / second
+   }
+}
+```
+
+**Display Paginated Text**
+
+Takes a long text and breaks it down into pages that can be horizontally swiped
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.Delegate {
+     Mycroft.PaginatedText {
+         text: string      //The text that should be displayed
+         currentIndex: 0   //The currently visible page number (starting from 0)
+     }
+}
+```
+
+
+
 **Displaying list of restaurants mycroft skill intent example:**
 
 ```python
@@ -220,7 +294,7 @@ import Mycroft 1.0 as Mycroft
 Mycroft.ProportionalDelegate{
     id: root
     property var foodPlacesModel: sessionData.foodPlacesBlob
-    
+
     Kirigami.CardsListView {
         id: restaurantsListView
         Layout.fillWidth: true
@@ -288,7 +362,3 @@ Mycroft.ProportionalDelegate{
     }
 }
 ```
-
-
-
-
