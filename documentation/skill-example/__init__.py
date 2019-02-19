@@ -94,9 +94,48 @@ class SkillExample(MycroftSkill):
     @intent_file_handler('gui.example.menu')
     def handle_gui_example_menu(self, message):
         """
-        Show Skill Example Menu To Run Test
+        Build and Show Skill Example Menu To Run Test
         """
+        menuObject = {}
+        menuList = [{
+            "exampleIcon": "beamerblock",
+            "exampleLabel": "Simple Text Example",
+            "exampleEvent": "skillExample.simpleText"
+            },
+            {
+            "exampleIcon": "beamerblock",
+            "exampleLabel": "Simple Image Example",
+            "exampleEvent": "skillExample.simpleImage"
+            },
+            {
+            "exampleIcon": "beamerblock",
+            "exampleLabel": "Paginated Text Example",
+            "exampleEvent": "skillExample.paginatedText"  
+            },
+            {
+            "exampleIcon": "beamerblock",
+            "exampleLabel": "Sliding Image Example",
+            "exampleEvent": "skillExample.slidingImage"
+            },
+            {
+            "exampleIcon": "beamerblock",
+            "exampleLabel": "Proportion Delegate & Autofit Label",
+            "exampleEvent": "skillExample.proportionalDelegate"
+            },
+            {
+            "exampleIcon": "beamerblock",
+            "exampleLabel": "Cards ListView",
+            "exampleEvent": "skillExample.listView"
+            },
+            {
+            "exampleIcon": "beamerblock",
+            "exampleLabel": "Events Example",
+            "exampleEvent": "skillExample.eventsExample"
+            }]
+        menuObject['menuItems'] = menuList
+        self.gui['menuBlob'] = menuObject
         self.gui.show_page("exampleMenu.qml")
+        
         
     def stop(self):
         pass

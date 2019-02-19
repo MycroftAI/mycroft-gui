@@ -5,9 +5,13 @@ import org.kde.kirigami 2.5 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 import Mycroft 1.0 as Mycroft
 
-Item {
+Mycroft.Delegate {
     id: exampleMenuView
-    anchors.fill: parent
+    property var exampleModel: sessionData.menuBlob.menuItems
+    
+    Component.onCompleted: {
+        console.log(sessionData.menuBlob)
+    }
     
     Item {
         id: topArea
@@ -38,7 +42,7 @@ Item {
         ListView {
             anchors.fill: parent
             clip: true
-            model: ExampleModel{}
+            model: exampleModel
             boundsBehavior: Flickable.StopAtBounds
             delegate: Kirigami.AbstractListItem {
                 contentItem: Item {
@@ -62,7 +66,7 @@ Item {
                                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                                 Layout.preferredHeight: units.iconSizes.medium
                                 Layout.preferredWidth: units.iconSizes.medium
-                                source: model.exampleIcon
+                                source: modelData.exampleIcon
                             }
 
                             
@@ -73,7 +77,7 @@ Item {
                                 height: paintedHeight
                                 elide: Text.ElideRight
                                 font.weight: Font.DemiBold
-                                text: model.exampleLabel
+                                text: modelData.exampleLabel
                                 textFormat: Text.PlainText
                                 level: 2
                             }
@@ -82,7 +86,7 @@ Item {
                 }
                 
                 onClicked: {
-                        triggerEvent(model.exampleEvent, {})
+                        triggerEvent(modelData.exampleEvent, {})
                 }
             }
         }
