@@ -15,14 +15,14 @@
  *
  */
 
-import QtQuick 2.4
+import QtQuick 2.6
 import QtQuick.Layouts 1.1
-import QtQuick.Controls 2.0 as Controls
+import QtQuick.Controls 2.2 as Controls
 import QtGraphicalEffects 1.0
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents3
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.kirigami 2.5 as Kirigami
 
@@ -141,7 +141,7 @@ Item {
             implicitWidth: root.smallScreenMode || appletsSpace.layout.children.length < 2 ? appletsView.width :  Math.max(applet.switchWidth + 1, Math.max( applet.Layout.minimumWidth, appletsView.width/2))
             implicitHeight: appletsView.height
 
-            PlasmaComponents3.BusyIndicator {
+            PlasmaComponents.BusyIndicator {
                 z: 1000
                 visible: applet && applet.busy
                 running: visible
@@ -167,7 +167,7 @@ Item {
 
         Flickable {
             id: appletsView
-            opacity: !skillView.currentItem
+            opacity: !skillView.currentItem || !skillView.open
             anchors {
                 left: parent.left
                 right: parent.right
@@ -186,6 +186,12 @@ Item {
                 id: appletsSpace
                 height: parent.height
             }
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InOutQuad
+                }
+            }
         }
     }
 
@@ -200,16 +206,22 @@ Item {
         rightPadding: root.width - plasmoid.availableScreenRect.x - plasmoid.availableScreenRect.width
     }
 
-    PlasmaComponents3.RoundButton {
+    Controls.RoundButton {
         anchors {
             left: parent.left
             bottom: parent.bottom
             margins: Kirigami.Units.largeSpacing
         }
+        width: Kirigami.Units.iconSizes.large
+        height: width
         visible: skillView.currentItem
-        icon.name: skillView.opened ? "go-back" : ""
-        icon.source: skillView.opened ? "" : Qt.resolveUrl("mycroft.png");
-        onClicked: skillView.opened = !skillView.opened;
+        icon.name: skillView.open ? "go-previous-symbolic" : ""
+        Image {
+            anchors.fill: parent
+            visible: !skillView.open
+            source: Qt.resolvedUrl("mycroft.png");
+        }
+        onClicked: skillView.open = !skillView.open;
     }
 
     Mycroft.StatusIndicator {

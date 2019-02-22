@@ -40,18 +40,26 @@ Mycroft.AbstractSkillView {
     property int rightPadding
     property int bottomPadding
 
-    property bool opened: false
+    property bool open: false
 
-    onOpenedChanged: {
-        if (!activeSkillsRepeater.currentDelegate.visible && opened) {
+    onOpenChanged: {
+        if (!activeSkillsRepeater.currentDelegate.visible && open) {
             enterAnimation.restart();
-        } else if (activeSkillsRepeater.currentDelegate.visible && !opened) {
+        } else if (activeSkillsRepeater.currentDelegate.visible && !open) {
+            activeSkillsRepeater.oldDelegate = activeSkillsRepeater.currentDelegate;
             exitAnimation.restart();
         }
     }
     Private.ImageBackground {
         id: background
+        opacity: root.open
         delegatesView: activeSkillsRepeater.currentDelegate ? activeSkillsRepeater.currentDelegate.view : null
+        Behavior on opacity {
+            OpacityAnimator {
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+        }
     }
 
     Timer {
@@ -68,6 +76,9 @@ Mycroft.AbstractSkillView {
 
     SequentialAnimation {
         id: enterAnimation
+        ScriptAction {
+            script: activeSkillsRepeater.currentDelegate.visible = true;
+        }
         ParallelAnimation {
             NumberAnimation {
                 target: activeSkillsRepeater.currentDelegate
@@ -87,7 +98,7 @@ Mycroft.AbstractSkillView {
         }
         ScriptAction {
             script: {
-                root.opened = true;
+                root.open = true;
             }
         }
     }
@@ -103,7 +114,7 @@ Mycroft.AbstractSkillView {
         ScriptAction {
             script: {
                 activeSkillsRepeater.oldDelegate.visible = false;
-                root.opened = activeSkillsRepeater.currentDelegate.visible;
+                root.open = activeSkillsRepeater.currentDelegate.visible;
             }
         }
     }
