@@ -40,6 +40,15 @@ Mycroft.AbstractSkillView {
     property int rightPadding
     property int bottomPadding
 
+    property bool opened: false
+
+    onOpenedChanged: {
+        if (!activeSkillsRepeater.currentDelegate.visible && opened) {
+            enterAnimation.restart();
+        } else if (activeSkillsRepeater.currentDelegate.visible && !opened) {
+            exitAnimation.restart();
+        }
+    }
     Private.ImageBackground {
         id: background
         delegatesView: activeSkillsRepeater.currentDelegate ? activeSkillsRepeater.currentDelegate.view : null
@@ -57,22 +66,29 @@ Mycroft.AbstractSkillView {
         }
     }
 
-    ParallelAnimation {
+    SequentialAnimation {
         id: enterAnimation
-        NumberAnimation {
-            target: activeSkillsRepeater.currentDelegate
-            property: "opacity"
-            from: 0
-            to: 1
-            duration: Kirigami.Units.longDuration
-            easing.type: Easing.InOutQuad
+        ParallelAnimation {
+            NumberAnimation {
+                target: activeSkillsRepeater.currentDelegate
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+            YAnimator {
+                target: activeSkillsRepeater.currentDelegate
+                from: root.height / 4
+                to: root.topPadding
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
         }
-        YAnimator {
-            target: activeSkillsRepeater.currentDelegate
-            from: root.height / 4
-            to: root.topPadding
-            duration: Kirigami.Units.longDuration
-            easing.type: Easing.InOutQuad
+        ScriptAction {
+            script: {
+                root.opened = true;
+            }
         }
     }
     SequentialAnimation {
@@ -85,7 +101,10 @@ Mycroft.AbstractSkillView {
             easing.type: Easing.InOutQuad
         }
         ScriptAction {
-            script: activeSkillsRepeater.oldDelegate.visible = false;
+            script: {
+                activeSkillsRepeater.oldDelegate.visible = false;
+                root.opened = activeSkillsRepeater.currentDelegate.visible;
+            }
         }
     }
 

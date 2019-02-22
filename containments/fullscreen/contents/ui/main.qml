@@ -22,7 +22,7 @@ import QtGraphicalEffects 1.0
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.kirigami 2.5 as Kirigami
 
@@ -141,7 +141,7 @@ Item {
             implicitWidth: root.smallScreenMode || appletsSpace.layout.children.length < 2 ? appletsView.width :  Math.max(applet.switchWidth + 1, Math.max( applet.Layout.minimumWidth, appletsView.width/2))
             implicitHeight: appletsView.height
 
-            PlasmaComponents.BusyIndicator {
+            PlasmaComponents3.BusyIndicator {
                 z: 1000
                 visible: applet && applet.busy
                 running: visible
@@ -200,6 +200,17 @@ Item {
         rightPadding: root.width - plasmoid.availableScreenRect.x - plasmoid.availableScreenRect.width
     }
 
+    PlasmaComponents3.RoundButton {
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            margins: Kirigami.Units.largeSpacing
+        }
+        visible: skillView.currentItem
+        icon.name: skillView.opened ? "go-back" : ""
+        icon.source: skillView.opened ? "" : Qt.resolveUrl("mycroft.png");
+        onClicked: skillView.opened = !skillView.opened;
+    }
 
     Mycroft.StatusIndicator {
         anchors {
