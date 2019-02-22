@@ -26,7 +26,7 @@ import org.kde.kirigami 2.5 as Kirigami
 
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 
-import "../../../org.kde.mycroft.panel/contents/ui" as Panel
+import "./panel/contents/ui" as Panel
 
 import Mycroft 1.0 as Mycroft
 
