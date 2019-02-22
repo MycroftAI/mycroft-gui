@@ -30,9 +30,15 @@ Controls.Control {
     topPadding: Kirigami.Units.largeSpacing
     bottomPadding: Kirigami.Units.largeSpacing
 
-    Layout.preferredWidth: Kirigami.Units.gridUnit * 5
+    //Layout.preferredWidth: Kirigami.Units.gridUnit * 5
+    Layout.fillWidth: true
     Layout.preferredHeight: Kirigami.Units.gridUnit * 15
-    contentItem: ColumnLayout {
+    ColumnLayout {
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
         spacing: Kirigami.Units.smallSpacing
 
         RowLayout {
@@ -51,6 +57,7 @@ Controls.Control {
             id: slider
             orientation: Qt.Vertical
             Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: 20
             Layout.fillHeight: true
         }
     }

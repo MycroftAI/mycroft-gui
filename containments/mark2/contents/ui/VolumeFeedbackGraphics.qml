@@ -30,6 +30,17 @@ T.Slider {
     to: PA.PulseAudio.MaximalVolume
     implicitWidth: Kirigami.Units.gridUnit * 4
 
+    function show () {
+        opacity = 1;
+        volSliderTimer.restart();
+    }
+
+    onMoved: {
+        paSinkModel.preferredSink.volume = value
+        feedbackTimer.running = true;
+        show();
+    }
+
     handle: Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         y: volSlider.height - volSlider.position * (volSlider.height - height) - height
@@ -73,10 +84,7 @@ T.Slider {
         }
     }
     value: paSinkModel.preferredSink ? paSinkModel.preferredSink.volume : PA.PulseAudio.MinimalVolume
-    function show () {
-        opacity = 1;
-        volSliderTimer.restart();
-    }
+
     anchors {
         top: parent.top
         bottom: parent.bottom

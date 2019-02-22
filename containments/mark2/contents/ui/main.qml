@@ -44,8 +44,6 @@ drag.target: skillView
     property int startVolume: -1
 //END properties
 
-
-
 //BEGIN slots
     Component.onCompleted: {
         Mycroft.MycroftController.start();
