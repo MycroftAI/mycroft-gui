@@ -30,6 +30,7 @@ Controls.Control {
     topPadding: Kirigami.Units.largeSpacing
     bottomPadding: Kirigami.Units.largeSpacing
 
+    Layout.preferredWidth: Kirigami.Units.gridUnit * 5
     Layout.preferredHeight: Kirigami.Units.gridUnit * 15
     contentItem: ColumnLayout {
         spacing: Kirigami.Units.smallSpacing
