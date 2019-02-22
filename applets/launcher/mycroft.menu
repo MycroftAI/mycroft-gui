@@ -9,7 +9,7 @@
       <Filename>net.bs.mycroft.gui.device3.desktop</Filename>
       <Filename>net.bs.mycroft.gui.device.desktop</Filename>
       <Filename>net.bs.mycroft.gui.device2.desktop</Filename>
-      <Filename>net.bs.mycroft.installer.desktop</Filename>
+      <Filename>org.mycroft.skill.installer.desktop</Filename>
       <Filename>org.kde.konsole.desktop</Filename>
       <Filename>calamares.desktop</Filename>
     </Include>
