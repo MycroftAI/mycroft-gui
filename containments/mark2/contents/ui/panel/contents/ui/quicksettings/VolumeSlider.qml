@@ -27,12 +27,23 @@ SliderBase {
     slider.to: PA.PulseAudio.MaximalVolume
 
     slider.value: paSinkModel.preferredSink ? paSinkModel.preferredSink.volume : PA.PulseAudio.MinimalVolume
-    slider.onMoved: paSinkModel.preferredSink.volume = slider.value
+    slider.onMoved: {
+        paSinkModel.preferredSink.volume = slider.value
+        feedbackTimer.running = true;
+    }
 
     PA.SinkModel {
         id: paSinkModel
     }
+    PA.VolumeFeedback {
+        id: feedback
+    }
 
+    Timer {
+        id: feedbackTimer
+        interval: 250
+        onTriggered: feedback.play(paSinkModel.preferredSink.index);
+    }
     //TODO: no way to query programmatically the volume from mycroft, especially without making it speak
     Connections {
         target: Mycroft.MycroftController
