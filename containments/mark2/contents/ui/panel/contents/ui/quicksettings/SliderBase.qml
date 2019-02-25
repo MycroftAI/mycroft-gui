@@ -16,12 +16,15 @@
  *
  */
 
-import QtQuick 2.1
+import QtQuick 2.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.2 as Controls
+import QtQuick.Templates 2.2 as T
 import org.kde.kirigami 2.5 as Kirigami
 
 Controls.Control {
+    id: root
+
     property alias iconSource: icon.source
     property alias slider: slider
 
@@ -33,32 +36,70 @@ Controls.Control {
     //Layout.preferredWidth: Kirigami.Units.gridUnit * 5
     Layout.fillWidth: true
     Layout.preferredHeight: Kirigami.Units.gridUnit * 15
-    ColumnLayout {
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-        spacing: Kirigami.Units.smallSpacing
+    contentItem: Item {
+        ColumnLayout {
+            anchors {
+                top: parent.top
+                bottom: parent.bottom
+                horizontalCenter: parent.horizontalCenter
+            }
+            spacing: Kirigami.Units.smallSpacing
 
-        RowLayout {
-            Layout.alignment: Qt.AlignHCenter
-            Kirigami.Icon {
-                id: icon
-                isMask: true
-                Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-                Layout.preferredHeight: Layout.preferredWidth
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                Kirigami.Icon {
+                    id: icon
+                    isMask: true
+                    Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                    Layout.preferredHeight: Layout.preferredWidth
+                }
+                Controls.Label {
+                    text: Math.round(slider.position * 10)
+                    Layout.preferredWidth: textMetrics.width
+                    TextMetrics {
+                        id
+                        : textMetrics
+                        text: "10"
+                    }
+                }
             }
-            Controls.Label {
-                text: Math.round(slider.position * 10)
+            T.Slider {
+                id: slider
+                orientation: Qt.Vertical
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
+                Layout.fillHeight: true
+                handle: Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: slider.height - slider.position * (slider.height - height) - height
+                    color: "orange"
+                    radius: height
+                    implicitWidth: Kirigami.Units.gridUnit * 3
+                    implicitHeight: Kirigami.Units.gridUnit
+                }
+                background: Item {
+                    Rectangle {
+                        anchors {
+                            top: parent.top
+                            bottom: parent.bottom
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        width: Math.round(Kirigami.Units.gridUnit / 2)
+                        color: Qt.rgba(0.2, 0.2, 0.2, 0.6)
+                        radius: width
+                        Rectangle {
+                            color: Kirigami.Theme.highlightColor
+                            anchors {
+                                left: parent.left
+                                right: parent.right
+                                bottom: parent.bottom
+                            }
+                            radius: width
+                            height: slider.position * (slider.height - width) + width
+                        }
+                    }
+                }
             }
-        }
-        Controls.Slider {
-            id: slider
-            orientation: Qt.Vertical
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 20
-            Layout.fillHeight: true
         }
     }
 
