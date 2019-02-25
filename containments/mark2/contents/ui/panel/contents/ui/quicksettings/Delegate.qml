@@ -31,11 +31,11 @@ Controls.Control {
 
     leftPadding: Kirigami.Units.largeSpacing
     rightPadding: Kirigami.Units.largeSpacing
-    topPadding: Kirigami.Units.smallSpacing
-    bottomPadding: Kirigami.Units.smallSpacing
+    topPadding: Kirigami.Units.largeSpacing
+    bottomPadding: Kirigami.Units.largeSpacing
 
     implicitWidth: Kirigami.Units.iconSizes.medium * 2 + leftPadding + rightPadding
-    implicitHeight: implicitWidth + topPadding + bottomPadding
+    implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
 
     Layout.fillWidth: true
 
@@ -46,7 +46,8 @@ Controls.Control {
             isMask: true
             color: Kirigami.Theme.highlightColor
             Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-            Layout.fillHeight: true
+            Layout.preferredHeight: Layout.preferredWidth
+            Layout.alignment: Qt.AlignVCenter
         }
         Controls.Label {
             id: label
