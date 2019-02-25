@@ -36,7 +36,11 @@ Controls.Drawer {
         bottomItem.anchors.fill = contentArea;
     }
 
-    onVisibleChanged: flickable.contentY = 0
+    onVisibleChanged: {
+        if (!visible) {
+            flickable.contentY = 0;
+        }
+    }
     opacity: position
 
     Kirigami.Theme.colorSet: Kirigami.Theme.View
