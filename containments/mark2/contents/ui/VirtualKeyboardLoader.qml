@@ -26,6 +26,8 @@ Loader {
         anchors {
             left: parent.left
             right: parent.right
+            //HACK since the screen real estate is so small, enlarge the keyboard to remove all its internal padding
+            margins: -Kirigami.Units.gridUnit
         }
         function showHide() {
             state = state == "hidden" ? "visible" : "hidden";
@@ -44,7 +46,7 @@ Loader {
                 name: "visible"
                 PropertyChanges {
                     target: inputPanel
-                    y: root.height - inputPanel.height
+                    y: root.height - inputPanel.height +  Kirigami.Units.gridUnit
                     opacity: 1
                 }
             },

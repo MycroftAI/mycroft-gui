@@ -15,9 +15,9 @@
  *
  */
 
-import QtQuick 2.4
+import QtQuick 2.6
 import QtQuick.Layouts 1.1
-import QtQuick.Controls 2.0 as Controls
+import QtQuick.Controls 2.2 as Controls
 import QtGraphicalEffects 1.0
 
 import org.kde.plasma.plasmoid 2.0
@@ -167,7 +167,7 @@ Item {
 
         Flickable {
             id: appletsView
-            opacity: !skillView.currentItem
+            opacity: !skillView.currentItem || !skillView.open
             anchors {
                 left: parent.left
                 right: parent.right
@@ -186,6 +186,12 @@ Item {
                 id: appletsSpace
                 height: parent.height
             }
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InOutQuad
+                }
+            }
         }
     }
 
@@ -200,6 +206,23 @@ Item {
         rightPadding: root.width - plasmoid.availableScreenRect.x - plasmoid.availableScreenRect.width
     }
 
+    Controls.RoundButton {
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            margins: Kirigami.Units.largeSpacing
+        }
+        width: Kirigami.Units.iconSizes.large
+        height: width
+        visible: skillView.currentItem
+        icon.name: skillView.open ? "go-previous-symbolic" : ""
+        Image {
+            anchors.fill: parent
+            visible: !skillView.open
+            source: Qt.resolvedUrl("mycroft.png");
+        }
+        onClicked: skillView.open = !skillView.open;
+    }
 
     Mycroft.StatusIndicator {
         anchors {

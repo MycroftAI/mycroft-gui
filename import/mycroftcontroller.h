@@ -112,5 +112,6 @@ private:
 
     bool m_isSpeaking = false;
     bool m_isListening = false;
+    bool m_mycroftLaunched = false;
 };
 

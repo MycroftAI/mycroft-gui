@@ -25,22 +25,24 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.kirigami 2.5 as Kirigami
 
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
+import org.kde.plasma.private.volume 0.1 as PA
 
-import "../../../org.kde.mycroft.panel/contents/ui" as Panel
+import "./panel/contents/ui" as Panel
 
 import Mycroft 1.0 as Mycroft
 
-Item {
+MouseArea {
     id: root
     width: 480
     height: 640
-
+    drag.filterChildren: true
+drag.target: skillView
 //BEGIN properties
     property Item toolBox
     readonly property bool smallScreenMode: Math.min(width, height) < Kirigami.Units.gridUnit * 18
+    property int startMouseY: -1
+    property int startVolume: -1
 //END properties
-
-
 
 //BEGIN slots
     Component.onCompleted: {
@@ -56,7 +58,43 @@ Item {
         }
     }
 
+    onPressed: {
+        startVolume = paSinkModel.preferredSink.volume
+        startMouseY = mouse.y
+    }
+    onPositionChanged: {
+        var delta = startMouseY - mouse.y;
+        if (Math.abs(delta) > Kirigami.Units.gridUnit) {
+            root.preventStealing = true
+        }
+        if (root.preventStealing) {
+            //mouse.accepted = true;
+            print(delta)
+            paSinkModel.preferredSink.volume = Math.max(PA.PulseAudio.MinimalVolume, Math.min(PA.PulseAudio.MaximalVolume, startVolume + (delta/height)*(PA.PulseAudio.MaximalVolume - PA.PulseAudio.MinimalVolume)))
+            feedbackTimer.running = true;
+            volSlider.show();
+        }
+    }
+    onReleased: root.preventStealing = false;
+    onCanceled: root.preventStealing = false;
 //END slots
+
+//BEGIN PulseAudio
+    PA.SinkModel {
+        id: paSinkModel
+    }
+    PA.VolumeFeedback {
+        id: feedback
+    }
+    Timer {
+        id: feedbackTimer
+        interval: 250
+        onTriggered: feedback.play(paSinkModel.preferredSink.index);
+    }
+    VolumeFeedbackGraphics {
+        id: volSlider
+    }
+//END PulseAudio
 
 //BEGIN NetworkManager
     PlasmaNM.NetworkStatus {
