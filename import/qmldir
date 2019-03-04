@@ -12,7 +12,7 @@ ProportionalDelegate 1.0 ProportionalDelegate.qml
 ScrollableDelegate 1.0 ScrollableDelegate.qml
 SkillView 1.0 SkillView.qml
 SlidingImage 1.0 SlidingImage.qml
-SlideshowDelegate 1.0 SlideshowDelegate.qml
+SlideShow 1.0 SlideShow.qml
 
 designersupported
 depends QtQuick.Controls 2.0

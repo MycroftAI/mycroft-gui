@@ -18,12 +18,32 @@
 
 import QtQuick 2.4
 import QtQuick.Controls 2.2 as Controls
+import QtQuick.Layouts 1.3
 import org.kde.kirigami 2.5 as Kirigami
 import Mycroft 1.0 as Mycroft
 
-Delegate {
-    id: control
+Flickable {
+    id: root
     
+/**
+ * Contains an slideshow object that can autoplay each slide and loop
+ * This can be used inside any mycroft delegate like in the following example.
+ *
+ * @code
+ *  Mycroft.Delegate {
+ *      ...
+ *      Mycroft.SlideShow {
+ *              id: root model: sessionData.exampleModel // model with slideshow data
+ *              anchors.fill: parent
+ *              interval: 5000 // time to switch between slides 
+ *              running: true // can be set to false if one wants to swipe manually 
+ *              delegate: Kirigami.AbstractCard { .... }
+ *              loop: true // can be set to play through continously or just once
+ *      }
+ *  }
+ * @endcode
+ */
+   
     //Listview Model
     property alias model: slideShowView.model
     
@@ -36,6 +56,9 @@ Delegate {
     //Slideshow Timer Running
     property alias running: slideShowTimer.running
     
+    //Slideshow Timer Loop
+    property alias loop: slideShowTimer.repeat
+                
     Timer {
         id: slideShowTimer
         interval: 5000
@@ -45,20 +68,16 @@ Delegate {
             var getCount = slideShowView.count
             if(slideShowView.currentIndex !== getCount){
                 slideShowView.currentIndex = slideShowView.currentIndex+1;
-            }
-            else{
+            } else{
                 slideShowView.currentIndex = 0
             }
         }
     }
-
-    contentItemAutoHeight: false
-    contentItem: ListView {
+            
+    ListView {
         id: slideShowView
-        anchors.top:  parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        width: root.width
+        height: root.height
         layoutDirection: Qt.LeftToRight
         orientation: ListView.Horizontal
         snapMode: ListView.SnapOneItem;
@@ -68,22 +87,23 @@ Delegate {
         highlightRangeMode: ListView.StrictlyEnforceRange
         highlightFollowsCurrentItem: true
         spacing: Kirigami.Units.largeSpacing
-
-        Keys.onLeftPressed: {
-            if (currentIndex > 0 )
-                currentIndex = currentIndex-1
-            slideShowTimer.restart()
-        }
-
-        Keys.onRightPressed: {
-            if (currentIndex < count)
-                currentIndex = currentIndex+1
-            slideShowTimer.restart()
-        }
-
+        contentHeight: contentItem.childrenRect.height
+        clip: true
+    
         onFlickEnded: {
             slideShowTimer.restart()
         }
     }
+
+    Keys.onLeftPressed: {
+            if (slideShowView.currentIndex > 0 )
+                slideShowView.currentIndex = slideShowView.currentIndex-1
+            slideShowTimer.restart()
+    }
+
+    Keys.onRightPressed: {
+        if (slideShowView.currentIndex < slideShowView.count)
+            slideShowView.currentIndex = slideShowView.currentIndex+1
+        slideShowTimer.restart()
+    }
 }
- 
