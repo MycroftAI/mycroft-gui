@@ -22,9 +22,6 @@ import QtQuick.Layouts 1.3
 import org.kde.kirigami 2.5 as Kirigami
 import Mycroft 1.0 as Mycroft
 
-Flickable {
-    id: root
-    
 /**
  * Contains an slideshow object that can autoplay each slide and loop
  * This can be used inside any mycroft delegate like in the following example.
@@ -37,13 +34,17 @@ Flickable {
  *              anchors.fill: parent
  *              interval: 5000 // time to switch between slides 
  *              running: true // can be set to false if one wants to swipe manually 
- *              delegate: Kirigami.AbstractCard { .... }
+ *              delegate: Item {...}
  *              loop: true // can be set to play through continously or just once
  *      }
  *  }
  * @endcode
  */
-   
+
+Item {
+    id: root
+    focus: true
+    
     //Listview Model
     property alias model: slideShowView.model
     
@@ -58,7 +59,7 @@ Flickable {
     
     //Slideshow Timer Loop
     property alias loop: slideShowTimer.repeat
-                
+    
     Timer {
         id: slideShowTimer
         interval: 5000
@@ -73,37 +74,58 @@ Flickable {
             }
         }
     }
-            
-    ListView {
-        id: slideShowView
-        width: root.width
-        height: root.height
-        layoutDirection: Qt.LeftToRight
-        orientation: ListView.Horizontal
-        snapMode: ListView.SnapOneItem;
-        flickDeceleration: 500
-        focus: true
-        flickableDirection: Flickable.AutoFlickDirection
-        highlightRangeMode: ListView.StrictlyEnforceRange
-        highlightFollowsCurrentItem: true
-        spacing: Kirigami.Units.largeSpacing
-        contentHeight: contentItem.childrenRect.height
-        clip: true
     
-        onFlickEnded: {
-            slideShowTimer.restart()
+    ColumnLayout { 
+        anchors.fill: parent
+        spacing: Kirigami.Units.largeSpacing
+        
+        ListView {
+            id: slideShowView
+            layoutDirection: Qt.LeftToRight
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
+            Layout.preferredHeight: root.height - slideshowIndicator.height
+            orientation: ListView.Horizontal
+            snapMode: ListView.SnapOneItem;
+            flickableDirection: Flickable.AutoFlickDirection
+            highlightRangeMode: ListView.StrictlyEnforceRange
+            highlightFollowsCurrentItem: true
+            spacing: Kirigami.Units.largeSpacing
+            clip: true
+            
+            onFlickEnded: {
+                slideShowTimer.restart()
+            }
+        }
+        
+        Controls.PageIndicator {
+            id: slideshowIndicator
+            Layout.preferredHeight: Kirigami.Units.gridUnit * 2
+            Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+            currentIndex: slideShowView.currentIndex
+            count: slideShowView.count        
         }
     }
-
+    
     Keys.onLeftPressed: {
-            if (slideShowView.currentIndex > 0 )
+            if (slideShowView.currentIndex > 0 ) {
                 slideShowView.currentIndex = slideShowView.currentIndex-1
+            }
+            
+            if (slideShowView.currentIndex == 0 ) {
+                slideShowView.currentIndex = slideShowView.count
+            }
             slideShowTimer.restart()
     }
 
     Keys.onRightPressed: {
-        if (slideShowView.currentIndex < slideShowView.count)
-            slideShowView.currentIndex = slideShowView.currentIndex+1
+        if (slideShowView.currentIndex < slideShowView.count) {
+            slideShowView.currentIndex = Math.min(slideShowView.currentIndex+1, slideShowView.count)
+        } 
+        
+        if(slideShowView.currentIndex == slideShowView.count) {
+            slideShowView.currentIndex = 0
+        }
         slideShowTimer.restart()
     }
 }
