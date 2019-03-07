@@ -85,6 +85,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void start();
+    void disconnectSocket();
     void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
     void sendText(const QString &message);

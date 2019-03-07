@@ -123,6 +123,14 @@ void MycroftController::start()
     emit socketStatusChanged();
 }
 
+void MycroftController::disconnectSocket()
+{
+    qDebug() << "in reconnect";
+    m_mainWebSocket.close();
+    m_reconnectTimer.stop();
+    emit socketStatusChanged();
+}
+
 void MycroftController::reconnect()
 {
     qDebug() << "in reconnect";
