@@ -163,5 +163,3 @@ Each active skill is associated with a model with urls to the QML files of all g
 }
 ```
 
-
-TODO: Active page in the gui
