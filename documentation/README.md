@@ -12,7 +12,7 @@ Mycroft-GUI is an open source visual and display framework for Mycroft running o
 
 #### GETTING STARTED
 
-Mycroft is an open source voice assistant that can be extended and expanded to the limits of your imagination. Mycroft can run anywhere from your desktop to your automobiles or on smart devices that empower your home.  
+Mycroft is an open source voice assistant that can be extended and expanded to the limits of your imagination. Mycroft can run anywhere from your desktop to your automobiles or on smart devices that empower your home.
 
 Want Mycroft to do something new? Teach Mycroft a skill, share it, and improve the experience for tens of thousands of people all over the world. This guide aims to provide you with resources to create familar and consistent visual experiences with your expanding and innovative skills.
 
@@ -20,11 +20,13 @@ The Mycroft GUI Visual Skill Development Guide is divided into two sections:
 
 ##### Visual Skill Development API Foundation
 
-- Learn and familarize yourself with the basics of expanding your voice only skills with the Visual Skill Development API for devices that support displays..(Learn More Link)  
+-   Learn and familarize yourself with the basics of expanding your voice only skills with the Visual Skill Development API for devices that support displays..(Learn More Link)
+    
 
 ##### Visual Skill Development Human Interface Guidelines
 
-- Learn about the best practises and design philosphy to creating consistent visual experiences..(Learn More Link) 
+-   Learn about the best practises and design philosphy to creating consistent visual experiences..(Learn More Link)
+    
 
 ## VISUAL SKILL DEVELOPMENT API FOUNDATION
 
@@ -32,9 +34,10 @@ Mycroft enabled devices with displays such as the Mark II, KDE Plasmoid provide 
 
 This section of the guide is divided into two skill examples that will show you how to create:
 
-- In-depth QML based audio and visual interaction skills
-
-- Simple template based text and image skills 
+-   In-depth QML based audio and visual interaction skills
+    
+-   Simple template based text and image skills
+    
 
 #### In-depth QML based audio and visual interaction skills
 
@@ -44,9 +47,10 @@ QML user interface markup language is a declartive language built on top of Qt's
 
 A collection of resources to familarize you with QML and Kirigami Framework.
 
-- [Introduction to QML ](http://doc.qt.io/qt-5/qml-tutorial.html)
-
-- [Introduction to Kirigami](https://www.kde.org/products/kirigami/)
+-   [Introduction to QML ](http://doc.qt.io/qt-5/qml-tutorial.html)
+    
+-   [Introduction to Kirigami](https://www.kde.org/products/kirigami/)
+    
 
 ##### Building your skill to support display
 
@@ -56,15 +60,16 @@ Skills for Mycroft AI are written in Python, using the skills development guide 
 
 Let's walk you through some basics of writing your QML user interface, this section is divided into 5 parts:
 
-- [Importing Modules](#Importing-Modules)
-
-- [Using Mycroft-GUI Framework Base Delegates](#Using-Mycroft-GUI-Framework)
-
-- [Using Mycroft Framework Components](#Using-Mycroft-Framework-Components)
-
-- Handling Data Models
-
-- [Event Handling](#Event-Handling)
+-   [Importing Modules](#Importing-Modules)
+    
+-   [Using Mycroft-GUI Framework Base Delegates](#Using-Mycroft-GUI-Framework)
+    
+-   [Using Mycroft Framework Components](#Using-Mycroft-Framework-Components)
+    
+-   Handling Data Models
+    
+-   [Event Handling](#Event-Handling)
+    
 
 ##### Importing Modules
 
@@ -87,7 +92,7 @@ Qt Quick module is the standard library for writing QML applications, the module
 
 ###### QTQuick.Controls Module:
 
-The QtQuick Controls module provides a set of controls that can be used to build complete interfaces in Qt Quick.  Some of the controls provided are button controls, container controls, delegate controls, indicator controls, input controls, navigation controls and more, for a complete list of controls and components provided by QtQuick Controls you can refer to [QtQuick Controls 2 Guidelines](https://doc.qt.io/qt-5.11/qtquickcontrols2-guidelines.html)
+The QtQuick Controls module provides a set of controls that can be used to build complete interfaces in Qt Quick. Some of the controls provided are button controls, container controls, delegate controls, indicator controls, input controls, navigation controls and more, for a complete list of controls and components provided by QtQuick Controls you can refer to [QtQuick Controls 2 Guidelines](https://doc.qt.io/qt-5.11/qtquickcontrols2-guidelines.html)
 
 ###### QtQuick.Layouts Module:
 
@@ -109,68 +114,94 @@ This provides a QML `Item` to render Adobe® After Effects™ animations exporte
 
 When you design your skill with QML, Mycroft-GUI frameworks provides you with some base delegates you should use when desiging your GUI skill. The base delegates provide you with a basic presentation layer for your skill with some property assignments that can help you setup background images, background dim, timeout and grace time properties to give you the control you need for rendereing an experience. In your GUI Skill you can use:
 
-- Mycroft.Delegate: *Needs Description* 
-
-  Simple display Image and Text Example using Mycroft.Delegate
-
-  ```
-  import Mycroft 1.0 as Mycroft
-  
-  Mycroft.Delegate {
-      skillBackgroundSource: sessionData.exampleImage
-      ColumnLayout {
-          anchors.fill: parent
-          Image {
-              id: imageId
-              Layout.fillWidth: true
-              Layout.preferredHeight: Kirigami.Units.gridUnit * 2
-              source: "https://source.unsplash.com/1920x1080/?+autumn"
-           }
-           Label {
-              id: labelId
-              Layout.fillWidth: true
-              Layout.preferredHeight: Kirigami.Units.gridUnit * 4
-              text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."            
-          }
-      }
-  }
-  ```
-
-- Mycroft.ScrollableDelegate: *Needs Description*
-
-  Example of using Mycroft.ScrollableDelegate
-
-  ```
-  import Mycroft 1.0 as Mycroft
-  
-  Mycroft.ScrollableDelegate {
-   skillBackgroundSource: sessionData.exampleImage
-   ColumnLayout {
-       anchors.fill: parent
-  
-      Repeater {
-          id: longListRepeater
-          model: 15
-          delegate: Item {
-              Rectangle {
-                id: coloredBackgroundLineId
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: Kirigami.Units.gridUnit * 2 
-                color: Kirigami.Theme.linkColor
-  
-                Label {
-                  id: labelId
-                  Layout.fillWidth: true
-                  Layout.preferredHeight: Kirigami.Units.gridUnit * 4
-                  text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo tempor incididunt ut labore et dolore magna aliqua."
-                 }                                    
-              }        
-           }   
-        }   
-     }
-  }
-  ```
+-   Mycroft.Delegate: *Needs Description*
+    
+    Simple display Image and Text Example using Mycroft.Delegate
+    
+    ```
+    import Mycroft 1.0 as Mycroft
+    
+    Mycroft.Delegate {
+        skillBackgroundSource: sessionData.exampleImage
+        ColumnLayout {
+            anchors.fill: parent
+            Image {
+                id: imageId
+                Layout.fillWidth: true
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 2
+                source: "https://source.unsplash.com/1920x1080/?+autumn"
+             }
+             Label {
+                id: labelId
+                Layout.fillWidth: true
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 4
+                text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."            
+            }
+        }
+    }
+    ```
+    
+-   Mycroft.ScrollableDelegate: *Needs Description*
+    
+    Example of using Mycroft.ScrollableDelegate
+    
+    ```
+    import QtQuick 2.4
+    import QtQuick.Controls 2.2
+    import QtQuick.Layouts 1.4
+    import org.kde.kirigami 2.4 as Kirigami
+    import Mycroft 1.0 as Mycroft
+    
+    Mycroft.ScrollableDelegate{
+        id: root
+        skillBackgroundSource: sessionData.background
+        property var sampleModel: sessionData.sampleBlob
+    
+        Kirigami.CardsListView {
+            id: exampleListView
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            model: sampleModel.lorem
+            delegate: Kirigami.AbstractCard {
+                id: rootCard
+                implicitHeight: delegateItem.implicitHeight + Kirigami.Units.largeSpacing
+                contentItem: Item {
+                    implicitWidth: parent.implicitWidth
+                    implicitHeight: parent.implicitHeight
+                    ColumnLayout {
+                        id: delegateItem
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        spacing: Kirigami.Units.largeSpacing
+                        Kirigami.Heading {
+                            id: restaurantNameLabel
+                            Layout.fillWidth: true
+                            text: modelData.text
+                            level: 2
+                            wrapMode: Text.WordWrap
+                        }
+                        Kirigami.Separator {
+                            Layout.fillWidth: true
+                        }
+                        Image {
+                            id: placeImage
+                            source: modelData.image
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: Kirigami.Units.gridUnit * 3
+                            fillMode: Image.PreserveAspectCrop
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: Kirigami.Units.gridUnit * 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    ```
+    
 
 ##### Using Mycroft Framework Components
 
@@ -271,7 +302,7 @@ Mycroft.Delegate {
 
 **Display A Vertical ListView With Information Cards**
 
-Kirigami CardsListView is a ListView which can have AbstractCard as its delegate: it will automatically assign the proper spacings and margins around the cards adhering to the design guidelines. 
+Kirigami CardsListView is a ListView which can have AbstractCard as its delegate: it will automatically assign the proper spacings and margins around the cards adhering to the design guidelines.
 
 **Python Skill Example**
 
@@ -401,6 +432,56 @@ Mycroft.ProportionalDelegate {
 }
 ```
 
+**Using Slideshow Component To Show Cards Slideshow**
+
+Slideshow component lets you insert a slideshow yith your custom delegate in any skill display which can be tuned to autoplay and loop and also scrolled or flicked manually by the user.
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.Delegate {
+    id: root
+
+    Mycroft.SlideShow {
+        id: simpleSlideShow 
+        model: sessionData.exampleModel // model with slideshow data
+        anchors.fill: parent
+        interval: 5000 // time to switch between slides 
+        running: true // can be set to false if one wants to swipe manually
+        loop: true // can be set to play through continously or just once
+        delegate: Kirigami.AbstractCard { 
+            width: rootItem.width
+            height: rootItem.height
+            contentItem: ColumnLayout {
+                anchors.fill: parent
+                Kirigami.Heading {
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    level: 3
+                    text: modelData.Title
+                }
+                Kirigami.Separator {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 1
+                }
+                Image {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: rootItem.height / 4
+                    source: modelData.Image
+                    fillMode: Image.PreserveAspectCrop
+                }
+            }
+        }
+    }
+}
+```
+
 ##### Event Handling
 
 Mycroft GUI API provides an Event Handling Protocol between the skill and QML display which allow Skill Authors to forward events in either direction to an event consumer. Skill Authors have the ability to create any amount of custom events. Event names that start with "system." are available to all skills, like previous/next/pick.
@@ -441,8 +522,6 @@ Mycroft.Delegate {
     }
 }
 ```
-
-
 
 **Simple Event Trigger Example From Skill To QML Display**
 
