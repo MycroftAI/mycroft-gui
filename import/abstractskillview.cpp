@@ -487,7 +487,6 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             if (!delegate) {
                 qWarning()<<"ERROR: QML gui" << guiObject << "not a Mycroft.AbstractDelegate instance";
                 guiObject->deleteLater();
-                context->deleteLater();
                 return;
             }
 
@@ -497,7 +496,6 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             delegate->setSessionData(sessionDataForSkill(skillId));
             delegateComponent.completeCreate();
 
-            connect(delegate, &QObject::destroyed, this, [this, context] {context->deleteLater();});
             //TODO: client->server visibility hint setting
             delegates << delegate;
         }
