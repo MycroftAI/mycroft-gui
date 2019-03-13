@@ -20,7 +20,7 @@ import QtQuick 2.4
 import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.4 as Controls
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.7 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 import "private" as Private
@@ -143,136 +143,91 @@ Mycroft.AbstractSkillView {
                 }
             }
 
-            ListView {
+            Kirigami.ColumnView {
                 id: delegatesView
                 interactive: true
                 clip: true
-                //NOTE: no delegate items should ever be deleted or we will get a crash
-                cacheBuffer: contentWidth * 2
+                columnWidth: Math.max(Math.floor(width / Math.floor(width/(switchWidth / 2))), Math.floor(width / count))
+                columnResizeMode: width < root.switchWidth ? Kirigami.ColumnView.SingleColumn : Kirigami.ColumnView.FixedColumns
+                separatorVisible: false
                 anchors.fill: parent
-                orientation: ListView.Horizontal
-                boundsBehavior: Flickable.StopAtBounds
-                snapMode: ListView.SnapOneItem
-                preferredHighlightBegin: 0
-                preferredHighlightEnd: 0
-                highlightMoveDuration: Kirigami.Units.longDuration
-                highlightFollowsCurrentItem: true
-                model: delegates
-                move: Transition {
-                    enabled: root.width > root.switchWidth
-                    XAnimator {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-                displaced: Transition {
-                    enabled: root.width > root.switchWidth
-                    XAnimator {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-                moveDisplaced: Transition {
-                    enabled: root.width > root.switchWidth
-                    XAnimator {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-                removeDisplaced: Transition {
-                    XAnimator {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-                remove: Transition {
-                    ParallelAnimation {
-                        OpacityAnimator {
-                            from: 1
-                            to: 0
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InQuad
-                        }
-                        YAnimator {
-                            from: 0
-                            to: -delegatesView.height / 3
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InQuad
-                        }
-                    }
-                }
 
                 onCurrentIndexChanged: {
                     delegates.currentIndex = currentIndex
                 }
 
-                onMovementEnded: currentIndex = indexAt(contentX, 0);
-                onFlickEnded: movementEnded()
                 Connections {
                     target: delegates
                     onCurrentIndexChanged: {
                         delegatesView.currentIndex = delegates.currentIndex
                     }
                 }
-                delegate: Controls.Control {
-                    id: delegate
-                    width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / root.switchWidth)))
-                    height: parent.height
-                    z: delegatesView.currentIndex == index ? 1 : 0
-                    contentItem: model.delegateUi
-                    padding: 0
-                    visible: x + width >= delegatesView.contentX || x >= delegatesView.contentX + delegatesView.width
-                    property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height : 0
-                    Connections {
-                        target: model.delegateUi
-                        onFocusChanged: {
-                            if (model.delegateUi.focus) {
-                                delegatesView.currentIndex = index;
-                                if (root.width >= root.switchWidth) {
-                                    focusAnim.restart();
+
+                Repeater {
+                    model: delegates
+                    delegate: Controls.Control {
+                        id: delegate
+
+                        Kirigami.ColumnView.fillWidth: false
+
+                        width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / root.switchWidth)))
+                        height: parent.height
+                        z: delegatesView.currentIndex == index ? 1 : 0
+                        contentItem: model.delegateUi
+                        padding: 0
+                        visible: x + width >= delegatesView.contentX || x >= delegatesView.contentX + delegatesView.width
+                        property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height : 0
+                        Connections {
+                            target: model.delegateUi
+                            onFocusChanged: {
+                                if (model.delegateUi.focus) {
+                                    delegatesView.currentIndex = index;
+                                    if (root.width >= root.switchWidth) {
+                                        focusAnim.restart();
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    SequentialAnimation {
-                        id: focusAnim
-                        NumberAnimation {
-                            target: model.delegateUi
-                            property: "scale"
-                            from: 1
-                            to: 1.1
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                        NumberAnimation {
-                            target: model.delegateUi
-                            property: "scale"
-                            from: 1.1
-                            to: 1
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
-                    RadialGradient {
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                            bottom: parent.bottom
-                        }
-                        height: Kirigami.Units.gridUnit
-                        verticalOffset: height/2
-                        gradient: Gradient {
-                            GradientStop { position: 0.0; color: Kirigami.Theme.highlightColor }
-                            GradientStop { position: 0.5; color: "transparent" }
-                        }
-                        visible: root.width >= root.switchWidth && delegatesView.count > 1
-                        opacity: delegatesView.currentIndex == index
-                        Behavior on opacity {
+                        SequentialAnimation {
+                            id: focusAnim
                             NumberAnimation {
+                                target: model.delegateUi
                                 property: "scale"
+                                from: 1
+                                to: 1.1
                                 duration: Kirigami.Units.longDuration
                                 easing.type: Easing.InOutQuad
+                            }
+                            NumberAnimation {
+                                target: model.delegateUi
+                                property: "scale"
+                                from: 1.1
+                                to: 1
+                                duration: Kirigami.Units.longDuration
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
+                        RadialGradient {
+                            anchors {
+                                left: parent.left
+                                right: parent.right
+                                bottom: parent.bottom
+                            }
+                            height: Kirigami.Units.gridUnit
+                            verticalOffset: height/2
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: Kirigami.Theme.highlightColor }
+                                GradientStop { position: 0.5; color: "transparent" }
+                            }
+                            visible: root.width >= root.switchWidth && delegatesView.count > 1
+                            opacity: delegatesView.currentIndex == index
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    property: "scale"
+                                    duration: Kirigami.Units.longDuration
+                                    easing.type: Easing.InOutQuad
+                                }
                             }
                         }
                     }
