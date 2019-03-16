@@ -32,6 +32,9 @@ Item {
     property int switchWidth: Kirigami.Units.gridUnit * 22
     property alias thumbnail: albumimg.source
     property alias title: songtitle.text
+    property bool progressBar: true
+    property bool thumbnailVisible: true
+    property bool titleVisible: true
     property var nextAction
     property var previousAction
         
@@ -70,8 +73,12 @@ Item {
             Image {
                 id: albumimg
                 fillMode: Image.PreserveAspectCrop
+                visible: root.thumbnailVisible ? 1 : 0
+                enabled: root.thumbnailVisible ? 1 : 0
                 Layout.preferredWidth: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
                 Layout.preferredHeight: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
+                //Layout.alignment: root.width > root.switchWidth ? Qt.AlignLeft : Qt.AlignHCenter
+                Layout.leftMargin: root.width > root.switchWidth ? Kirigami.Units.smallSpacing : Kirigami.Units.largeSpacing * 6
             }
 
             ColumnLayout {
@@ -85,6 +92,8 @@ Item {
                     level: root.width > root.switchWidth ? 1 : 3
                     Layout.fillWidth: true
                     font.capitalization: Font.Capitalize
+                    visible: root.titleVisible ? 1 : 0
+                    enabled: root.titleVisible ? 1 : 0
                 }
 
                 RowLayout {
@@ -132,6 +141,8 @@ Item {
                 RowLayout {
                     spacing: Kirigami.Units.smallSpacing
                     Layout.fillWidth: true
+                    visible: root.progressBar ? 1 : 0
+                    enabled: root.progressBar ? 1 : 0
 
                     Controls.Slider {
                         id: seekableslider
