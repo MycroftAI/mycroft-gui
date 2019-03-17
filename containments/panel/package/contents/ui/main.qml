@@ -122,9 +122,9 @@ PlasmaCore.ColorScope {
                 top: parent.top
                 right: parent.right
                 bottom: parent.bottom
-                margins: Kirigami.units.smallSpacing
+                margins: Kirigami.Units.smallSpacing
+                rightMargin:  height + Kirigami.Units.smallSpacing
             }
-            visible: !windowControl.visible
             readonly property int implicitHeight: children.length > 0 ? Kirigami.Units.gridUnit * 5 : 0
             layer.enabled: true
             layer.effect: DropShadow {
