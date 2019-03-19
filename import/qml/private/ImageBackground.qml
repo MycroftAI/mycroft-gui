@@ -19,15 +19,15 @@
 import QtQuick 2.4
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.4 as Controls
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.7 as Kirigami
 
 
 Item {
     id: backgroundImage
     anchors.fill: parent
 
-    property ListView delegatesView
-    property string source: delegatesView ? delegatesView.currentItem.contentItem.skillBackgroundSource : ""
+    property Kirigami.ColumnView delegatesView
+    property string source: delegatesView && delegatesView.currentItem ? delegatesView.currentItem.contentItem.skillBackgroundSource : ""
     property Image currentImage: image1
 
     onSourceChanged: {
@@ -54,7 +54,7 @@ Item {
     Rectangle {
         z: 10
         anchors.fill: parent
-        color: delegatesView ? delegatesView.currentItem.contentItem.skillBackgroundColorOverlay : "transparent"
+        color: delegatesView && delegatesView.currentItem ? delegatesView.currentItem.contentItem.skillBackgroundColorOverlay : "transparent"
     }
     Image {
         id: image1
