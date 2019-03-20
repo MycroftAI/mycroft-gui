@@ -50,6 +50,10 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
 
     connect(m_guiWebSocket, &QWebSocket::disconnected, this, &AbstractSkillView::closed);
 
+    connect(m_guiWebSocket, &QWebSocket::disconnected, this, [this]() {
+        m_activeSkillsModel->removeRows(0, m_activeSkillsModel->rowCount());
+    });
+
     connect(m_guiWebSocket, &QWebSocket::stateChanged, this,
             [this] (QAbstractSocket::SocketState state) {
                 emit statusChanged();

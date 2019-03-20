@@ -42,6 +42,9 @@ DelegatesModel::~DelegatesModel()
     for (auto d : m_delegatesToDelete) {
         d->deleteLater();
     }
+    for (auto d : m_delegates) {
+        d->deleteLater();
+    }
 }
 
 void DelegatesModel::insertDelegates(int position, QList<AbstractDelegate *> delegates)
