@@ -729,15 +729,17 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     // Action triggered from the server
     } else if (type == QLatin1String("mycroft.events.triggered")) {
         const QString skillOrSystem = doc[QStringLiteral("namespace")].toString();
+qWarning()<<"FFFFFFFFF"<<doc;
         if (skillOrSystem.isEmpty()) {
             qWarning() << "No namespace provided for mycroft.events.triggered";
             return;
         }
+        /*FIXME: do we need to keep this check? we need to also include skills without gui
         // If it's a skill it must exist
         if (skillOrSystem != QLatin1String("system") && !m_activeSkillsModel->skillIndex(skillOrSystem).isValid()) {
             qWarning() << "Invalid skill id passed as namespace for mycroft.events.triggered:" << skillOrSystem;
             return;
-        }
+        }*/
 
         const QString eventName = doc[QStringLiteral("event_name")].toString();
         if (eventName.isEmpty()) {
@@ -769,6 +771,8 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 delegate->forceActiveFocus((Qt::FocusReason)ServerEventFocusReason);
                 emit delegate->event(eventName, data);
             }
+        } else if (eventName == QStringLiteral("mycroft.gui.close.screen")) {
+            emit activeSkillClosed();
         } else {
             for (auto *delegate : delegates) {
                 emit delegate->event(eventName, data);

@@ -140,6 +140,9 @@ Mycroft.AbstractSkillView {
                     activeSkillsRepeater.oldDelegate = activeSkillsRepeater.currentDelegate;
                     activeSkillsRepeater.currentDelegate = delegate;
                     eventCompression.restart();
+                    if (delegatesView.count == 0) {
+                        root.open = false;
+                    }
                 }
             }
 
@@ -147,6 +150,11 @@ Mycroft.AbstractSkillView {
                 id: delegatesView
                 interactive: true
                 clip: true
+                onCountChanged: {
+                    if (index == 0 && count == 0) {
+                        root.open = false;
+                    }
+                }
                 columnWidth: Math.max(Math.floor(width / Math.floor(width/(switchWidth / 2))), Math.floor(width / count))
                 columnResizeMode: width < root.switchWidth ? Kirigami.ColumnView.SingleColumn : Kirigami.ColumnView.FixedColumns
                 separatorVisible: false

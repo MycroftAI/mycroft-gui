@@ -79,6 +79,10 @@ public:
     void deleteProperty(const QString &skillId, const QString &property);
 
 Q_SIGNALS:
+    /**
+     * The skill that was open due voice interaction has been closed either due to timeout or user interaction
+     */
+    void activeSkillClosed();
     //socket stuff
     void statusChanged();
     void closed();
