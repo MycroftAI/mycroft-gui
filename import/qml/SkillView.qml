@@ -77,7 +77,10 @@ Mycroft.AbstractSkillView {
     SequentialAnimation {
         id: enterAnimation
         ScriptAction {
-            script: activeSkillsRepeater.currentDelegate.visible = true;
+            script: {
+                root.visible = true
+                activeSkillsRepeater.currentDelegate.visible = true;
+            }
         }
         ParallelAnimation {
             NumberAnimation {
@@ -115,6 +118,7 @@ Mycroft.AbstractSkillView {
             script: {
                 activeSkillsRepeater.oldDelegate.visible = false;
                 root.open = activeSkillsRepeater.currentDelegate.visible;
+                root.visible = root.open;
             }
         }
     }
