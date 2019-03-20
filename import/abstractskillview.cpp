@@ -729,7 +729,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     // Action triggered from the server
     } else if (type == QLatin1String("mycroft.events.triggered")) {
         const QString skillOrSystem = doc[QStringLiteral("namespace")].toString();
-qWarning()<<"FFFFFFFFF"<<doc;
+
         if (skillOrSystem.isEmpty()) {
             qWarning() << "No namespace provided for mycroft.events.triggered";
             return;
