@@ -23,9 +23,7 @@
 #include <QtQml>
 #include <QDebug>
 #include <QCursor>
-#include <QtWebEngine/qtwebengineglobal.h>
-#include <QtWebEngine/QtWebEngine>
-
+#include <QtWebView/QtWebView>
 
 #ifdef Q_OS_ANDROID
 #include <QGuiApplication>
@@ -83,7 +81,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    QtWebEngine::initialize();
+    QtWebView::initialize();
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);

@@ -37,8 +37,7 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Qml
     Network
     WebSockets
-    WebEngine 
-    WebEngineWidgets
+    WebView
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
@@ -97,7 +96,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif()
 
 add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
-target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebEngineWidgets Qt5::WebEngine ${mycroft_gui_app_EXTRA_LIBS})
+target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebView ${mycroft_gui_app_EXTRA_LIBS})
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     add_subdirectory(applets)
