@@ -34,15 +34,11 @@ Item {
         if (backgroundImage.currentImage == image1) {
             image2.opacity = 0;
             image2.source = source;
-            if (image2.status == Image.Ready) {
-                backgroundImage.setCurrent(image2);
-            }
+            backgroundImage.setCurrent(image2);
         } else {
             image1.opacity = 0;
             image1.source = source;
-            if (image1.status == Image.Ready) {
-                backgroundImage.setCurrent(image1);
-            }
+            backgroundImage.setCurrent(image1);
         }
     }
 
@@ -84,6 +80,13 @@ Item {
             target: backgroundImage.currentImage
             from: 0
             to: 1
+            duration: 1000
+            easing.type: Easing.InOutQuad
+        }
+        OpacityAnimator {
+            target: backgroundImage.currentImage == image1 ? image2 : image1
+            from: 1
+            to: 0
             duration: 1000
             easing.type: Easing.InOutQuad
         }
