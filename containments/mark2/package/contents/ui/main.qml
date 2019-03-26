@@ -63,12 +63,11 @@ drag.target: skillView
     }
     onPositionChanged: {
         var delta = startMouseY - mouse.y;
-        if (Math.abs(delta) > Kirigami.Units.gridUnit) {
+        if (Math.abs(delta) > Kirigami.Units.gridUnit*2) {
             root.preventStealing = true
         }
         if (root.preventStealing) {
             //mouse.accepted = true;
-            print(delta)
             paSinkModel.preferredSink.volume = Math.max(PA.PulseAudio.MinimalVolume, Math.min(PA.PulseAudio.MaximalVolume, startVolume + (delta/height)*(PA.PulseAudio.MaximalVolume - PA.PulseAudio.MinimalVolume)))
             feedbackTimer.running = true;
             volSlider.show();
