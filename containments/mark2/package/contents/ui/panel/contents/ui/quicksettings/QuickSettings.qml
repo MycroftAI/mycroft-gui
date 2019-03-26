@@ -55,7 +55,9 @@ ColumnLayout {
         property int delegateSize: Kirigami.Units.iconSizes.medium * 2 + Kirigami.Units.smallSpacing*2
 
         HomeDelegate {}
-        DisableMycroftDelegate {}
-        SystemSettingsDelegate {}
+        WirelessDelegate {}
+        MuteDelegate {}
+        RebootDelegate {}
+        ShutdownDelegate {}
     }
 }

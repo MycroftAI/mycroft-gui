@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 by Marco Martin <mart@kde.org>
+ * Copyright 2019 by Marco Martin <mart@kde.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,10 @@ import org.kde.kirigami 2.5 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 Delegate {
-    iconSource: "go-home"
-    text: i18n("Home")
+    iconSource: "system-reboot"
+    text: i18n("Restart")
     onClicked: {
-        Mycroft.MycroftController.sendRequest("mycroft.stop", {});
-        for(var i in plasmoid.nativeInterface) {
-            print(i+" "+plasmoid.nativeInterface[i]);
-        }
-        plasmoid.nativeInterface.requestShowingDesktop();
+        plasmoid.nativeInterface.requestReboot();
     }
 }
 

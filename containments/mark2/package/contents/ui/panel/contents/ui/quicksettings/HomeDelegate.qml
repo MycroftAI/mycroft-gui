@@ -21,8 +21,14 @@ import org.kde.kirigami 2.5 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 Delegate {
-    iconSource: "configure"
-    text: i18n("Settings")
-    onClicked: Mycroft.MycroftController.sendRequest("mycroft.device.settings", {});
+    iconSource: "go-home"
+    text: i18n("Standby Face")
+    onClicked: {
+        Mycroft.MycroftController.sendRequest("mycroft.stop", {});
+        for(var i in plasmoid.nativeInterface) {
+            print(i+" "+plasmoid.nativeInterface[i]);
+        }
+        plasmoid.nativeInterface.requestShowingDesktop();
+    }
 }
 

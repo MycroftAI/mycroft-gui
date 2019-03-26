@@ -24,7 +24,6 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 
 import org.kde.kirigami 2.5 as Kirigami
 
-import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 import org.kde.plasma.private.volume 0.1 as PA
 
 import "./panel/contents/ui" as Panel
@@ -95,21 +94,6 @@ drag.target: skillView
         id: volSlider
     }
 //END PulseAudio
-
-//BEGIN NetworkManager
-    PlasmaNM.NetworkStatus {
-        id: networkStatus
-    }
-
-    PlasmaNM.ConnectionIcon {
-        id: connectionIconProvider
-    }
-
-    PlasmaNM.Handler {
-        id: handler
-    }
-//END NetworkManager
-
 
 //BEGIN VirtualKeyboard
     VirtualKeyboardLoader {
