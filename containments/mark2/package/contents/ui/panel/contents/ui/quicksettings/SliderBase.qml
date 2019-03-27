@@ -36,13 +36,11 @@ Controls.Control {
     //Layout.preferredWidth: Kirigami.Units.gridUnit * 5
     Layout.fillWidth: true
     Layout.preferredHeight: Kirigami.Units.gridUnit * 15
-    contentItem: Item {
+    contentItem: MouseArea {
+        //to not cause unwanted scrolls
+        preventStealing: true
         ColumnLayout {
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                horizontalCenter: parent.horizontalCenter
-            }
+            anchors.fill: parent
             spacing: Kirigami.Units.smallSpacing
 
             RowLayout {
@@ -66,17 +64,18 @@ Controls.Control {
             T.Slider {
                 id: slider
                 orientation: Qt.Vertical
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
+                Layout.fillWidth: true
                 Layout.fillHeight: true
                 handle: Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: slider.height - slider.position * (slider.height - height) - height
+                    
                     color: "orange"
                     radius: height
                     implicitWidth: Kirigami.Units.gridUnit * 3
                     implicitHeight: Kirigami.Units.gridUnit
                 }
+
                 background: Item {
                     Rectangle {
                         anchors {
