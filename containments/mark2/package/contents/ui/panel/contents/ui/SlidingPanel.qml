@@ -31,6 +31,7 @@ Controls.Drawer {
 
     property Item bottomItem
 
+    interactive: position < 1 || flickable.atYEnd
     onBottomItemChanged: {
         bottomItem.parent = contentArea;
         bottomItem.anchors.fill = contentArea;
@@ -56,6 +57,7 @@ Controls.Drawer {
                 fill: parent
                 margins: Kirigami.Units.largeSpacing * 2
             }
+
             boundsBehavior: Flickable.StopAtBounds
             contentWidth: width
             contentHeight: layout.height
