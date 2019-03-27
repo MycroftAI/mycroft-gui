@@ -24,8 +24,8 @@ set(CMAKE_AUTOMOC ON)
 #the Android case is a temporary hack, adjust it to where and android app can find
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(MYCROFT_CORE_DIR ":")
-else(MYCROFT_CORE_DIR "/opt/mycroft")
-    set(MYCROFT_CORE_DIR "/opt/mycroft")
+else(MYCROFT_CORE_DIR "~/mycroft-core")
+    set(MYCROFT_CORE_DIR "~/mycroft-core")
 endif()
 
 configure_file(config-mycroft.h.in ${CMAKE_CURRENT_BINARY_DIR}/config-mycroft.h)
