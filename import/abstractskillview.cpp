@@ -462,52 +462,24 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             return;
         }
 
-        QList <AbstractDelegate *> delegates;
+        QList <DelegateLoader *> delegateLoaders;
         for (const auto &urlString : delegateUrls) {
             const QUrl delegateUrl = QUrl::fromUserInput(urlString);
 
             if (!delegateUrl.isValid()) {
                 continue;
             }
+            
+            DelegateLoader *loader = new DelegateLoader(this);
+            loader->init(skillId, delegateUrl);
 
-            QQmlEngine *engine = qmlEngine(this);
-            QQmlContext *context = QQmlEngine::contextForObject(this);
-            //This class should be *ALWAYS* created from QML
-            Q_ASSERT(engine);
-            Q_ASSERT(context);
-
-            QQmlComponent delegateComponent(engine, delegateUrl, this);
-            //TODO: separate context?
-            QObject *guiObject = delegateComponent.beginCreate(context);
-            AbstractDelegate *delegate = qobject_cast<AbstractDelegate *>(guiObject);
-            if (delegateComponent.isError()) {
-                qWarning() << "ERROR Loading QML file" << delegateUrl;
-                for (auto err : delegateComponent.errors()) {
-                    qWarning() << err.toString();
-                }
-                return;
-            }
-
-            if (!delegate) {
-                qWarning()<<"ERROR: QML gui" << guiObject << "not a Mycroft.AbstractDelegate instance";
-                guiObject->deleteLater();
-                return;
-            }
-
-            delegate->setSkillId(skillId);
-            delegate->setQmlUrl(delegateUrl);
-            delegate->setSkillView(this);
-            delegate->setSessionData(sessionDataForSkill(skillId));
-            delegateComponent.completeCreate();
-
-            //TODO: client->server visibility hint setting
-            delegates << delegate;
+            delegateLoaders << loader;
         }
 
-        if (delegates.count() > 0) {
-            delegatesModel->insertDelegates(position, delegates);
+        if (delegateLoaders.count() > 0) {
+            delegatesModel->insertDelegateLoaders(position, delegateLoaders);
             //give the focus to the first
-            delegates.first()->forceActiveFocus((Qt::FocusReason)ServerEventFocusReason);
+            delegateLoaders.first()->setFocus(true);
         }
 
 

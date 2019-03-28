@@ -24,6 +24,7 @@
 #include <QPointer>
 
 class ActiveSkillsModel;
+class AbstractSkillView;
 class AbstractDelegate;
 class SessionDataMap;
 

@@ -24,6 +24,7 @@
 class QTimer;
 
 class AbstractDelegate;
+class DelegateLoader;
 
 class DelegatesModel : public QAbstractListModel
 {
@@ -41,7 +42,7 @@ public:
     /**
      * Insert one or more delegates at position
      */
-    void insertDelegates(int position, QList<AbstractDelegate *> delegates);
+    void insertDelegateLoaders(int position, QList<DelegateLoader *> loaders);
 
     /**
      * clears the whole model
@@ -63,8 +64,8 @@ Q_SIGNALS:
     void currentIndexChanged();
 
 private:
-    QList<AbstractDelegate *> m_delegates;
-    QList<AbstractDelegate *>m_delegatesToDelete;
+    QList<DelegateLoader *> m_delegateLoaders;
+    QList<DelegateLoader *> m_delegateLoadersToDelete;
     QTimer *m_deleteTimer;
     int m_currentIndex = 0;
 };
