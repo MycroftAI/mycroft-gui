@@ -39,20 +39,22 @@ Item {
     property var previousAction
     readonly property bool horizontal: width > switchWidth
 
-    onEnabledChanged: {
-        if (enabled && status == "play") {
-            player.play();
-        } else {
-            player.pause();
-        }
-    }
-    Component.onCompleted: {
-        if (enabled && status == "play") {
-            player.play();
-        } else if (status == "stop") {
-            player.stop();
-        } else {
-            player.pause();
+    onEnabledChanged: syncStatusTimer.restart()
+    onSourceChanged: syncStatusTimer.restart()
+    Component.onCompleted: syncStatusTimer.restart()
+
+    // Sometimes can't be restarted reliably immediately, put it in a timer
+    Timer {
+        id: syncStatusTimer
+        interval: 0
+        onTriggered: {
+            if (enabled && status == "play") {
+                player.play();
+            } else if (status == "stop") {
+                player.stop();
+            } else {
+                player.pause();
+            }
         }
     }
     MediaPlayer {
