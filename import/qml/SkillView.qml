@@ -16,7 +16,7 @@
  *
  */
 
-import QtQuick 2.4
+import QtQuick 2.10
 import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.4 as Controls
@@ -129,10 +129,12 @@ Mycroft.AbstractSkillView {
                 id: delegate
                 readonly property bool current: index == 0
                 property alias view: delegatesView
-                
+
                 width: parent.width
                 height: parent.height
 
+                visible: current || opacityAnim.running
+                enabled: current && visible
                 opacity: current
                 z: current ? 1 : 0
 
@@ -144,6 +146,7 @@ Mycroft.AbstractSkillView {
                 }
                 Behavior on opacity {
                     OpacityAnimator {
+                        id: opacityAnim
                         duration: Kirigami.Units.longDuration
                         easing.type: Easing.InOutQuad
                     }
