@@ -28,7 +28,7 @@ Item {
     id: root
 
     property alias source: player.source
-    property alias status: player.currentStatus
+    property string status: "stop"
     property int switchWidth: Kirigami.Units.gridUnit * 22
     property alias thumbnail: albumimg.source
     property alias title: songtitle.text
@@ -38,23 +38,26 @@ Item {
     property var nextAction
     property var previousAction
 
-    onVisibleChanged: {
-        if (visible) {
+    onEnabledChanged: {
+        if (enabled && status == "play") {
             player.play();
         } else {
             player.pause();
         }
     }
-
     Component.onCompleted: {
-        if (!visible) {
+        if (enabled && status == "play") {
+            player.play();
+        } else if (status == "stop") {
+            player.stop();
+        } else {
             player.pause();
         }
     }
     MediaPlayer {
         id: player
-        autoPlay: true
-        property var currentStatus
+        autoPlay: false
+        property string currentStatus: root.enabled ? root.status : "pause"
 
         onCurrentStatusChanged: {
             switch(currentStatus){
@@ -64,13 +67,13 @@ Item {
             case "pause":
                 player.pause()
                 break;
-            case "resume":
+            case "play":
                 player.play()
                 break;
             }
         }
     }
-        
+
     ColumnLayout {
         anchors.top: root.width > root.switchWidth ? parent.verticalCenter : parent.top
         anchors.left: parent.left
@@ -150,7 +153,7 @@ Item {
                         }
                     }
                 }
-                
+
                 RowLayout {
                     spacing: Kirigami.Units.smallSpacing
                     Layout.fillWidth: true
