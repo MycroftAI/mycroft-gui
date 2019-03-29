@@ -57,7 +57,7 @@ Item {
     MediaPlayer {
         id: player
         autoPlay: false
-        property string currentStatus: root.enabled ? root.status : "pause"
+        readonly property string currentStatus: root.enabled ? root.status : "pause"
 
         onCurrentStatusChanged: {
             switch(currentStatus){
@@ -74,120 +74,129 @@ Item {
         }
     }
 
-    ColumnLayout {
-        anchors.top: root.width > root.switchWidth ? parent.verticalCenter : parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: Kirigami.Units.largeSpacing
 
-        GridLayout {
+    GridLayout {
+        anchors {
+            top: root.width > root.switchWidth ? parent.verticalCenter : parent.top
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        columns: root.width > root.switchWidth ? 2 : 1
+
+        Image {
+            id: albumimg
+            fillMode: Image.PreserveAspectCrop
+            visible: root.thumbnailVisible ? 1 : 0
+            enabled: root.thumbnailVisible ? 1 : 0
+            Layout.preferredWidth: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
+            Layout.preferredHeight: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            columns: root.width > root.switchWidth ? 2 : 1
+            spacing: Kirigami.Units.largeSpacing
 
-            Image {
-                id: albumimg
-                fillMode: Image.PreserveAspectCrop
-                visible: root.thumbnailVisible ? 1 : 0
-                enabled: root.thumbnailVisible ? 1 : 0
-                Layout.preferredWidth: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
-                Layout.preferredHeight: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
-                //Layout.alignment: root.width > root.switchWidth ? Qt.AlignLeft : Qt.AlignHCenter
-                Layout.leftMargin: root.width > root.switchWidth ? Kirigami.Units.smallSpacing : Kirigami.Units.largeSpacing * 6
+            Kirigami.Heading {
+                id: songtitle
+                text: title
+                level: root.width > root.switchWidth ? 1 : 3
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                font.capitalization: Font.Capitalize
+                visible: root.titleVisible ? 1 : 0
+                enabled: root.titleVisible ? 1 : 0
             }
 
-            ColumnLayout {
+            RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.alignment: root.width > root.switchWidth ? Qt.AlignLeft : Qt.AlignHCenter
                 spacing: Kirigami.Units.largeSpacing
 
-                Kirigami.Heading {
-                    id: songtitle
-                    text: title
-                    level: root.width > root.switchWidth ? 1 : 3
-                    Layout.fillWidth: true
-                    font.capitalization: Font.Capitalize
-                    visible: root.titleVisible ? 1 : 0
-                    enabled: root.titleVisible ? 1 : 0
-                }
-
-                RowLayout {
+                Controls.RoundButton {
+                    id: previousButton
+                    Layout.minimumWidth: Kirigami.Units.iconSizes.smallMedium
+                    Layout.minimumHeight: width
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    spacing: Kirigami.Units.largeSpacing
+                    Layout.maximumWidth: Kirigami.Units.gridUnit * 3
+                    Layout.maximumHeight: width
+                    focus: false
+                    icon.name: "media-seek-backward"
+                    onClicked: {
+                        triggerEvent(previousAction, {})
+                        previousButton.focus = false
+                    }
+                }
 
-                    Controls.RoundButton {
-                        id: previousButton
-                        Layout.preferredWidth: Kirigami.Units.gridUnit * 3
-                        Layout.preferredHeight: Kirigami.Units.gridUnit * 3
-                        focus: false
-                        icon.name: "media-seek-backward"
-                        onClicked: {
-                            triggerEvent(previousAction, {})
-                            previousButton.focus = false
-                        }
+                Controls.RoundButton {
+                    id: playButton
+                    Layout.minimumWidth: Kirigami.Units.iconSizes.medium
+                    Layout.minimumHeight: width
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.maximumWidth: Kirigami.Units.gridUnit * 4
+                    Layout.maximumHeight: width
+                    focus: false
+                    icon.name: player.playbackState === MediaPlayer.PlayingState ? "media-playback-pause" : "media-playback-start"
+                    onClicked: {
+                        player.playbackState === MediaPlayer.PlayingState ? player.pause() : player.play()
+                        playButton.focus = false
+                    }
+                }
+
+                Controls.RoundButton {
+                    id: nextButton
+                    Layout.minimumWidth: Kirigami.Units.iconSizes.smallMedium
+                    Layout.minimumHeight: width
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.maximumWidth: Kirigami.Units.gridUnit * 3
+                    Layout.maximumHeight: width
+                    focus: false
+                    icon.name: "media-seek-forward"
+                    onClicked: {
+                        triggerEvent(nextAction, {})
+                        nextButton.focus = false
+                    }
+                }
+            }
+
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                Layout.fillWidth: true
+                visible: root.progressBar ? 1 : 0
+                enabled: root.progressBar ? 1 : 0
+
+                Controls.Slider {
+                    id: seekableslider
+                    to: player.duration
+                    Layout.fillWidth: true
+                    property bool sync: false
+
+                    onValueChanged: {
+                        if (!sync)
+                            player.seek(value)
                     }
 
-                    Controls.RoundButton {
-                        id: playButton
-                        Layout.preferredWidth: Kirigami.Units.gridUnit * 4
-                        Layout.preferredHeight: Kirigami.Units.gridUnit * 4
-                        focus: false
-                        icon.name: player.playbackState === MediaPlayer.PlayingState ? "media-playback-pause" : "media-playback-start"
-                        onClicked: {
-                            player.playbackState === MediaPlayer.PlayingState ? player.pause() : player.play()
-                            playButton.focus = false
-                        }
-                    }
-
-                    Controls.RoundButton {
-                        id: nextButton
-                        Layout.preferredWidth: Kirigami.Units.gridUnit * 3
-                        Layout.preferredHeight: Kirigami.Units.gridUnit * 3
-                        focus: false
-                        icon.name: "media-seek-forward"
-                        onClicked: {
-                            triggerEvent(nextAction, {})
-                            nextButton.focus = false
+                    Connections {
+                        target: player
+                        onPositionChanged: {
+                            seekableslider.sync = true
+                            seekableslider.value = player.position
+                            seekableslider.sync = false
                         }
                     }
                 }
 
-                RowLayout {
-                    spacing: Kirigami.Units.smallSpacing
-                    Layout.fillWidth: true
-                    visible: root.progressBar ? 1 : 0
-                    enabled: root.progressBar ? 1 : 0
-
-                    Controls.Slider {
-                        id: seekableslider
-                        to: player.duration
-                        Layout.preferredWidth: parent.implicitWidth - Kirigami.Units.gridUnit * 1.2
-                        property bool sync: false
-
-                        onValueChanged: {
-                            if (!sync)
-                                player.seek(value)
-                        }
-
-                        Connections {
-                            target: player
-                            onPositionChanged: {
-                                seekableslider.sync = true
-                                seekableslider.value = player.position
-                                seekableslider.sync = false
-                            }
-                        }
-                    }
-
-                    Controls.Label {
-                        id: positionLabel
-                        Layout.preferredWidth: Kirigami.Units.gridUnit * 1
-                        readonly property int minutes: Math.floor(player.position / 60000)
-                        readonly property int seconds: Math.round((player.position % 60000) / 1000)
-                        text: Qt.formatTime(new Date(0, 0, 0, 0, minutes, seconds), qsTr("mm:ss"))
-                    }
+                Controls.Label {
+                    id: positionLabel
+                    readonly property int minutes: Math.floor(player.position / 60000)
+                    readonly property int seconds: Math.round((player.position % 60000) / 1000)
+                    text: Qt.formatTime(new Date(0, 0, 0, 0, minutes, seconds), qsTr("mm:ss"))
                 }
             }
         }
