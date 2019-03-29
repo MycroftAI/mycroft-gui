@@ -37,7 +37,20 @@ Item {
     property bool titleVisible: true
     property var nextAction
     property var previousAction
-        
+
+    onVisibleChanged: {
+        if (visible) {
+            player.play();
+        } else {
+            player.pause();
+        }
+    }
+
+    Component.onCompleted: {
+        if (!visible) {
+            player.pause();
+        }
+    }
     MediaPlayer {
         id: player
         autoPlay: true
