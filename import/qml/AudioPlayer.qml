@@ -37,6 +37,7 @@ Item {
     property bool titleVisible: true
     property var nextAction
     property var previousAction
+    readonly property bool horizontal: width > switchWidth
 
     onEnabledChanged: {
         if (enabled && status == "play") {
@@ -77,20 +78,21 @@ Item {
 
     GridLayout {
         anchors {
-            top: root.width > root.switchWidth ? parent.verticalCenter : parent.top
+            top: root.horizontal ? undefined : parent.top
             left: parent.left
             right: parent.right
             bottom: parent.bottom
         }
-        columns: root.width > root.switchWidth ? 2 : 1
+        columns: root.horizontal ? 2 : 1
+        height: implicitHeight
 
         Image {
             id: albumimg
             fillMode: Image.PreserveAspectCrop
             visible: root.thumbnailVisible ? 1 : 0
             enabled: root.thumbnailVisible ? 1 : 0
-            Layout.preferredWidth: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
-            Layout.preferredHeight: root.width > root.switchWidth ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
+            Layout.preferredWidth: root.horizontal ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
+            Layout.preferredHeight: root.horizontal ? Kirigami.Units.gridUnit * 10 : Kirigami.Units.gridUnit * 5
             Layout.alignment: Qt.AlignHCenter
         }
 
@@ -102,7 +104,7 @@ Item {
             Kirigami.Heading {
                 id: songtitle
                 text: title
-                level: root.width > root.switchWidth ? 1 : 3
+                level: root.horizontal ? 1 : 3
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 font.capitalization: Font.Capitalize
@@ -113,7 +115,7 @@ Item {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.alignment: root.width > root.switchWidth ? Qt.AlignLeft : Qt.AlignHCenter
+                Layout.alignment: root.horizontal ? Qt.AlignLeft : Qt.AlignHCenter
                 spacing: Kirigami.Units.largeSpacing
 
                 Controls.RoundButton {
