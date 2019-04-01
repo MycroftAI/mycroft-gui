@@ -17,6 +17,7 @@ find_package(ECM 1.6.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDEInstallDirs)
+include(ECMInstallIcons)
 set(CMAKE_AUTOMOC ON)
 
 #this is used for mycroft spawning. It's horrible and should not be needed, but mycroft packaging is questionable at best
