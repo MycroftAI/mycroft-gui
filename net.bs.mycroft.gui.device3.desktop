@@ -1,7 +1,0 @@
-[Desktop Entry]
-Exec=mycroft-gui-app --width 400 --height 400 --hideTextInput --dpi 96
-Icon=kmenuedit
-Type=Application
-StartupNotify=true
-
-Name=Mycroft (400,400)

@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.8.12)
  
 set(QT_MIN_VERSION "5.9.0")
-set(KF5_MIN_VERSION "5.0.0")
+set(KF5_MIN_VERSION "5.50.0")
  
 PROJECT(mycroft-gui)
 
@@ -24,11 +24,11 @@ set(CMAKE_AUTOMOC ON)
 #the Android case is a temporary hack, adjust it to where and android app can find
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(MYCROFT_CORE_DIR ":")
-else(MYCROFT_CORE_DIR "/opt/mycroft")
-    set(MYCROFT_CORE_DIR "/opt/mycroft")
+else(MYCROFT_CORE_DIR "~/mycroft-core")
+    set(MYCROFT_CORE_DIR "~/mycroft-core")
 endif()
 
-configure_file(config-mycroft.h.in ${CMAKE_CURRENT_BINARY_DIR}/config-mycroft.h)
+#configure_file(config-mycroft.h.in ${CMAKE_CURRENT_BINARY_DIR}/config-mycroft.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
@@ -37,9 +37,10 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Qml
     Network
     WebSockets
-    WebEngine 
-    WebEngineWidgets
+    WebView
 )
+
+find_package(LibKWorkspace 5.14.90 CONFIG REQUIRED)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
@@ -63,54 +64,13 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
 
 add_definitions(-DQT_NO_URL_CAST_FROM_STRING -DQT_USE_QSTRINGBUILDER -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII)
 
-SET(mycroft_gui_app_SRC
-    main.cpp
-    speechintent.cpp
-)
-
-if (CMAKE_SYSTEM_NAME STREQUAL "Android")
-    set(mycroft_gui_app_EXTRA_LIBS
-        Qt5::AndroidExtras
-        Qt5::QuickControls2
-        #NOTE: qtsvg is needed for android packaging to work
-        Qt5::Svg
-        Qt5::WebSockets
-        OpenSSL::SSL
-    )
-else()
-set(mycroft_gui_app_EXTRA_LIBS
-        Qt5::Widgets
-    )
-endif()
-
-qt5_add_resources(mycroft_gui_app_SRC
-    qml.qrc
-)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Android")
-    qt5_add_resources(mycroft_gui_app_SRC
-        skills.qrc
-    )
-    qt5_add_resources(mycroft_gui_app_SRC
-        skills-extra.qrc
-    )
-endif()
-
-add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
-target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebEngineWidgets Qt5::WebEngine ${mycroft_gui_app_EXTRA_LIBS})
+add_subdirectory(application)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     add_subdirectory(applets)
     add_subdirectory(containments)
 endif()
 
-install(TARGETS mycroft-gui-app ${INSTALL_TARGETS_DEFAULT_ARGS})
-add_subdirectory(import)
-
-install( PROGRAMS net.bs.mycroft.gui.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
-install( PROGRAMS net.bs.mycroft.gui.device.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
-install( PROGRAMS net.bs.mycroft.gui.device2.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
-install( PROGRAMS net.bs.mycroft.gui.device3.desktop DESTINATION  ${KDE_INSTALL_APPDIR} )
 install(FILES MycroftMark2.colors
         DESTINATION ${DATA_INSTALL_DIR}/color-schemes/)
 
@@ -124,11 +84,6 @@ plasma_install_package(lookandfeel org.mycroft.mark2 look-and-feel lookandfeel)
 
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})
-
-if (CMAKE_SYSTEM_NAME STREQUAL "Android")
-    find_package(KF5Kirigami2 REQUIRED)
-    kirigami_package_breeze_icons(ICONS help-hint configure)
-endif()
 
 if (BUILD_TESTING)
     add_subdirectory(autotests)

@@ -21,6 +21,104 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 
+
+DelegateLoader::DelegateLoader(AbstractSkillView *parent)
+    : QObject(parent),
+      m_view(parent)
+{}
+
+DelegateLoader::~DelegateLoader()
+{
+    m_delegate->deleteLater();
+}
+
+void DelegateLoader::init(const QString skillId, const QUrl &delegateUrl)
+{
+    if (!m_skillId.isEmpty()) {
+        qWarning() << "Init already called";
+    }
+
+    m_skillId = skillId;
+    m_delegateUrl = delegateUrl;
+    QQmlEngine *engine = qmlEngine(m_view);
+    //This class should be *ALWAYS* created from QML
+    Q_ASSERT(engine);
+
+    m_component = new QQmlComponent(engine, delegateUrl, m_view);
+
+    switch(m_component->status()) {
+    case QQmlComponent::Error:
+        qWarning() << "ERROR Loading QML file" << delegateUrl;
+        for (auto err : m_component->errors()) {
+            qWarning() << err.toString();
+        }
+        break;
+    case QQmlComponent::Ready:
+        createObject();
+        break;
+    case QQmlComponent::Loading:
+        connect(m_component, &QQmlComponent::statusChanged, this, &DelegateLoader::createObject);
+        break;
+    default:
+        break;
+    }
+}
+
+void DelegateLoader::createObject()
+{
+    QQmlContext *context = QQmlEngine::contextForObject(m_view);
+    //This class should be *ALWAYS* created from QML
+    Q_ASSERT(context);
+
+    QObject *guiObject = m_component->beginCreate(context);
+    m_delegate = qobject_cast<AbstractDelegate *>(guiObject);
+    if (m_component->isError()) {
+        qWarning() << "ERROR Loading QML file" << m_delegateUrl;
+        for (auto err : m_component->errors()) {
+            qWarning() << err.toString();
+        }
+        return;
+    }
+
+    if (!m_delegate) {
+        qWarning()<<"ERROR: QML gui" << guiObject << "not a Mycroft.AbstractDelegate instance";
+        guiObject->deleteLater();
+        return;
+    }
+
+    connect(m_delegate, &QObject::destroyed, this, &QObject::deleteLater);
+
+    m_delegate->setSkillId(m_skillId);
+    m_delegate->setQmlUrl(m_delegateUrl);
+    m_delegate->setSkillView(m_view);
+    m_delegate->setSessionData(m_view->sessionDataForSkill(m_skillId));
+    m_component->completeCreate();
+
+    emit delegateCreated();
+
+    if (m_focus) {
+        m_delegate->forceActiveFocus((Qt::FocusReason)AbstractSkillView::ServerEventFocusReason);
+    }
+};
+
+AbstractDelegate *DelegateLoader::delegate()
+{
+    return m_delegate;
+}
+
+void DelegateLoader::setFocus(bool focus)
+{
+    m_focus = focus;
+
+    if (m_delegate && focus) {
+        m_delegate->forceActiveFocus((Qt::FocusReason)AbstractSkillView::ServerEventFocusReason);
+    } else if (m_delegate) {
+        m_delegate->setFocus(false);
+    }
+}
+
+//////////////////////////////////////////
+
 AbstractDelegate::AbstractDelegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
@@ -154,6 +252,7 @@ bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) {
         forceActiveFocus(Qt::MouseFocusReason);
+        MycroftController::instance()->sendRequest(QStringLiteral("mycroft.gui.user.interaction"), QVariantMap());
     }
     return QQuickItem::childMouseEventFilter(item, event);
 }
@@ -161,6 +260,7 @@ bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
 void AbstractDelegate::mousePressEvent(QMouseEvent *event)
 {
     forceActiveFocus(Qt::MouseFocusReason);
+    MycroftController::instance()->sendRequest(QStringLiteral("mycroft.gui.user.interaction"), QVariantMap());
 }
 
 void AbstractDelegate::focusInEvent(QFocusEvent *event)

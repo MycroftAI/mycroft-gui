@@ -16,11 +16,11 @@
  *
  */
 
-import QtQuick 2.4
+import QtQuick 2.10
 import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.4 as Controls
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.7 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 import "private" as Private
@@ -40,19 +40,69 @@ Mycroft.AbstractSkillView {
     property int rightPadding
     property int bottomPadding
 
-    property bool open: false
+    property bool open: true
 
     onOpenChanged: {
-        if (!activeSkillsRepeater.currentDelegate.visible && open) {
-            enterAnimation.restart();
-        } else if (activeSkillsRepeater.currentDelegate.visible && !open) {
-            activeSkillsRepeater.oldDelegate = activeSkillsRepeater.currentDelegate;
-            exitAnimation.restart();
+        if (open) {
+            openAnimation.restart();
+        } else {
+            closeAnimation.restart();
         }
     }
+
+    SequentialAnimation {
+        id: openAnimation
+        ScriptAction {
+            script: {
+                root.visible = true
+            }
+        }
+        ParallelAnimation {
+            NumberAnimation {
+                target: root
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+            YAnimator {
+                target: itemsParent
+                from: root.height / 4
+                to: root.topPadding
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+        }
+    }
+
+    SequentialAnimation {
+        id: closeAnimation
+        ParallelAnimation {
+            OpacityAnimator {
+                target: root
+                from: 1
+                to: 0
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+            YAnimator {
+                target: itemsParent
+                from: root.topPadding
+                to: root.height / 4
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+        }
+        ScriptAction {
+            script: {
+                root.visible = false;
+            }
+        }
+    }
+
     Private.ImageBackground {
         id: background
-        opacity: root.open
         delegatesView: activeSkillsRepeater.currentDelegate ? activeSkillsRepeater.currentDelegate.view : null
         Behavior on opacity {
             OpacityAnimator {
@@ -62,233 +112,157 @@ Mycroft.AbstractSkillView {
         }
     }
 
-    Timer {
-        id: eventCompression
-        interval: 500
-        property Item delegate
-        onTriggered: {
-            activeSkillsRepeater.currentDelegate.visible = true;
-            enterAnimation.restart();
-            exitAnimation.restart();
-            print(enterAnimation.target)
-        }
-    }
+    Item {
+        id: delegatesContainer
+        width: root.width - root.leftPadding - root.rightPadding
+        height: root.height - root.topPadding - root.bottomPadding
+        x: root.leftPadding
+        y: root.topPadding
 
-    SequentialAnimation {
-        id: enterAnimation
-        ScriptAction {
-            script: activeSkillsRepeater.currentDelegate.visible = true;
-        }
-        ParallelAnimation {
-            NumberAnimation {
-                target: activeSkillsRepeater.currentDelegate
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: Kirigami.Units.longDuration
-                easing.type: Easing.InOutQuad
-            }
-            YAnimator {
-                target: activeSkillsRepeater.currentDelegate
-                from: root.height / 4
-                to: root.topPadding
-                duration: Kirigami.Units.longDuration
-                easing.type: Easing.InOutQuad
-            }
-        }
-        ScriptAction {
-            script: {
-                root.open = true;
-            }
-        }
-    }
-    SequentialAnimation {
-        id: exitAnimation
-        OpacityAnimator {
-            target: activeSkillsRepeater.oldDelegate
-            from: 1
-            to: 0
-            duration: Kirigami.Units.longDuration
-            easing.type: Easing.InOutQuad
-        }
-        ScriptAction {
-            script: {
-                activeSkillsRepeater.oldDelegate.visible = false;
-                root.open = activeSkillsRepeater.currentDelegate.visible;
-            }
-        }
-    }
+        Repeater {
+            id: activeSkillsRepeater
+            property Item currentDelegate
+            property Item oldDelegate
+            model: activeSkills
 
-    Repeater {
-        id: activeSkillsRepeater
-        property Item currentDelegate
-        property Item oldDelegate
-        model: activeSkills
+            delegate: Item {
+                id: delegate
+                readonly property bool current: index == 0
+                property alias view: delegatesView
 
-        delegate: Item {
-            id: delegate
-            readonly property bool current: index == 0
-            property alias view: delegatesView
-            width: root.width - root.leftPadding - root.rightPadding
-            height: root.height - root.topPadding - root.bottomPadding
-            x: root.leftPadding
-            y: root.topPadding
-            opacity: 0
-            z: current ? 1 : 0
-            onCurrentChanged: {
-                if (index == 0) {
-                    activeSkillsRepeater.oldDelegate = activeSkillsRepeater.currentDelegate;
-                    activeSkillsRepeater.currentDelegate = delegate;
-                    eventCompression.restart();
+                width: parent.width
+                height: parent.height
+
+                visible: current || opacityAnim.running
+                enabled: current && visible
+                opacity: current
+                z: current ? 1 : 0
+
+                onCurrentChanged: {
+                    if (current) {
+                        activeSkillsRepeater.currentDelegate = delegate;
+                        enterAnim.restart();
+                    }
                 }
-            }
-
-            ListView {
-                id: delegatesView
-                interactive: true
-                clip: true
-                //NOTE: no delegate items should ever be deleted or we will get a crash
-                cacheBuffer: contentWidth * 2
-                anchors.fill: parent
-                orientation: ListView.Horizontal
-                boundsBehavior: Flickable.StopAtBounds
-                snapMode: ListView.SnapOneItem
-                preferredHighlightBegin: 0
-                preferredHighlightEnd: 0
-                highlightMoveDuration: Kirigami.Units.longDuration
-                highlightFollowsCurrentItem: true
-                model: delegates
-                move: Transition {
-                    enabled: root.width > root.switchWidth
-                    XAnimator {
+                Behavior on opacity {
+                    OpacityAnimator {
+                        id: opacityAnim
                         duration: Kirigami.Units.longDuration
                         easing.type: Easing.InOutQuad
                     }
                 }
-                displaced: Transition {
-                    enabled: root.width > root.switchWidth
-                    XAnimator {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-                moveDisplaced: Transition {
-                    enabled: root.width > root.switchWidth
-                    XAnimator {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-                removeDisplaced: Transition {
-                    XAnimator {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-                remove: Transition {
-                    ParallelAnimation {
-                        OpacityAnimator {
-                            from: 1
-                            to: 0
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InQuad
-                        }
-                        YAnimator {
-                            from: 0
-                            to: -delegatesView.height / 3
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InQuad
-                        }
-                    }
+                YAnimator {
+                    id: enterAnim
+                    target: delegate
+                    from: root.height / 4
+                    to: root.topPadding
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InOutQuad
                 }
 
-                onCurrentIndexChanged: {
-                    delegates.currentIndex = currentIndex
-                }
+                Kirigami.ColumnView {
+                    id: delegatesView
+                    interactive: true
+                    clip: true
 
-                onMovementEnded: currentIndex = indexAt(contentX, 0);
-                onFlickEnded: movementEnded()
-                Connections {
-                    target: delegates
+                    columnWidth: Math.max(Math.floor(width / Math.floor(width/(switchWidth / 2))), Math.floor(width / count))
+                    columnResizeMode: width < root.switchWidth ? Kirigami.ColumnView.SingleColumn : Kirigami.ColumnView.FixedColumns
+                    separatorVisible: false
+                    anchors.fill: parent
+
                     onCurrentIndexChanged: {
-                        delegatesView.currentIndex = delegates.currentIndex
+                        delegates.currentIndex = currentIndex
                     }
-                }
-                delegate: Controls.Control {
-                    id: delegate
-                    width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / root.switchWidth)))
-                    height: parent.height
-                    z: delegatesView.currentIndex == index ? 1 : 0
-                    contentItem: model.delegateUi
-                    padding: 0
-                    visible: x + width >= delegatesView.contentX || x >= delegatesView.contentX + delegatesView.width
-                    property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height : 0
+
                     Connections {
-                        target: model.delegateUi
-                        onFocusChanged: {
-                            if (model.delegateUi.focus) {
-                                delegatesView.currentIndex = index;
-                                if (root.width >= root.switchWidth) {
-                                    focusAnim.restart();
+                        target: delegates
+                        onCurrentIndexChanged: {
+                            delegatesView.currentIndex = delegates.currentIndex
+                        }
+                    }
+
+                    Repeater {
+                        model: delegates
+                        delegate: Controls.Control {
+                            id: delegate
+
+                            Kirigami.ColumnView.fillWidth: false
+
+                            width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / root.switchWidth)))
+                            height: parent.height
+                            z: delegatesView.currentIndex == index ? 1 : 0
+                            contentItem: model.delegateUi
+                            padding: 0
+                            visible: x + width >= delegatesView.contentX || x >= delegatesView.contentX + delegatesView.width
+                            property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height : 0
+                            Connections {
+                                target: model.delegateUi
+                                onFocusChanged: {
+                                    if (model.delegateUi.focus) {
+                                        delegatesView.currentIndex = index;
+                                        if (root.width >= root.switchWidth) {
+                                            focusAnim.restart();
+                                        }
+                                    }
+                                }
+                            }
+
+                            SequentialAnimation {
+                                id: focusAnim
+                                NumberAnimation {
+                                    target: model.delegateUi
+                                    property: "scale"
+                                    from: 1
+                                    to: 1.1
+                                    duration: Kirigami.Units.longDuration
+                                    easing.type: Easing.InOutQuad
+                                }
+                                NumberAnimation {
+                                    target: model.delegateUi
+                                    property: "scale"
+                                    from: 1.1
+                                    to: 1
+                                    duration: Kirigami.Units.longDuration
+                                    easing.type: Easing.InOutQuad
+                                }
+                            }
+                            RadialGradient {
+                                anchors {
+                                    left: parent.left
+                                    right: parent.right
+                                    bottom: parent.bottom
+                                }
+                                height: Kirigami.Units.gridUnit
+                                verticalOffset: height/2
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: Kirigami.Theme.highlightColor }
+                                    GradientStop { position: 0.5; color: "transparent" }
+                                }
+                                visible: root.width >= root.switchWidth && delegatesView.count > 1
+                                opacity: delegatesView.currentIndex == index
+                                Behavior on opacity {
+                                    NumberAnimation {
+                                        property: "scale"
+                                        duration: Kirigami.Units.longDuration
+                                        easing.type: Easing.InOutQuad
+                                    }
                                 }
                             }
                         }
                     }
-
-                    SequentialAnimation {
-                        id: focusAnim
-                        NumberAnimation {
-                            target: model.delegateUi
-                            property: "scale"
-                            from: 1
-                            to: 1.1
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                        NumberAnimation {
-                            target: model.delegateUi
-                            property: "scale"
-                            from: 1.1
-                            to: 1
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
-                    RadialGradient {
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                            bottom: parent.bottom
-                        }
-                        height: Kirigami.Units.gridUnit
-                        verticalOffset: height/2
-                        gradient: Gradient {
-                            GradientStop { position: 0.0; color: Kirigami.Theme.highlightColor }
-                            GradientStop { position: 0.5; color: "transparent" }
-                        }
-                        visible: root.width >= root.switchWidth && delegatesView.count > 1
-                        opacity: delegatesView.currentIndex == index
-                        Behavior on opacity {
-                            NumberAnimation {
-                                property: "scale"
-                                duration: Kirigami.Units.longDuration
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-                    }
                 }
-            }
-            Controls.PageIndicator {
-                id: pageIndicator
-                visible: delegatesView.count > 1
-                z: 999
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    bottom: parent.bottom
-                    margins: Kirigami.Units.largeSpacing
+                Controls.PageIndicator {
+                    id: pageIndicator
+                    visible: delegatesView.count > 1
+                    z: 999
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom
+                        margins: Kirigami.Units.largeSpacing
+                    }
+                    count: delegatesView.count
+                    currentIndex: delegatesView.currentIndex
                 }
-                count: delegatesView.count
-                currentIndex: delegatesView.currentIndex
             }
         }
     }

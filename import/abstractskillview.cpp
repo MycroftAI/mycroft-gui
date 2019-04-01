@@ -50,6 +50,10 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
 
     connect(m_guiWebSocket, &QWebSocket::disconnected, this, &AbstractSkillView::closed);
 
+    connect(m_guiWebSocket, &QWebSocket::disconnected, this, [this]() {
+        m_activeSkillsModel->removeRows(0, m_activeSkillsModel->rowCount());
+    });
+
     connect(m_guiWebSocket, &QWebSocket::stateChanged, this,
             [this] (QAbstractSocket::SocketState state) {
                 emit statusChanged();
@@ -458,54 +462,24 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             return;
         }
 
-        QList <AbstractDelegate *> delegates;
+        QList <DelegateLoader *> delegateLoaders;
         for (const auto &urlString : delegateUrls) {
             const QUrl delegateUrl = QUrl::fromUserInput(urlString);
 
             if (!delegateUrl.isValid()) {
                 continue;
             }
+            
+            DelegateLoader *loader = new DelegateLoader(this);
+            loader->init(skillId, delegateUrl);
 
-            QQmlEngine *engine = qmlEngine(this);
-            QQmlContext *context = QQmlEngine::contextForObject(this);
-            //This class should be *ALWAYS* created from QML
-            Q_ASSERT(engine);
-            Q_ASSERT(context);
-
-            QQmlComponent delegateComponent(engine, delegateUrl, this);
-            //TODO: separate context?
-            QObject *guiObject = delegateComponent.beginCreate(context);
-            AbstractDelegate *delegate = qobject_cast<AbstractDelegate *>(guiObject);
-            if (delegateComponent.isError()) {
-                qWarning() << "ERROR Loading QML file" << delegateUrl;
-                for (auto err : delegateComponent.errors()) {
-                    qWarning() << err.toString();
-                }
-                return;
-            }
-
-            if (!delegate) {
-                qWarning()<<"ERROR: QML gui" << guiObject << "not a Mycroft.AbstractDelegate instance";
-                guiObject->deleteLater();
-                context->deleteLater();
-                return;
-            }
-
-            delegate->setSkillId(skillId);
-            delegate->setQmlUrl(delegateUrl);
-            delegate->setSkillView(this);
-            delegate->setSessionData(sessionDataForSkill(skillId));
-            delegateComponent.completeCreate();
-
-            connect(delegate, &QObject::destroyed, this, [this, context] {context->deleteLater();});
-            //TODO: client->server visibility hint setting
-            delegates << delegate;
+            delegateLoaders << loader;
         }
 
-        if (delegates.count() > 0) {
-            delegatesModel->insertDelegates(position, delegates);
+        if (delegateLoaders.count() > 0) {
+            delegatesModel->insertDelegateLoaders(position, delegateLoaders);
             //give the focus to the first
-            delegates.first()->forceActiveFocus((Qt::FocusReason)ServerEventFocusReason);
+            delegateLoaders.first()->setFocus(true);
         }
 
 
@@ -731,15 +705,17 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     // Action triggered from the server
     } else if (type == QLatin1String("mycroft.events.triggered")) {
         const QString skillOrSystem = doc[QStringLiteral("namespace")].toString();
+
         if (skillOrSystem.isEmpty()) {
             qWarning() << "No namespace provided for mycroft.events.triggered";
             return;
         }
+        /*FIXME: do we need to keep this check? we need to also include skills without gui
         // If it's a skill it must exist
         if (skillOrSystem != QLatin1String("system") && !m_activeSkillsModel->skillIndex(skillOrSystem).isValid()) {
             qWarning() << "Invalid skill id passed as namespace for mycroft.events.triggered:" << skillOrSystem;
             return;
-        }
+        }*/
 
         const QString eventName = doc[QStringLiteral("event_name")].toString();
         if (eventName.isEmpty()) {
@@ -771,6 +747,8 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 delegate->forceActiveFocus((Qt::FocusReason)ServerEventFocusReason);
                 emit delegate->event(eventName, data);
             }
+        } else if (eventName == QStringLiteral("mycroft.gui.close.screen")) {
+            emit activeSkillClosed();
         } else {
             for (auto *delegate : delegates) {
                 emit delegate->event(eventName, data);

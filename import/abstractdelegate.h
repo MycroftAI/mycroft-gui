@@ -27,6 +27,31 @@
 
 class MycroftController;
 
+class DelegateLoader : public QObject {
+    Q_OBJECT
+public:
+    DelegateLoader(AbstractSkillView *parent);
+    ~DelegateLoader();
+
+    void init(const QString skillId, const QUrl &url);
+    AbstractDelegate *delegate();
+
+    void setFocus(bool focus);
+
+Q_SIGNALS:
+    void delegateCreated();
+
+private:
+    void createObject();
+
+    QString m_skillId;
+    QUrl m_delegateUrl;
+    bool m_focus = false;
+    QQmlComponent *m_component = nullptr;
+    AbstractSkillView *m_view;
+    QPointer <AbstractDelegate> m_delegate;
+};
+
 class AbstractDelegate: public QQuickItem
 {
     Q_OBJECT

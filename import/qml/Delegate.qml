@@ -34,7 +34,9 @@ Mycroft.AbstractDelegate {
 
     readonly property Item controlBarItem: {
         if (controlBar) {
-            controlBar.createObject(control);
+            return controlBar.createObject(control, {"z": 9999});
+        } else {
+            return null;
         }
     }
 
