@@ -35,7 +35,7 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QStringList arguments;
     for (int a = 0; a < argc; ++a) {
@@ -72,6 +72,8 @@ int main(int argc, char *argv[])
 #else
     QApplication app(argc, argv);
 #endif
+
+    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("mycroft")));
 
     // NOTE: Have to manually implement a --help option because the parser.addHelpOption() would
     //       be triggered at parser.process() time, but it requires the QApplication. But the

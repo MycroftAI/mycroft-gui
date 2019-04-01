@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=mycroft-gui-app
-Icon=kmenuedit
+Icon=mycroft
 Type=Application
 StartupNotify=true
 
