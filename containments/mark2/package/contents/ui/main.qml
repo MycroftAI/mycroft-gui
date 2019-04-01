@@ -30,17 +30,15 @@ import "./panel/contents/ui" as Panel
 
 import Mycroft 1.0 as Mycroft
 
-MouseArea {
+Item {
     id: root
     width: 480
     height: 640
-    drag.filterChildren: true
-drag.target: skillView
+
 //BEGIN properties
     property Item toolBox
     readonly property bool smallScreenMode: Math.min(width, height) < Kirigami.Units.gridUnit * 18
-    property int startMouseY: -1
-    property int startVolume: -1
+
 //END properties
 
 //BEGIN slots
@@ -56,6 +54,23 @@ drag.target: skillView
             Mycroft.MycroftController.start();
         }
     }
+
+    
+//END slots
+
+MouseArea {
+    id: mainParent
+
+    rotation: -90
+    anchors.centerIn: parent
+    width: parent.height
+    height: parent.width
+
+    property int startMouseY: -1
+    property int startVolume: -1
+
+    drag.filterChildren: true
+    drag.target: skillView
 
     onPressed: {
         startVolume = paSinkModel.preferredSink.volume
@@ -75,7 +90,7 @@ drag.target: skillView
     }
     onReleased: root.preventStealing = false;
     onCanceled: root.preventStealing = false;
-//END slots
+    
 
 //BEGIN PulseAudio
     PA.SinkModel {
@@ -101,46 +116,60 @@ drag.target: skillView
     }
 //END VirtualKeyboard
 
-    Image {
-        source: "background.png"
-        fillMode: Image.PreserveAspectFit
-        anchors.fill: parent
-        opacity: !skillView.currentItem
-        Behavior on opacity {
-            OpacityAnimator {
-                duration: Kirigami.Units.longDuration
-                easing.type: Easing.InQuad
+        Image {
+            source: "background.png"
+            fillMode: Image.PreserveAspectFit
+            anchors.fill: parent
+            opacity: !skillView.currentItem
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.InQuad
+                }
             }
         }
-    }
 
-    Panel.SlidingPanel {
-        id: panel
-        z: 999
-        width: root.width
-        dragMargin: Kirigami.Units.gridUnit * 2
-        dim: true
-    }
-    Rectangle {
-        z: 998
-        anchors.fill:parent
-        color: "black"
-        opacity: panel.position * 0.8
-        visible: panel.position > 0
-    }
+        Panel.SlidingPanel {
+            id: panel
+            z: 999
+            width: mainParent.width
+            edge: {
+                switch (mainParent.rotation) {
+                case -90:
+                    return Qt.LeftEdge;
+                case 90:
+                    return Qt.RightEdge;
+                case 180: return Qt.BottomEdge;
+                case 0:
+                default:
+                    return Qt.TopEdge;
+                }
+            }
+            contentItem.rotation: mainParent.rotation
+            dragMargin: Kirigami.Units.gridUnit * 2
+            dim: true
+        }
+        Rectangle {
+            z: 998
+            anchors.fill:parent
+            color: "black"
+            opacity: panel.position * 0.8
+            visible: panel.position > 0
+        }
 
-    Mycroft.SkillView {
-        id: skillView
-        anchors.fill: parent
-        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+        Mycroft.SkillView {
+            id: skillView
+            anchors.fill: parent
+            Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-        bottomPadding: virtualKeyboard.state == "visible" ? virtualKeyboard.height : 0
-    }
+            bottomPadding: virtualKeyboard.state == "visible" ? virtualKeyboard.height : 0
+        }
 
-    Controls.Button {
-        anchors.centerIn: parent
-        text: "start"
-        visible: Mycroft.MycroftController.status == Mycroft.MycroftController.Closed
-        onClicked: Mycroft.MycroftController.start();
+        Controls.Button {
+            anchors.centerIn: parent
+            text: "start"
+            visible: Mycroft.MycroftController.status == Mycroft.MycroftController.Closed
+            onClicked: Mycroft.MycroftController.start();
+        }
     }
 }

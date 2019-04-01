@@ -26,6 +26,7 @@ Loader {
         anchors {
             left: parent.left
             right: parent.right
+            bottom: parent.bottom
             //HACK since the screen real estate is so small, enlarge the keyboard to remove all its internal padding
             margins: -Kirigami.Units.gridUnit
         }
@@ -40,13 +41,13 @@ Loader {
                 state = "hidden";
             }
         }
-        height: Math.min(root.height / 2, Math.max(root.height/3, Kirigami.Units.gridUnit * 15))
+        height: Math.min(parent.height / 2, Math.max(parent.height/3, Kirigami.Units.gridUnit * 15))
         states: [
             State {
                 name: "visible"
                 PropertyChanges {
                     target: inputPanel
-                    y: root.height - inputPanel.height +  Kirigami.Units.gridUnit
+                    y: inputPanel.parent.height - inputPanel.height +  Kirigami.Units.gridUnit
                     opacity: 1
                 }
             },
@@ -54,7 +55,7 @@ Loader {
                 name: "hidden"
                 PropertyChanges {
                     target: inputPanel
-                    y: root.height - root.height/4
+                    y: inputPanel.parent.height - inputPanel.parent.height/4
                     opacity: 0
                 }
             }
