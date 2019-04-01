@@ -1,0 +1,40 @@
+#!/bin/bash
+# automates the messy OpenSSL cross-compilation process
+
+function android-build-openssl()
+{
+        pushd ${HOME}/src > /dev/null
+        if [ ! -d openssl ]; then
+                git clone --branch OpenSSL_1_0_2-stable --depth 1 https://github.com/openssl/openssl.git || return
+        fi
+        cd openssl || return
+        if [ ! -f setenv-android.sh ]; then
+                wget https://wiki.openssl.org/images/7/70/Setenv-android.sh -O setenv-android.sh || return
+                dos2unix setenv-android.sh
+        fi
+        sed -ie 's/_ANDROID_API=.*$/_ANDROID_API="android-21"/' setenv-android.sh
+        case ${ANDROID_ARCH} in
+                x86)
+                        sed -ie 's/_ANDROID_ARCH=.*$/_ANDROID_ARCH="arch-x86"/' setenv-android.sh
+                        sed -ie 's/_ANDROID_EABI=.*$/_ANDROID_EABI="x86-4.9"/' setenv-android.sh
+                ;;
+                armv7)
+                        sed -ie 's/_ANDROID_ARCH=.*$/_ANDROID_ARCH="arch-arm"/' setenv-android.sh
+                        sed -ie 's/_ANDROID_EABI=.*$/_ANDROID_EABI="arm-linux-androideabi-4.9"/' setenv-android.sh
+                ;;
+        esac
+        source setenv-android.sh
+        ./Configure --prefix=/opt/kdeandroid-deps -I${ANDROID_NDK_ROOT}/sysroot/usr/include -I${ANDROID_NDK_ROOT}/sysroot/usr/include/${CROSS_COMPILE::-1}/ shared android-${ANDROID_ARCH}
+        make depend
+        make CALC_VERSIONS="SHLIB_COMPAT=; SHLIB_SOVER=" build_libs || return
+        make -k CALC_VERSIONS="SHLIB_COMPAT=; SHLIB_SOVER=" install_sw
+        cp -v libcrypto.so libssl.so /opt/kdeandroid-deps/lib
+        popd > /dev/null
+}
+
+export ANDROID_ARCH=armv7
+
+android-build-openssl
+
+
+
