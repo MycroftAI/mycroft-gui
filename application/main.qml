@@ -47,8 +47,14 @@ Kirigami.ApplicationWindow {
         panel.width = Qt.binding(function(){return root.width});
 
         // Maximize and auto connect if set
-        if (deviceMaximized)
+        if (deviceMaximized) {
             showMaximized()
+        }
+
+        //FIXME
+        if (qinput.visible) {
+            qinput.forceActiveFocus();
+        }
     }
 
     // Uses Android's voice popup for speech recognition
@@ -183,7 +189,7 @@ Kirigami.ApplicationWindow {
         //Note: a custom control as ToolBar on Android has a funny color
         footer: Control {
             visible: !hideTextInput
-            implicitHeight: contentItem.implicitHeight
+            implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
             contentItem: RowLayout {
                 Item {
                     id: handleAnchor
@@ -191,8 +197,9 @@ Kirigami.ApplicationWindow {
                     Layout.preferredWidth: height
                 }
                 TextField {
-                    Layout.fillWidth: true
                     id: qinput
+                    Layout.fillWidth: true
+
                     onAccepted: {
                         Mycroft.MycroftController.sendText(qinput.text)
                     }
