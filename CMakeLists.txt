@@ -65,6 +65,7 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
 add_definitions(-DQT_NO_URL_CAST_FROM_STRING -DQT_USE_QSTRINGBUILDER -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII)
 
 add_subdirectory(application)
+add_subdirectory(icons)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     add_subdirectory(applets)
