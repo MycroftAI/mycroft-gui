@@ -18,19 +18,11 @@ popd
 
 for i in extra-cmake-modules kconfig kcoreaddons kguiaddons ki18n kirigami; do
 	# we figure out the dependencies
-	arguments=$(python3 ci-tooling/helpers/getsetting.py --project $i --product Frameworks --platform AndroidQt5.11 --key cmake-options)
+	arguments=$(python3 ci-tooling/helpers/getsetting.py --project $i --product Frameworks --platform AndroidQt5.12 --key cmake-options)
 	build-cmake $i kde:$i $arguments -DBUILD_TESTING=OFF -GNinja $EXTRA
 done
 
 export package=mycroft-gui
-
-sudo apt install dos2unix
-$HOME/src/mycroft-gui/build/build-openssl1
-
-wget https://files.xenon.pangea.pub/android/skills.tar.gz -O /tmp/skills.tar.gz
-pushd $HOME/src/mycroft-gui
-tar xvf /tmp/skills.tar.gz
-popd
 
 # first we download the project and look for the manifest file
 manifestFile=`find $(pwd)/src/$package -name AndroidManifest.xml`
@@ -50,7 +42,7 @@ then
     fi
     targetname=`python3 /opt/helpers/target-from-appdata.py $appdataFile | tr '\n' ';' | head -c -1`
 fi
-arguments=$(python3 ci-tooling/helpers/getsetting.py --project $package --product Applications --platform AndroidQt5.11 --key cmake-options)
+arguments=$(python3 ci-tooling/helpers/getsetting.py --project $package --product Applications --platform AndroidQt5.12 --key cmake-options)
 
 build-cmake $package kde:$package -DQTANDROID_EXPORTED_TARGET=$targetname $EXTRA $arguments $@
 pushd build/$package
@@ -66,8 +58,7 @@ fi
 if [ -d /output ]
 then
     sudo chown user /output || true
-    cp *_build_apk/build/outputs/apk/*.apk /output
-    rm -r $HOME/src/mycroft-gui/skills-extra/
+    cp *_build_apk/build/outputs/apk/debug/*.apk /output
 fi
 
 exit 0

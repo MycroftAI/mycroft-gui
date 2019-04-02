@@ -4,6 +4,7 @@ PROJECT(mycroft-gui-app)
 
 SET(mycroft_gui_app_SRC
     main.cpp
+    appsettings.cpp
     speechintent.cpp
 )
 
@@ -25,15 +26,6 @@ endif()
 qt5_add_resources(mycroft_gui_app_SRC
     qml.qrc
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Android")
-    qt5_add_resources(mycroft_gui_app_SRC
-        skills.qrc
-    )
-    qt5_add_resources(mycroft_gui_app_SRC
-        skills-extra.qrc
-    )
-endif()
 
 add_executable(mycroft-gui-app ${mycroft_gui_app_SRC})
 target_link_libraries(mycroft-gui-app Qt5::Core Qt5::Quick Qt5::WebView ${mycroft_gui_app_EXTRA_LIBS})

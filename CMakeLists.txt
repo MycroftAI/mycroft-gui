@@ -17,6 +17,7 @@ find_package(ECM 1.6.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDEInstallDirs)
+include(ECMInstallIcons)
 set(CMAKE_AUTOMOC ON)
 
 #this is used for mycroft spawning. It's horrible and should not be needed, but mycroft packaging is questionable at best
@@ -40,8 +41,6 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     WebView
 )
 
-find_package(LibKWorkspace 5.14.90 CONFIG REQUIRED)
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
     find_package(Qt5QuickControls2 ${QT_MIN_VERSION} REQUIRED)
@@ -56,6 +55,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5Widgets ${QT_MIN_VERSION} REQUIRED)
     find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
     find_package(KF5KIO ${KF5_MIN_VERSION} REQUIRED) # FIXME look for "KIOWidgets" (KRun) explicitly
+    find_package(LibKWorkspace 5.14.90 CONFIG REQUIRED)
 endif()
 
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
@@ -65,6 +65,7 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
 add_definitions(-DQT_NO_URL_CAST_FROM_STRING -DQT_USE_QSTRINGBUILDER -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII)
 
 add_subdirectory(application)
+add_subdirectory(icons)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     add_subdirectory(applets)
@@ -74,13 +75,17 @@ endif()
 install(FILES MycroftMark2.colors
         DESTINATION ${DATA_INSTALL_DIR}/color-schemes/)
 
+add_subdirectory(import)
+
 # SSP: Disabled, now syncing with mycroft-core instance via sync_skills.sh
 #
 # install( DIRECTORY skills DESTINATION ${MYCROFT_CORE_DIR}/skills/ui
 #     PATTERN "*.qmlc" EXCLUDE
 # )
 
-plasma_install_package(lookandfeel org.mycroft.mark2 look-and-feel lookandfeel)
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    plasma_install_package(lookandfeel org.mycroft.mark2 look-and-feel lookandfeel)
+endif()
 
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})

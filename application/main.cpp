@@ -32,21 +32,16 @@
 #endif
 
 #include "speechintent.h"
+#include "appsettings.h"
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QStringList arguments;
     for (int a = 0; a < argc; ++a) {
         arguments << QString::fromLocal8Bit(argv[a]);
     }
-//FIXME: this should just go away on any platform
-#ifndef Q_OS_ANDROID
-    if (!qEnvironmentVariableIsSet("QT_QUICK_CONTROLS_STYLE")) {
-        qputenv("QT_QUICK_CONTROLS_STYLE", "Plasma");
-    }
-#endif
 
     QCommandLineParser parser;
 
@@ -73,6 +68,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 #endif
 
+    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("mycroft")));
+
     // NOTE: Have to manually implement a --help option because the parser.addHelpOption() would
     //       be triggered at parser.process() time, but it requires the QApplication. But the
     //       'dpi' option for the GUI creates a chicken-and-the-egg issue.
@@ -98,14 +95,19 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
     engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
 
+    AppSettings *appSettings = new AppSettings(&view);
+    engine.rootContext()->setContextProperty(QStringLiteral("applicationSettings"), appSettings);
+
     qmlRegisterType<SpeechIntent>("org.kde.private.mycroftgui", 1, 0, "SpeechIntent");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+#ifndef Q_OS_ANDROID
     if (hidemouse) {
         QCursor cursor(Qt::BlankCursor);
         QApplication::setOverrideCursor(cursor);
         QApplication::changeOverrideCursor(cursor);
     }
+#endif
     return app.exec();
 }
