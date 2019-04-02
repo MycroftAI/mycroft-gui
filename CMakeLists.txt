@@ -75,6 +75,8 @@ endif()
 install(FILES MycroftMark2.colors
         DESTINATION ${DATA_INSTALL_DIR}/color-schemes/)
 
+add_subdirectory(import)
+
 # SSP: Disabled, now syncing with mycroft-core instance via sync_skills.sh
 #
 # install( DIRECTORY skills DESTINATION ${MYCROFT_CORE_DIR}/skills/ui
