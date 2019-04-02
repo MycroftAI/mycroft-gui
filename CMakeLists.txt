@@ -81,7 +81,9 @@ install(FILES MycroftMark2.colors
 #     PATTERN "*.qmlc" EXCLUDE
 # )
 
-plasma_install_package(lookandfeel org.mycroft.mark2 look-and-feel lookandfeel)
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    plasma_install_package(lookandfeel org.mycroft.mark2 look-and-feel lookandfeel)
+endif()
 
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})
