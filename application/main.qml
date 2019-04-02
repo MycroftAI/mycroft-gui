@@ -116,6 +116,12 @@ Kirigami.ApplicationWindow {
             }
         ]
         Switch {
+            id: nightSwitch
+            text: "Dark Mode"
+            checked: applicationSettings.darkMode
+            onCheckedChanged: applicationSettings.darkMode = checked
+        }
+        Switch {
             text: "Connect Automatically"
             checked: Mycroft.GlobalSettings.autoConnect
             onCheckedChanged: Mycroft.GlobalSettings.autoConnect = checked
@@ -146,7 +152,7 @@ Kirigami.ApplicationWindow {
             }
         }
         Rectangle {
-            color: "black"
+            color: nightSwitch.checked ? "black" : Kirigami.Theme.backgroundColor
             rotation: globalScreenRotation || 0
             anchors.fill: parent
             Image {
@@ -164,7 +170,7 @@ Kirigami.ApplicationWindow {
 
             Mycroft.SkillView {
                 id: mainView
-                Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
                 anchors.fill: parent
             }
             Button {
@@ -188,6 +194,7 @@ Kirigami.ApplicationWindow {
 
         //Note: a custom control as ToolBar on Android has a funny color
         footer: Control {
+            Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
             visible: !hideTextInput
             implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
             contentItem: RowLayout {

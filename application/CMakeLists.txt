@@ -4,6 +4,7 @@ PROJECT(mycroft-gui-app)
 
 SET(mycroft_gui_app_SRC
     main.cpp
+    appsettings.cpp
     speechintent.cpp
 )
 

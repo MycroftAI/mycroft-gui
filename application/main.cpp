@@ -32,6 +32,7 @@
 #endif
 
 #include "speechintent.h"
+#include "appsettings.h"
 
 int main(int argc, char *argv[])
 {
@@ -93,6 +94,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
     engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
+
+    AppSettings *appSettings = new AppSettings(&view);
+    engine.rootContext()->setContextProperty(QStringLiteral("applicationSettings"), appSettings);
 
     qmlRegisterType<SpeechIntent>("org.kde.private.mycroftgui", 1, 0, "SpeechIntent");
 
