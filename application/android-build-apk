@@ -22,6 +22,8 @@ for i in extra-cmake-modules kconfig kcoreaddons kguiaddons ki18n kirigami; do
 	build-cmake $i kde:$i $arguments -DBUILD_TESTING=OFF -GNinja $EXTRA
 done
 
+/opt/helpers/build-cmake lottie-qml https://github.com/kbroulik/lottie-qml
+
 export package=mycroft-gui
 
 # first we download the project and look for the manifest file
