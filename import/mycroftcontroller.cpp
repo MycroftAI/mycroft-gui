@@ -167,7 +167,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     emit intentRecevied(type, doc[QStringLiteral("data")].toVariant().toMap());
 
 #ifdef Q_OS_ANDROID
-    if (type == "speak") {
+    if (type == QLatin1String("speak")) {
         m_speech->say(doc[QStringLiteral("data")]["utterance"].toString());
     }
 #endif
