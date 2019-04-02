@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
-#ifdef Q_OS_ANDROID
+#ifndef Q_OS_ANDROID
     if (hidemouse) {
         QCursor cursor(Qt::BlankCursor);
         QApplication::setOverrideCursor(cursor);
