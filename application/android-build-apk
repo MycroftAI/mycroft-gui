@@ -58,7 +58,7 @@ fi
 if [ -d /output ]
 then
     sudo chown user /output || true
-    cp *_build_apk/build/outputs/apk/*.apk /output
+    cp *_build_apk/build/outputs/apk/debug/*.apk /output
 fi
 
 exit 0
