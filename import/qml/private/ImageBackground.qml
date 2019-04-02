@@ -27,7 +27,7 @@ Item {
     anchors.fill: parent
 
     property Kirigami.ColumnView delegatesView
-    property string source: delegatesView && delegatesView.currentItem ? delegatesView.currentItem.contentItem.skillBackgroundSource : ""
+    property string source: delegatesView && delegatesView.currentItem && delegatesView.currentItem.contentItem ? delegatesView.currentItem.contentItem.skillBackgroundSource : ""
     property Image currentImage: image1
 
     onSourceChanged: {
@@ -50,7 +50,7 @@ Item {
     Rectangle {
         z: 10
         anchors.fill: parent
-        color: delegatesView && delegatesView.currentItem ? delegatesView.currentItem.contentItem.skillBackgroundColorOverlay : "transparent"
+        color: delegatesView && delegatesView.currentItem && delegatesView.currentItem.contentItem ? delegatesView.currentItem.contentItem.skillBackgroundColorOverlay : "transparent"
     }
     Image {
         id: image1
