@@ -18,7 +18,7 @@ popd
 
 for i in extra-cmake-modules kconfig kcoreaddons kguiaddons ki18n kirigami; do
 	# we figure out the dependencies
-	arguments=$(python3 ci-tooling/helpers/getsetting.py --project $i --product Frameworks --platform AndroidQt5.11 --key cmake-options)
+	arguments=$(python3 ci-tooling/helpers/getsetting.py --project $i --product Frameworks --platform AndroidQt5.12 --key cmake-options)
 	build-cmake $i kde:$i $arguments -DBUILD_TESTING=OFF -GNinja $EXTRA
 done
 
@@ -50,7 +50,7 @@ then
     fi
     targetname=`python3 /opt/helpers/target-from-appdata.py $appdataFile | tr '\n' ';' | head -c -1`
 fi
-arguments=$(python3 ci-tooling/helpers/getsetting.py --project $package --product Applications --platform AndroidQt5.11 --key cmake-options)
+arguments=$(python3 ci-tooling/helpers/getsetting.py --project $package --product Applications --platform AndroidQt5.12 --key cmake-options)
 
 build-cmake $package kde:$package -DQTANDROID_EXPORTED_TARGET=$targetname $EXTRA $arguments $@
 pushd build/$package
