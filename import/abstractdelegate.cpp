@@ -29,7 +29,9 @@ DelegateLoader::DelegateLoader(AbstractSkillView *parent)
 
 DelegateLoader::~DelegateLoader()
 {
-    m_delegate->deleteLater();
+    if (m_delegate) {
+        m_delegate->deleteLater();
+    }
 }
 
 void DelegateLoader::init(const QString skillId, const QUrl &delegateUrl)
