@@ -35,10 +35,10 @@ Mycroft.AbstractSkillView {
     property int switchWidth: Kirigami.Units.gridUnit * 45
     property alias backgroundVisible: background.visible
 
-    property int leftPadding
-    property int topPadding
-    property int rightPadding
-    property int bottomPadding
+    property int leftPadding: 0
+    property int topPadding: 0
+    property int rightPadding: 0
+    property int bottomPadding: 0
 
     property bool open: true
 
