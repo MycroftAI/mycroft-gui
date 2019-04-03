@@ -22,9 +22,11 @@
 #include <QAndroidActivityResultReceiver>
 #endif
 
-static int s_receiverRequestCode = 42;
 
 #ifdef Q_OS_ANDROID
+
+static int s_receiverRequestCode = 42;
+
 class SpeechIntentResultReceiver : public QAndroidActivityResultReceiver
 {
 public:

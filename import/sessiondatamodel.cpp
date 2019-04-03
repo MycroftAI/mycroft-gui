@@ -116,6 +116,7 @@ bool SessionDataModel::moveRows(const QModelIndex &sourceParent, int sourceRow, 
     }
 
     endMoveRows();
+    return true;
 }
 
 bool SessionDataModel::removeRows(int row, int count, const QModelIndex &parent)
@@ -128,6 +129,7 @@ bool SessionDataModel::removeRows(int row, int count, const QModelIndex &parent)
 
     m_data.erase(m_data.begin() + row, m_data.begin() + row + count);
     endRemoveRows();
+    return true;
 }
 
 

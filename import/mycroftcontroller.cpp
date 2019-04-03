@@ -98,7 +98,7 @@ MycroftController::MycroftController(QObject *parent)
 
 void MycroftController::start()
 {
-    auto appSettingObj = new GlobalSettings;
+    //auto appSettingObj = new GlobalSettings;
     QString socket = m_appSettingObj->webSocketAddress() + QStringLiteral(":8181/core");
     m_mainWebSocket.open(QUrl(socket));
     connect(&m_mainWebSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),

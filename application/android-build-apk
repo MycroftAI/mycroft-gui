@@ -46,7 +46,7 @@ then
 fi
 arguments=$(python3 ci-tooling/helpers/getsetting.py --project $package --product Applications --platform AndroidQt5.12 --key cmake-options)
 
-build-cmake $package kde:$package -DQTANDROID_EXPORTED_TARGET=$targetname $EXTRA $arguments $@
+build-cmake $package kde:$package -DCMAKE_BUILD_TYPE=Debug -DQTANDROID_EXPORTED_TARGET=$targetname $EXTRA $arguments $@
 pushd build/$package
 
 if [ -f /keys/${package}keystore-config ]; then

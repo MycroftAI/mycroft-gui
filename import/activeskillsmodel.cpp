@@ -122,6 +122,7 @@ bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow,
     }
 
     endMoveRows();
+    return true;
 }
 
 bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent)
@@ -140,6 +141,7 @@ bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent
     }
     m_skills.erase(m_skills.begin() + row, m_skills.begin() + row + count);
     endRemoveRows();
+    return true;
 }
 
 

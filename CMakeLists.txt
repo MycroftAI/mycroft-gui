@@ -20,6 +20,8 @@ include(KDEInstallDirs)
 include(ECMInstallIcons)
 set(CMAKE_AUTOMOC ON)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
+
 #this is used for mycroft spawning. It's horrible and should not be needed, but mycroft packaging is questionable at best
 #in any sane world mycroft would install something in $PATH
 #the Android case is a temporary hack, adjust it to where and android app can find

@@ -171,7 +171,7 @@ public Q_SLOTS:
      * Trigger an event either for this skill or a system one
      * Is not possible to trigger events belonging to different skills
      */
-    void triggerEvent(const QString &eventName, const QVariantMap &parameters);
+    void triggerGuiEvent(const QString &eventName, const QVariantMap &parameters);
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
@@ -188,7 +188,7 @@ Q_SIGNALS:
      * It is guaranteed the event will be either a system event or an event belonging to our skill, but never to another skill.
      * The Skill writer can access this by implementing the following code on the root element of the delegate:
      * @code
-     *  onEvent: {
+     *  onGuiEvent: {
      *      switch (eventName) {
      *      case "myevent1":
      *       ....
@@ -198,7 +198,7 @@ Q_SIGNALS:
      * @param eventName the unique name for the event
      * @param data the data for this event in JSon form
      */
-    void event(const QString &eventName, const QVariantMap &data);
+    void guiEvent(const QString &eventName, const QVariantMap &data);
 
     //QML property notifiers
     void skillBackgroundSourceChanged();
