@@ -69,14 +69,6 @@ add_definitions(-DQT_NO_URL_CAST_FROM_STRING -DQT_USE_QSTRINGBUILDER -DQT_NO_CAS
 add_subdirectory(application)
 add_subdirectory(icons)
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
-    add_subdirectory(applets)
-    add_subdirectory(containments)
-endif()
-
-install(FILES MycroftMark2.colors
-        DESTINATION ${DATA_INSTALL_DIR}/color-schemes/)
-
 add_subdirectory(import)
 
 # SSP: Disabled, now syncing with mycroft-core instance via sync_skills.sh
@@ -84,10 +76,6 @@ add_subdirectory(import)
 # install( DIRECTORY skills DESTINATION ${MYCROFT_CORE_DIR}/skills/ui
 #     PATTERN "*.qmlc" EXCLUDE
 # )
-
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
-    plasma_install_package(lookandfeel org.mycroft.mark2 look-and-feel lookandfeel)
-endif()
 
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})
