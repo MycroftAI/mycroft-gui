@@ -2,7 +2,7 @@
 set -ex
 cd $HOME
 
-# export PATH=/opt/helpers:$PATH
+export PATH=/opt/helpers:$PATH
 export PATH=/scripts:$PATH
 sudo chown -R user /home/user/src/mycroft-gui || true
 
