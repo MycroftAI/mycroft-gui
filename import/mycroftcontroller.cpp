@@ -103,10 +103,10 @@ void MycroftController::start()
     m_mainWebSocket.open(QUrl(socket));
     connect(&m_mainWebSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             this, [this] (const QAbstractSocket::SocketError &error) {
-        qDebug() << error;
+        //qDebug() << error;
 
         if (error != QAbstractSocket::HostNotFoundError && error != QAbstractSocket::ConnectionRefusedError) {
-            qWarning("Mycroft is running but the connection failed for some reason. Kill Mycroft manually.");
+            qWarning() << "Mycroft is running but the connection failed for some reason. Kill Mycroft manually.";
 
             return;
         }
