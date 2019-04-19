@@ -50,9 +50,10 @@ static QObject *globalSettingsSingletonProvider(QQmlEngine *engine, QJSEngine *s
 
 static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
-    Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
 
+    //singleton managed internally, qml should never delete it
+    engine->setObjectOwnership(MycroftController::instance(), QQmlEngine::CppOwnership);
     return MycroftController::instance();
 }
 
