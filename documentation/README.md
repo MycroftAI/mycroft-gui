@@ -530,8 +530,8 @@ Mycroft.Delegate {
 ```python
 ...
     def handle_foo_intent(self, message):
-        self.gui['foobar']: message.data.get("utterance")
-        self.gui['color']: "blue"
+        self.gui['foobar'] = message.data.get("utterance")
+        self.gui['color'] = "blue"
         self.gui.show_page("foo.qml")
 ...
 ...
