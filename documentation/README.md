@@ -8,7 +8,7 @@ In the age of information visualization is eminently essential to grab attention
 
 #### INTRODUCTION TO MYCROFT-GUI
 
-Mycroft-GUI is an open source visual and display framework for Mycroft running on top of KDE Plasma Technology and built using Kirigami a lightweight user interface framework for convergent applications which are empowered by QT.
+Mycroft-GUI is an open source visual and display framework for Mycroft running on top of KDE Plasma Technology and built using Kirigami a lightweight user interface framework for convergent applications which are empowered by Qt.
 
 #### GETTING STARTED
 
