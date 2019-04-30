@@ -187,8 +187,13 @@ Mycroft.AbstractSkillView {
                         delegate: Controls.Control {
                             id: delegate
 
-                            Kirigami.ColumnView.fillWidth: false
+                            Kirigami.ColumnView.reservedSpace: 0
+                            Kirigami.ColumnView.fillWidth: model.delegateUi ? model.delegateUi.fillWidth : false
 
+                            leftPadding: 0
+                            rightPadding: 0
+                            topPadding: 0
+                            bottomPadding: 0
                             width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / root.switchWidth)))
                             height: parent.height
                             z: delegatesView.currentIndex == index ? 1 : 0

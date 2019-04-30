@@ -63,6 +63,11 @@ class AbstractDelegate: public QQuickItem
     Q_PROPERTY(SessionDataMap *sessionData READ sessionData CONSTANT)
 
     /**
+     * When true the delegate will always take the full screen width. (default false)
+     */
+    Q_PROPERTY(bool fillWidth MEMBER m_fillWidth NOTIFY fillWidthChanged)
+
+    /**
      * The idle time after Mycroft stopped talking  before the delegate wants to return to the resting face expressed in milliseconds.
      * The view may or may not follow this.
      * By default, it's 5 seconsa
@@ -208,6 +213,7 @@ Q_SIGNALS:
     void contentItemAutoWidthChanged();
     void contentItemAutoHeightChanged();
     void timeoutChanged();
+    void fillWidthChanged();
     void leftPaddingChanged();
     void rightPaddingChanged();
     void topPaddingChanged();
@@ -240,6 +246,7 @@ private:
     QString m_backgroundSource;
     QColor m_skillBackgroundColorOverlay = Qt::transparent;
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
+    bool m_fillWidth = false;
 
     /**
      * Padding adds a space between each edge of the content item and the background item, effectively controlling the size of the content item.
