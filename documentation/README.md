@@ -482,6 +482,37 @@ Mycroft.Delegate {
 }
 ```
 
+##### Using AudioPlayer Component To Play Audio Files / Audio Streaming
+
+AudioPlayer component is a custom wrapper around Qt Multimedia MediaPlayer, that gives the Skill Authors a basic responsive design audio player they can plug into their skills.
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.Delegate {
+    id: root
+    skillBackgroundSource: sessionData.audioThumbnail
+    
+    Mycroft.AudioPlayer {
+        id: examplePlayer
+        anchors.fill: parent
+        source: sessionData.audioSource        //Set URL of audio file
+        thumbnail: sessionData.audioThumbnail  //Set Thumbnail of audio
+        title: sessionData.audioTitle          //Set Title of audio 
+        nextAction: "author.example-player.next" //Event to drive next button action in skill
+        previousAction: "author.example-player.previous" //Event to drive previous button action in skill
+        status: sessionData.status             //Current status of playing audio
+    }
+}
+
+```
+
 ##### Event Handling
 
 Mycroft GUI API provides an Event Handling Protocol between the skill and QML display which allow Skill Authors to forward events in either direction to an event consumer. Skill Authors have the ability to create any amount of custom events. Event names that start with "system." are available to all skills, like previous/next/pick.
@@ -517,7 +548,7 @@ Mycroft.Delegate {
         anchors.fill: parent
         text: "Click Me"
         onClicked: {
-            triggerEvent("skill.foo.event", {"string": "Lorem ipsum dolor sit amet"})
+            triggerGuiEvent("skill.foo.event", {"string": "Lorem ipsum dolor sit amet"})
         }
     }
 }
