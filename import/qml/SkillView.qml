@@ -141,6 +141,7 @@ Mycroft.AbstractSkillView {
                 onCurrentChanged: {
                     if (current) {
                         activeSkillsRepeater.currentDelegate = delegate;
+                        root.open = true;
                         enterAnim.restart();
                     }
                 }
