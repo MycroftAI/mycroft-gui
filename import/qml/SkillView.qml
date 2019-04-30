@@ -244,7 +244,7 @@ Mycroft.AbstractSkillView {
                                     GradientStop { position: 0.0; color: Kirigami.Theme.highlightColor }
                                     GradientStop { position: 0.5; color: "transparent" }
                                 }
-                                visible: root.width >= root.switchWidth && delegatesView.count > 1
+                                visible: root.width >= root.switchWidth && delegatesView.count > 1 && (model.delegateUi && !model.delegateUi.fillWidth)
                                 opacity: delegatesView.currentIndex == index
                                 Behavior on opacity {
                                     NumberAnimation {
