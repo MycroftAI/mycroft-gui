@@ -29,7 +29,9 @@ DelegateLoader::DelegateLoader(AbstractSkillView *parent)
 
 DelegateLoader::~DelegateLoader()
 {
-    m_delegate->deleteLater();
+    if (m_delegate) {
+        m_delegate->deleteLater();
+    }
 }
 
 void DelegateLoader::init(const QString skillId, const QUrl &delegateUrl)
@@ -131,7 +133,7 @@ AbstractDelegate::~AbstractDelegate()
 {
 }
 
-void AbstractDelegate::triggerEvent(const QString &eventName, const QVariantMap &parameters)
+void AbstractDelegate::triggerGuiEvent(const QString &eventName, const QVariantMap &parameters)
 {
     if (!m_skillView) {
         qWarning() << "No SkillView, this should never happen: orphan delegate?";
@@ -175,7 +177,7 @@ void AbstractDelegate::contentData_append(QQmlListProperty<QObject> *prop, QObje
         return;
     }
 
-    QQuickItem *item = qobject_cast<QQuickItem *>(object);
+//    QQuickItem *item = qobject_cast<QQuickItem *>(object);
     delegate->m_contentData.append(object);
 }
 
@@ -282,7 +284,7 @@ void AbstractDelegate::focusInEvent(QFocusEvent *event)
 
     int index = context->contextProperty(QStringLiteral("index")).toInt();
     if (index >= 0) {
-        triggerEvent(QStringLiteral("page_gained_focus"), QVariantMap({{QStringLiteral("number"), index}}));
+        triggerGuiEvent(QStringLiteral("page_gained_focus"), QVariantMap({{QStringLiteral("number"), index}}));
     }
 }
 

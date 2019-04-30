@@ -98,15 +98,15 @@ MycroftController::MycroftController(QObject *parent)
 
 void MycroftController::start()
 {
-    auto appSettingObj = new GlobalSettings;
+    //auto appSettingObj = new GlobalSettings;
     QString socket = m_appSettingObj->webSocketAddress() + QStringLiteral(":8181/core");
     m_mainWebSocket.open(QUrl(socket));
     connect(&m_mainWebSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             this, [this] (const QAbstractSocket::SocketError &error) {
-        qDebug() << error;
+        //qDebug() << error;
 
         if (error != QAbstractSocket::HostNotFoundError && error != QAbstractSocket::ConnectionRefusedError) {
-            qWarning("Mycroft is running but the connection failed for some reason. Kill Mycroft manually.");
+            qWarning() << "Mycroft is running but the connection failed for some reason. Kill Mycroft manually.";
 
             return;
         }

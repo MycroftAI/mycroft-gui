@@ -63,6 +63,11 @@ class AbstractDelegate: public QQuickItem
     Q_PROPERTY(SessionDataMap *sessionData READ sessionData CONSTANT)
 
     /**
+     * When true the delegate will always take the full screen width. (default false)
+     */
+    Q_PROPERTY(bool fillWidth MEMBER m_fillWidth NOTIFY fillWidthChanged)
+
+    /**
      * The idle time after Mycroft stopped talking  before the delegate wants to return to the resting face expressed in milliseconds.
      * The view may or may not follow this.
      * By default, it's 5 seconsa
@@ -171,7 +176,7 @@ public Q_SLOTS:
      * Trigger an event either for this skill or a system one
      * Is not possible to trigger events belonging to different skills
      */
-    void triggerEvent(const QString &eventName, const QVariantMap &parameters);
+    void triggerGuiEvent(const QString &eventName, const QVariantMap &parameters);
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
@@ -188,7 +193,7 @@ Q_SIGNALS:
      * It is guaranteed the event will be either a system event or an event belonging to our skill, but never to another skill.
      * The Skill writer can access this by implementing the following code on the root element of the delegate:
      * @code
-     *  onEvent: {
+     *  onGuiEvent: {
      *      switch (eventName) {
      *      case "myevent1":
      *       ....
@@ -198,7 +203,7 @@ Q_SIGNALS:
      * @param eventName the unique name for the event
      * @param data the data for this event in JSon form
      */
-    void event(const QString &eventName, const QVariantMap &data);
+    void guiEvent(const QString &eventName, const QVariantMap &data);
 
     //QML property notifiers
     void skillBackgroundSourceChanged();
@@ -208,6 +213,7 @@ Q_SIGNALS:
     void contentItemAutoWidthChanged();
     void contentItemAutoHeightChanged();
     void timeoutChanged();
+    void fillWidthChanged();
     void leftPaddingChanged();
     void rightPaddingChanged();
     void topPaddingChanged();
@@ -240,6 +246,7 @@ private:
     QString m_backgroundSource;
     QColor m_skillBackgroundColorOverlay = Qt::transparent;
     int m_timeout = 5000; //Completely arbitrary 5 seconds of timeout
+    bool m_fillWidth = false;
 
     /**
      * Padding adds a space between each edge of the content item and the background item, effectively controlling the size of the content item.

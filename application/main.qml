@@ -207,6 +207,7 @@ Kirigami.ApplicationWindow {
                     id: qinput
                     Layout.fillWidth: true
 
+                    placeholderText: "Ask Mycroft..."
                     onAccepted: {
                         Mycroft.MycroftController.sendText(qinput.text)
                     }

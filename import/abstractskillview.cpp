@@ -34,8 +34,8 @@
 
 AbstractSkillView::AbstractSkillView(QQuickItem *parent)
     : QQuickItem(parent),
-      m_controller(MycroftController::instance()),
-      m_id(QUuid::createUuid().toString())
+      m_id(QUuid::createUuid().toString()),
+      m_controller(MycroftController::instance())
 {
     m_activeSkillsModel = new ActiveSkillsModel(this);
 
@@ -353,6 +353,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             qWarning() << "No property provided in mycroft.session.delete";
             return;
         }
+
         SessionDataMap *map = sessionDataForSkill(skillId);
         SessionDataModel *dm = map->value(property).value<SessionDataModel *>();
         map->clearAndNotify(property);
@@ -430,6 +431,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             qWarning() << "Error: Invalid items_number in mycroft.session.list.move of mycroft.system.active_skills";
             return;
         }
+
         m_activeSkillsModel->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
 //END ACTIVESKILLS
 
@@ -442,6 +444,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             qWarning() << "No skill_id provided in mycroft.gui.list.insert";
             return;
         }
+
         const int position = doc[QStringLiteral("position")].toInt();
 
         DelegatesModel *delegatesModel = m_activeSkillsModel->delegatesModelForSkill(skillId);
@@ -745,13 +748,13 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             if (pos >= 0 && pos < delegates.count()) {
                 AbstractDelegate *delegate = delegates[pos];
                 delegate->forceActiveFocus((Qt::FocusReason)ServerEventFocusReason);
-                emit delegate->event(eventName, data);
+                emit delegate->guiEvent(eventName, data);
             }
         } else if (eventName == QStringLiteral("mycroft.gui.close.screen")) {
             emit activeSkillClosed();
         } else {
             for (auto *delegate : delegates) {
-                emit delegate->event(eventName, data);
+                emit delegate->guiEvent(eventName, data);
             }
         }
     } else {

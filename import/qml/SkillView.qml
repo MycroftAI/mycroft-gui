@@ -35,10 +35,10 @@ Mycroft.AbstractSkillView {
     property int switchWidth: Kirigami.Units.gridUnit * 45
     property alias backgroundVisible: background.visible
 
-    property int leftPadding
-    property int topPadding
-    property int rightPadding
-    property int bottomPadding
+    property int leftPadding: 0
+    property int topPadding: 0
+    property int rightPadding: 0
+    property int bottomPadding: 0
 
     property bool open: true
 
@@ -141,6 +141,7 @@ Mycroft.AbstractSkillView {
                 onCurrentChanged: {
                     if (current) {
                         activeSkillsRepeater.currentDelegate = delegate;
+                        root.open = true;
                         enterAnim.restart();
                     }
                 }
@@ -186,8 +187,13 @@ Mycroft.AbstractSkillView {
                         delegate: Controls.Control {
                             id: delegate
 
-                            Kirigami.ColumnView.fillWidth: false
+                            Kirigami.ColumnView.reservedSpace: 0
+                            Kirigami.ColumnView.fillWidth: model.delegateUi ? model.delegateUi.fillWidth : false
 
+                            leftPadding: 0
+                            rightPadding: 0
+                            topPadding: 0
+                            bottomPadding: 0
                             width: Math.max(0, delegatesView.width /  Math.min(delegatesView.count, Math.ceil(delegatesView.width / root.switchWidth)))
                             height: parent.height
                             z: delegatesView.currentIndex == index ? 1 : 0
@@ -238,7 +244,7 @@ Mycroft.AbstractSkillView {
                                     GradientStop { position: 0.0; color: Kirigami.Theme.highlightColor }
                                     GradientStop { position: 0.5; color: "transparent" }
                                 }
-                                visible: root.width >= root.switchWidth && delegatesView.count > 1
+                                visible: root.width >= root.switchWidth && delegatesView.count > 1 && (model.delegateUi && !model.delegateUi.fillWidth)
                                 opacity: delegatesView.currentIndex == index
                                 Behavior on opacity {
                                     NumberAnimation {

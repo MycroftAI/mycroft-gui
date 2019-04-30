@@ -131,6 +131,7 @@ bool DelegatesModel::moveRows(const QModelIndex &sourceParent, int sourceRow, in
     }
 
     endMoveRows();
+    return true;
 }
 
 bool DelegatesModel::removeRows(int row, int count, const QModelIndex &parent)
@@ -146,6 +147,7 @@ bool DelegatesModel::removeRows(int row, int count, const QModelIndex &parent)
     m_delegateLoaders.erase(m_delegateLoaders.begin() + row, m_delegateLoaders.begin() + row + count);
 
     endRemoveRows();
+    return true;
 }
 
 
