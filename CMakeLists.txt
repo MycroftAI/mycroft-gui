@@ -57,7 +57,6 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5Widgets ${QT_MIN_VERSION} REQUIRED)
     find_package(KF5Plasma ${KF5_MIN_VERSION} REQUIRED)
     find_package(KF5KIO ${KF5_MIN_VERSION} REQUIRED) # FIXME look for "KIOWidgets" (KRun) explicitly
-    find_package(LibKWorkspace 5.14.90 CONFIG REQUIRED)
 endif()
 
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0)
