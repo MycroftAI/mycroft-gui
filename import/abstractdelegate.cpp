@@ -254,7 +254,7 @@ bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) {
         forceActiveFocus(Qt::MouseFocusReason);
-        MycroftController::instance()->sendRequest(QStringLiteral("mycroft.gui.user.interaction"), QVariantMap());
+        triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap());
     }
     return QQuickItem::childMouseEventFilter(item, event);
 }
@@ -262,7 +262,7 @@ bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
 void AbstractDelegate::mousePressEvent(QMouseEvent *event)
 {
     forceActiveFocus(Qt::MouseFocusReason);
-    MycroftController::instance()->sendRequest(QStringLiteral("mycroft.gui.user.interaction"), QVariantMap());
+    triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap());
 }
 
 void AbstractDelegate::focusInEvent(QFocusEvent *event)
