@@ -87,11 +87,20 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
                 }
             });
 
-    //Reconnect timer
+    // Reconnect timer
     m_reconnectTimer.setInterval(1000);
     connect(&m_reconnectTimer, &QTimer::timeout, this, [this]() {
         m_guiWebSocket->close();
         m_guiWebSocket->open(m_url);
+    });
+
+    // Trim components cache timer
+    m_trimComponentsTimer.setInterval(50);
+    connect(&m_trimComponentsTimer, &QTimer::timeout, this, [this]() {
+        QQmlEngine *engine = qmlEngine(this);
+        if (engine) {
+            engine->trimComponentCache();
+        }
     });
 }
 
@@ -472,9 +481,10 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             if (!delegateUrl.isValid()) {
                 continue;
             }
-            
+
             DelegateLoader *loader = new DelegateLoader(this);
             loader->init(skillId, delegateUrl);
+            connect(loader, &QObject::destroyed, &m_trimComponentsTimer, QOverload<>::of(&QTimer::start));
 
             delegateLoaders << loader;
         }

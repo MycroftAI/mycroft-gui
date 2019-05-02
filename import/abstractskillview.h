@@ -92,6 +92,7 @@ private:
     void onGuiSocketMessageReceived(const QString &message);
 
     QTimer m_reconnectTimer;
+    QTimer m_trimComponentsTimer;
     QString m_id;
     QUrl m_url;
     QHash<QString, SessionDataMap*> m_skillData;
