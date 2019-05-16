@@ -27,7 +27,7 @@ Mycroft.Delegate {
                 text: "blue"
                 
                 onClicked: {
-                    triggerEvent("skillExample.colorChange", {"color": "#0000ff"})
+                    triggerGuiEvent("skillExample.colorChange", {"color": "#0000ff"})
                 }
             }
             Button {
@@ -37,7 +37,7 @@ Mycroft.Delegate {
                 text: "red"
                 
                 onClicked: {
-                    triggerEvent("skillExample.colorChange", {"color": "#ff0000"})
+                    triggerGuiEvent("skillExample.colorChange", {"color": "#ff0000"})
                 }
             }
             Button {
@@ -47,7 +47,7 @@ Mycroft.Delegate {
                 text: "black"
                 
                 onClicked: {
-                    triggerEvent("skillExample.colorChange", {"color": "#000000"})
+                    triggerGuiEvent("skillExample.colorChange", {"color": "#000000"})
                 }
             }
         }
