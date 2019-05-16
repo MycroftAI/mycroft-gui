@@ -128,6 +128,10 @@ void MycroftController::disconnectSocket()
     qDebug() << "in reconnect";
     m_mainWebSocket.close();
     m_reconnectTimer.stop();
+    if (m_mycroftLaunched) {
+        QProcess::startDetached(QStringLiteral("mycroft-gui-core-stop"));
+        m_mycroftLaunched = false;
+    }
     emit socketStatusChanged();
 }
 
