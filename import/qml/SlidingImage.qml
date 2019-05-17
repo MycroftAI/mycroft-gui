@@ -53,10 +53,10 @@ Item {
     property real speed: 1
 
     clip: true
-    Component.onCompleted: image.updateAnims()
-    onWidthChanged: image.updateAnims()
-    onHeightChanged: image.updateAnims()
-    onRunningChanged: image.updateAnims()
+    Component.onCompleted: image.updateAnimsTimer.restart()
+    onWidthChanged: image.updateAnimsTimer.restart()
+    onHeightChanged: image.updateAnimsTimer.restart()
+    onRunningChanged: image.updateAnimsTimer.restart()
 
     Image {
         id: image
@@ -65,8 +65,8 @@ Item {
         readonly property bool horizontal: sourceSize.width / sourceSize.height > root.width / root.height
         //Transforms the speed into duration
         readonly property real duration: horizontal
-            ? ((image.width - root.width) / (root.speed * Kirigami.Units.gridUnit)) * 1000
-            : ((image.height - root.height) / (root.speed * Kirigami.Units.gridUnit)) * 1000
+            ? ((image.width - root.width) / (root.speed * Kirigami.Units.gridUnit)) * (1000 / Kirigami.Units.gridUnit)
+            : ((image.height - root.height) / (root.speed * Kirigami.Units.gridUnit)) * (1000 / Kirigami.Units.gridUnit)
 
         width: horizontal
             ? root.height * (sourceSize.width / sourceSize.height)
@@ -74,29 +74,38 @@ Item {
         height: horizontal
             ? root.height
             : root.width * (sourceSize.height / sourceSize.width)
-        onWidthChanged: updateAnims()
-        onHeightChanged: updateAnims()
+        onWidthChanged: updateAnimsTimer.restart()
+        onHeightChanged: updateAnimsTimer.restart()
+        onSourceSizeChanged: updateAnimsTimer.restart()
 
-        function updateAnims() {
-            xAnim.running = false;
-            yAnim.running = false;
-            if (!root.running) {
-                return;
+        Timer {
+            id: updateAnimsTimer
+            interval: 100
+            onTriggered: {
+                xAnim.running = false;
+                yAnim.running = false;
+                if (!root.running) {
+                    return;
+                }
+
+                xAnim.running = image.width > root.width;
+                yAnim.running = image.height > root.height;
             }
-            xAnim.running = image.width > root.width;
-            yAnim.running = image.height > root.height;
         }
     }
 
     SequentialAnimation {
         id: xAnim
         loops: Animation.Infinite
-        XAnimator {
+        XAnimator {id: bah
             target: image
             from: 0
             to: root.width - image.width
             duration: image.duration
             easing.type: Easing.InOutQuad
+        }
+        PauseAnimation {
+            duration: 500
         }
         XAnimator {
             target: image
@@ -104,6 +113,9 @@ Item {
             to: 0
             duration: image.duration
             easing.type: Easing.InOutQuad
+        }
+        PauseAnimation {
+            duration: 500
         }
     }
 
@@ -117,12 +129,18 @@ Item {
             duration: image.duration
             easing.type: Easing.InOutQuad
         }
+        PauseAnimation {
+            duration: 500
+        }
         YAnimator {
             target: image
             from: root.height - image.height
             to: 0
             duration: image.duration
             easing.type: Easing.InOutQuad
+        }
+        PauseAnimation {
+            duration: 500
         }
     }
 }
