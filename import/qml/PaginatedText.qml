@@ -35,7 +35,7 @@ Flickable {
      * columns: int
      * How many colums the text has been paginated into
      */
-    readonly property int columns: label.columns + 1
+    readonly property int columns: label.internalColumns
 
     /**
      * currentIndex: int
@@ -67,7 +67,7 @@ Flickable {
 
 
 
-    contentWidth: label.columnWidth * (label.columns + 1)
+    contentWidth: label.columnWidth * (label.internalColumns)
     contentHeight: height
 
     onWidthChanged: label.relayout()
@@ -94,7 +94,7 @@ Flickable {
         // All the properties in label rather than on root item are for internal use 
         // only and should never be accessed by the QML code external of this component
         readonly property int columnWidth: root.width
-        property int columns: 1
+        property int internalColumns: 1
         property real lastLineY: 0
         property real lastLineHeight: 0
 
@@ -110,7 +110,7 @@ Flickable {
         }
 
         function relayout() {
-            columns = 0;
+            label.internalColumns = 1;
             lastLineY = 0;
             lastLineHeight = 0;
             forceLayout();
@@ -119,20 +119,24 @@ Flickable {
         wrapMode: Text.WordWrap
 
         onLineLaidOut: {
+            if ( width <= 0 || height <= 0) {
+                return;
+            }
             if (line.y == 0) {
-                columns = 0;
+                label.internalColumns = 1;
                 lastLineY = 0;
                 lastLineHeight = 0;
             }
 
             if (lastLineY + lastLineHeight + line.height > height) {
-                ++columns;
+                ++label.internalColumns;
                 line.y = 0;
             } else {
                 line.y = lastLineY + lastLineHeight;
             }
 
-            line.x = columnWidth * columns + root.leftPadding;
+            line.x = columnWidth * (label.internalColumns - 1) + root.leftPadding;
+
             lastLineY = line.y;
             lastLineHeight = line.height;
         }
