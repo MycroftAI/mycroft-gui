@@ -79,6 +79,9 @@ add_subdirectory(import)
 configure_file(data/mycroft-gui-core-loader.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-loader DESTINATION ${KDE_INSTALL_BINDIR})
 
+configure_file(data/mycroft-gui-core-stop.in ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-stop)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mycroft-gui-core-stop DESTINATION ${KDE_INSTALL_BINDIR})
+
 if (BUILD_TESTING)
     add_subdirectory(autotests)
 endif()
