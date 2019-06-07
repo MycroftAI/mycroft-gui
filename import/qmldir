@@ -14,6 +14,7 @@ SkillView 1.0 SkillView.qml
 SlidingImage 1.0 SlidingImage.qml
 SlideShow 1.0 SlideShow.qml
 AudioPlayer 1.0 AudioPlayer.qml
+VideoPlayer 1.0 VideoPlayer.qml
 
 designersupported
 depends QtQuick.Controls 2.0
