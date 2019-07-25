@@ -116,6 +116,12 @@ Kirigami.ApplicationWindow {
             }
         ]
         Switch {
+            id: remoteSTTSwitch
+            text: "Remote STT"
+            checked: applicationSettings.remoteSTT
+            onCheckedChanged: applicationSettings.remoteSTT = checked
+        }
+        Switch {
             id: nightSwitch
             text: "Dark Mode"
             checked: applicationSettings.darkMode
@@ -164,6 +170,27 @@ Kirigami.ApplicationWindow {
                     OpacityAnimator {
                         duration: Kirigami.Units.longDuration
                         easing.type: Easing.InQuad
+                    }
+                }
+            }
+            
+            Popup {
+                id: audioRecorder
+                width: 300
+                height: 125
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                x: (root.width - width) / 2
+                y: (root.height - height) / 2
+                
+                RemoteStt {
+                    id: remoteSttInstance
+                }
+                
+                onOpenedChanged: {
+                    if(audioRecorder.opened){
+                        remoteSttInstance.record = true;
+                    } else {
+                        remoteSttInstance.record = false;
                     }
                 }
             }
@@ -224,8 +251,14 @@ Kirigami.ApplicationWindow {
                 }
                 Button {
                     text: "Speak" // TODO generic microphone icon
-                    onClicked: speechIntent.start()
-                    visible: speechIntent.supported
+                    onClicked:  {
+                        if(applicationSettings.remoteSTT){
+                            audioRecorder.open()  
+                        } else { 
+                            speechIntent.start() 
+                        }
+                    }
+                    visible: speechIntent.supported || applicationSettings.remoteSTT
                 }
             }
             background: Rectangle {

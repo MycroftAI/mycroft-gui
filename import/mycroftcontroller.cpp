@@ -254,6 +254,22 @@ void MycroftController::sendRequest(const QString &type, const QVariantMap &data
     m_mainWebSocket.sendTextMessage(QString::fromUtf8(doc.toJson()));
 }
 
+void MycroftController::sendBinary(const QString &type, const QJsonObject &data) 
+{
+    if (m_mainWebSocket.state() != QAbstractSocket::ConnectedState) {
+        qWarning() << "mycroft connection not open!";
+        return;
+    }
+    QJsonObject socketObject;
+    socketObject[QStringLiteral("type")] = type;
+    socketObject[QStringLiteral("data")] = data;
+
+    QJsonDocument doc;
+    doc.setObject(socketObject);
+    QByteArray docbin = doc.toJson(QJsonDocument::Compact);
+    m_mainWebSocket.sendBinaryMessage(docbin);
+}
+
 void MycroftController::sendText(const QString &message)
 {
     sendRequest(QStringLiteral("recognizer_loop:utterance"), QVariantMap({{QStringLiteral("utterances"), QStringList({message})}}));

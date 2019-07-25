@@ -13,6 +13,7 @@ set(mycroftimport_SRCS
     sessiondatamodel.cpp
     globalsettings.cpp
     filereader.cpp
+    audiorec.cpp
     )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -28,6 +29,7 @@ endif()
 target_link_libraries(mycroftplugin
         PUBLIC
             Qt5::Core
+            Qt5::Multimedia
             ${mycroftplugin_EXTRA_LIBS}
         PRIVATE
             Qt5::Qml

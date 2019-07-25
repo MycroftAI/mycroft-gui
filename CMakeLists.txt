@@ -41,6 +41,7 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Network
     WebSockets
     WebView
+    Multimedia
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
