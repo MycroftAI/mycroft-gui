@@ -22,8 +22,13 @@
 #include <QWebSocket>
 #include <QPointer>
 #include <QQuickItem>
+#include "controllerconfig.h"
 
 #ifdef Q_OS_ANDROID
+#include <QTextToSpeech>
+#endif
+
+#ifdef BUILD_LOCAL_TTS
 #include <QTextToSpeech>
 #endif
 
@@ -109,6 +114,10 @@ private:
     QHash<QString, QQmlPropertyMap*> m_skillData;
 
 #ifdef Q_OS_ANDROID
+    QTextToSpeech *m_speech;
+#endif
+    
+#ifdef BUILD_LOCAL_TTS
     QTextToSpeech *m_speech;
 #endif
 

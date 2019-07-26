@@ -15,12 +15,19 @@ set(mycroftimport_SRCS
     filereader.cpp
     audiorec.cpp
     )
-
+    
+configure_file(controllerconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/controllerconfig.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set(mycroftplugin_EXTRA_LIBS
+        Qt5::TextToSpeech
+    )
+endif()
+
+if (BUILD_LOCAL_TTS)
     set(mycroftplugin_EXTRA_LIBS
         Qt5::TextToSpeech
     )

@@ -21,6 +21,7 @@
 #include "abstractdelegate.h"
 #include "activeskillsmodel.h"
 #include "abstractskillview.h"
+#include "controllerconfig.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -91,6 +92,10 @@ MycroftController::MycroftController(QObject *parent)
     });
 
 #ifdef Q_OS_ANDROID
+    m_speech = new QTextToSpeech(this);
+#endif
+
+#ifdef BUILD_LOCAL_TTS
     m_speech = new QTextToSpeech(this);
 #endif
 }
@@ -173,6 +178,17 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
 #ifdef Q_OS_ANDROID
     if (type == QLatin1String("speak")) {
         m_speech->say(doc[QStringLiteral("data")][QStringLiteral("utterance")].toString());
+    }
+#endif
+
+#ifdef BUILD_LOCAL_TTS
+    if (type == QLatin1String("speak")) {
+        m_speech->setLocale(QLocale(QLocale::English, QLocale::LatinScript, QLocale::UnitedKingdom));
+        const QVector<QVoice> voices = m_speech->availableVoices();
+        m_speech->setRate(-0.1);
+        m_speech->setPitch(-0.2);
+        m_speech->setVoice(voices.at(4));
+        m_speech->say(doc[QStringLiteral("data")][QStringLiteral("utterance")].toString()); 
     }
 #endif
 
