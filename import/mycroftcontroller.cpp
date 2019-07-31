@@ -21,7 +21,6 @@
 #include "abstractdelegate.h"
 #include "activeskillsmodel.h"
 #include "abstractskillview.h"
-#include "controllerconfig.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -34,6 +33,7 @@
 #include <QQmlContext>
 #include <QUuid>
 #include <QWebSocket>
+#include <QMediaPlayer>
 
 
 MycroftController *MycroftController::instance()
@@ -95,9 +95,6 @@ MycroftController::MycroftController(QObject *parent)
     m_speech = new QTextToSpeech(this);
 #endif
 
-#ifdef BUILD_LOCAL_TTS
-    m_speech = new QTextToSpeech(this);
-#endif
 }
 
 
@@ -181,16 +178,23 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     }
 #endif
 
-#ifdef BUILD_LOCAL_TTS
-    if (type == QLatin1String("speak")) {
-        m_speech->setLocale(QLocale(QLocale::English, QLocale::LatinScript, QLocale::UnitedKingdom));
-        const QVector<QVoice> voices = m_speech->availableVoices();
-        m_speech->setRate(-0.1);
-        m_speech->setPitch(-0.2);
-        m_speech->setVoice(voices.at(4));
-        m_speech->say(doc[QStringLiteral("data")][QStringLiteral("utterance")].toString()); 
+    if (type == QLatin1String("remote.tts.audio") && m_appSettingObj->remoteTts()) {
+        QString aud = doc[QStringLiteral("data")][QStringLiteral("wave")].toString();
+        auto innerdoc = QJsonDocument::fromJson(aud.toUtf8());
+        QJsonValue qjv = innerdoc[QStringLiteral("py/b64")];
+        QString aud_values = qjv.toString();
+        QByteArray audioopt;
+        audioopt.append(qUtf8Printable(aud_values));
+        QByteArray aud_array = QByteArray::fromBase64(audioopt, QByteArray::Base64UrlEncoding);
+        QByteArray ret_aud = QByteArray::fromBase64(aud_array);
+        QFile file(QStringLiteral("/tmp/incoming.wav"));
+        file.open(QIODevice::WriteOnly);
+        file.write(ret_aud);
+        file.close();
+        QMediaPlayer *player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(QStringLiteral("/tmp/incoming.wav")));
+        player->play();
     }
-#endif
 
     if (type == QLatin1String("intent_failure")) {
         m_isListening = false;

@@ -122,6 +122,11 @@ Kirigami.ApplicationWindow {
             onCheckedChanged: applicationSettings.remoteSTT = checked
         }
         Switch {
+            text: "Remote TTS"
+            checked: Mycroft.GlobalSettings.remoteTts
+            onCheckedChanged: Mycroft.GlobalSettings.remoteTts = checked
+        }
+        Switch {
             id: nightSwitch
             text: "Dark Mode"
             checked: applicationSettings.darkMode

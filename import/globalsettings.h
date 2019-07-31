@@ -32,6 +32,7 @@ class GlobalSettings : public QObject
     Q_OBJECT
     Q_PROPERTY(QString webSocketAddress READ webSocketAddress WRITE setWebSocketAddress NOTIFY webSocketChanged)
     Q_PROPERTY(bool autoConnect READ autoConnect WRITE setAutoConnect NOTIFY autoConnectChanged)
+    Q_PROPERTY(bool remoteTts READ remoteTts WRITE setRemoteTts NOTIFY remoteTtsChanged)
     
 public:
     explicit GlobalSettings(QObject *parent=0);
@@ -43,10 +44,13 @@ public:
 
     bool autoConnect() const;
     void setAutoConnect(bool autoconnect);
+    bool remoteTts() const;
+    void setRemoteTts(bool remoteTts);
 
 Q_SIGNALS:
     void webSocketChanged();
     void autoConnectChanged();
+    void remoteTtsChanged();
 
 private:
     QSettings m_settings;

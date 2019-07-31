@@ -38,3 +38,18 @@ void GlobalSettings::setAutoConnect(bool autoConnect)
     m_settings.setValue(QStringLiteral("autoConnect"), autoConnect);
     emit autoConnectChanged();
 }
+
+bool GlobalSettings::remoteTts() const
+{
+    return m_settings.value(QStringLiteral("remoteTts"), false).toBool();
+}
+
+void GlobalSettings::setRemoteTts(bool remoteTts)
+{
+    if (GlobalSettings::remoteTts() == remoteTts) {
+        return;
+    }
+
+    m_settings.setValue(QStringLiteral("remoteTts"), remoteTts);
+    emit remoteTtsChanged();
+}
