@@ -21,6 +21,7 @@
 #include "abstractdelegate.h"
 #include "activeskillsmodel.h"
 #include "abstractskillview.h"
+#include "controllerconfig.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -33,8 +34,10 @@
 #include <QQmlContext>
 #include <QUuid>
 #include <QWebSocket>
-#include <QMediaPlayer>
 
+#ifdef BUILD_REMOTE_TTS
+#include <QMediaPlayer>
+#endif
 
 MycroftController *MycroftController::instance()
 {
@@ -178,6 +181,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     }
 #endif
 
+#ifdef BUILD_REMOTE_TTS
     if (type == QLatin1String("remote.tts.audio") && m_appSettingObj->remoteTts()) {
         QString aud = doc[QStringLiteral("data")][QStringLiteral("wave")].toString();
         auto innerdoc = QJsonDocument::fromJson(aud.toUtf8());
@@ -195,6 +199,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         player->setMedia(QUrl::fromLocalFile(QStringLiteral("/tmp/incoming.wav")));
         player->play();
     }
+#endif
 
     if (type == QLatin1String("intent_failure")) {
         m_isListening = false;

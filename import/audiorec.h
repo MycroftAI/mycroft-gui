@@ -2,10 +2,14 @@
 #define AUDIOREC_H
 
 #include <QObject>
-#include <QAudioInput>
 #include <QFile>
 #include <QtWebSockets>
 #include "mycroftcontroller.h"
+#include "controllerconfig.h"
+
+#ifdef BUILD_REMOTE_TTS
+#include <QAudioInput>
+#endif
 
 class AudioRec : public QObject
 {
@@ -24,9 +28,12 @@ Q_SIGNALS:
 private:
     MycroftController *m_controller;
     QFile destinationFile;
-    QAudioInput* audio;
     QByteArray m_audStream;
     qint16 m_audStream_size;
+
+#ifdef BUILD_REMOTE_TTS    
+    QAudioInput* audio;
+#endif
 };
 
 #endif // AUDIOREC_H

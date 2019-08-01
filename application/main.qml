@@ -118,13 +118,15 @@ Kirigami.ApplicationWindow {
         Switch {
             id: remoteSTTSwitch
             text: "Remote STT"
-            checked: applicationSettings.remoteSTT
-            onCheckedChanged: applicationSettings.remoteSTT = checked
+            checked: applicationSettings.usesRemoteSTT
+            onCheckedChanged: applicationSettings.usesRemoteSTT = checked
+            visible: Mycroft.GlobalSettings.displayRemoteConfig
         }
         Switch {
             text: "Remote TTS"
-            checked: Mycroft.GlobalSettings.remoteTts
-            onCheckedChanged: Mycroft.GlobalSettings.remoteTts = checked
+            checked: Mycroft.GlobalSettings.usesRemoteTTS
+            onCheckedChanged: Mycroft.GlobalSettings.usesRemoteTTS = checked
+            visible: Mycroft.GlobalSettings.displayRemoteConfig
         }
         Switch {
             id: nightSwitch
@@ -257,13 +259,13 @@ Kirigami.ApplicationWindow {
                 Button {
                     text: "Speak" // TODO generic microphone icon
                     onClicked:  {
-                        if(applicationSettings.remoteSTT){
+                        if(applicationSettings.usesRemoteSTT){
                             audioRecorder.open()  
                         } else { 
                             speechIntent.start() 
                         }
                     }
-                    visible: speechIntent.supported || applicationSettings.remoteSTT
+                    visible: speechIntent.supported || applicationSettings.usesRemoteSTT
                 }
             }
             background: Rectangle {

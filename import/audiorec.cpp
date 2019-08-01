@@ -1,4 +1,6 @@
 #include "audiorec.h"
+#include "controllerconfig.h"
+
 #include <QUrl>
 #include <QFile>
 #include <QDir>
@@ -11,10 +13,12 @@ AudioRec::AudioRec(QObject *parent) :
 
 }
 
-void AudioRec::recordTStart(){
+void AudioRec::recordTStart()
+{
     destinationFile.setFileName(QStringLiteral("/tmp/mycroft_in.raw"));
     destinationFile.open( QIODevice::WriteOnly | QIODevice::Truncate );
-    
+
+#ifdef BUILD_REMOTE_TTS    
     QAudioFormat format;
     format.setSampleRate(8000);
     format.setChannelCount(1);
@@ -31,15 +35,20 @@ void AudioRec::recordTStart(){
 
     audio = new QAudioInput(format, this);
     audio->start(&destinationFile);
+#endif
 }
 
-void AudioRec::recordTStop(){
+void AudioRec::recordTStop()
+{
+#ifdef BUILD_REMOTE_TTS
     audio->stop();
+#endif
     destinationFile.close();
     emit recordTStatus(QStringLiteral("Completed"));
 }
 
-void AudioRec::readStream(){
+void AudioRec::readStream()
+{
     QFile inputFile;
     QDir::setCurrent(QStringLiteral("/tmp"));
     inputFile.setFileName(QStringLiteral("mycroft_in.raw"));
@@ -52,7 +61,8 @@ void AudioRec::readStream(){
     inputFile.close();
 }
 
-void AudioRec::returnStream() {
+void AudioRec::returnStream()
+{
     QJsonObject dataObject;
     QByteArray utteranceArray;
     utteranceArray.push_front(m_audStream.toHex());

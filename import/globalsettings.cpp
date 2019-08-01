@@ -18,6 +18,7 @@
 #include <QDebug>
 #include <QFile>
 #include "globalsettings.h"
+#include "controllerconfig.h"
 
 GlobalSettings::GlobalSettings(QObject *parent) :
     QObject(parent)
@@ -39,17 +40,36 @@ void GlobalSettings::setAutoConnect(bool autoConnect)
     emit autoConnectChanged();
 }
 
-bool GlobalSettings::remoteTts() const
+bool GlobalSettings::usesRemoteTTS() const
 {
-    return m_settings.value(QStringLiteral("remoteTts"), false).toBool();
+    return m_settings.value(QStringLiteral("usesRemoteTTS"), false).toBool();
 }
 
-void GlobalSettings::setRemoteTts(bool remoteTts)
+void GlobalSettings::setUsesRemoteTTS(bool usesRemoteTTS)
 {
-    if (GlobalSettings::remoteTts() == remoteTts) {
+    if (GlobalSettings::usesRemoteTTS() == usesRemoteTTS) {
         return;
     }
 
-    m_settings.setValue(QStringLiteral("remoteTts"), remoteTts);
-    emit remoteTtsChanged();
+    m_settings.setValue(QStringLiteral("usesRemoteTTS"), usesRemoteTTS);
+    emit usesRemoteTTSChanged();
+}
+
+bool GlobalSettings::displayRemoteConfig() const
+{
+#ifdef BUILD_REMOTE_TTS
+    return m_settings.value(QStringLiteral("displayRemoteConfig"), true).toBool();
+#else
+    return m_settings.value(QStringLiteral("displayRemoteConfig"), false).toBool();
+#endif
+}
+
+void GlobalSettings::setDisplayRemoteConfig(bool displayRemoteConfig)
+{
+    if (GlobalSettings::displayRemoteConfig() == displayRemoteConfig) {
+        return;
+    }
+
+    m_settings.setValue(QStringLiteral("displayRemoteConfig"), displayRemoteConfig);
+    emit displayRemoteConfigChanged();
 }

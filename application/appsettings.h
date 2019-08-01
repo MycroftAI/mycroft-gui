@@ -28,19 +28,19 @@ class AppSettings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool darkMode READ darkMode WRITE setDarkMode NOTIFY darkModeChanged)
-    Q_PROPERTY(bool remoteSTT READ remoteSTT WRITE setRemoteSTT NOTIFY remoteSTTChanged)
+    Q_PROPERTY(bool usesRemoteSTT READ usesRemoteSTT WRITE setUsesRemoteSTT NOTIFY usesRemoteSTTChanged)
     
 public:
     explicit AppSettings(QObject *parent=0);
 
     bool darkMode() const;
     void setDarkMode(bool dark);
-    bool remoteSTT() const;
-    void setRemoteSTT(bool remote);
+    bool usesRemoteSTT() const;
+    void setUsesRemoteSTT(bool remote);
 
 Q_SIGNALS:
     void darkModeChanged();
-    void remoteSTTChanged();
+    void usesRemoteSTTChanged();
 
 private:
     QSettings m_settings;
