@@ -13,8 +13,10 @@ set(mycroftimport_SRCS
     sessiondatamodel.cpp
     globalsettings.cpp
     filereader.cpp
+    audiorec.cpp
     )
 
+configure_file(controllerconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/controllerconfig.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
@@ -22,6 +24,12 @@ add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(mycroftplugin_EXTRA_LIBS
         Qt5::TextToSpeech
+    )
+endif()
+
+if (BUILD_REMOTE_TTS)
+    set(mycroftplugin_EXTRA_LIBS
+        Qt5::Multimedia
     )
 endif()
 
@@ -35,7 +43,6 @@ target_link_libraries(mycroftplugin
             Qt5::Network
             Qt5::WebSockets
     )
-
 
 install(TARGETS mycroftplugin DESTINATION ${KDE_INSTALL_QMLDIR}/Mycroft)
 

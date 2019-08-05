@@ -88,6 +88,7 @@ public Q_SLOTS:
     void disconnectSocket();
     void reconnect();
     void sendRequest(const QString &type, const QVariantMap &data);
+    void sendBinary(const QString &type, const QJsonObject &data);
     void sendText(const QString &message);
 
 private:
@@ -110,7 +111,7 @@ private:
 #ifdef Q_OS_ANDROID
     QTextToSpeech *m_speech;
 #endif
-
+    
     bool m_isSpeaking = false;
     bool m_isListening = false;
     bool m_mycroftLaunched = false;

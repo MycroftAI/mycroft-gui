@@ -1,6 +1,7 @@
 # Set minimum CMake version (required for CMake 3.0 or later)
 cmake_minimum_required(VERSION 2.8.12)
- 
+
+option(BUILD_REMOTE_TTS "Build remote TTS support" OFF)
 set(QT_MIN_VERSION "5.9.0")
 set(KF5_MIN_VERSION "5.50.0")
  
@@ -42,6 +43,10 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     WebSockets
     WebView
 )
+
+if (BUILD_REMOTE_TTS)
+    find_package(Qt5Multimedia ${QT_MIN_VERSION} REQUIRED)
+endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_package(Qt5AndroidExtras ${QT_MIN_VERSION} REQUIRED)
