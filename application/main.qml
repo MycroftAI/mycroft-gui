@@ -116,6 +116,19 @@ Kirigami.ApplicationWindow {
             }
         ]
         Switch {
+            id: remoteSTTSwitch
+            text: "Remote STT"
+            checked: applicationSettings.usesRemoteSTT
+            onCheckedChanged: applicationSettings.usesRemoteSTT = checked
+            visible: Mycroft.GlobalSettings.displayRemoteConfig
+        }
+        Switch {
+            text: "Remote TTS"
+            checked: Mycroft.GlobalSettings.usesRemoteTTS
+            onCheckedChanged: Mycroft.GlobalSettings.usesRemoteTTS = checked
+            visible: Mycroft.GlobalSettings.displayRemoteConfig
+        }
+        Switch {
             id: nightSwitch
             text: "Dark Mode"
             checked: applicationSettings.darkMode
@@ -164,6 +177,27 @@ Kirigami.ApplicationWindow {
                     OpacityAnimator {
                         duration: Kirigami.Units.longDuration
                         easing.type: Easing.InQuad
+                    }
+                }
+            }
+            
+            Popup {
+                id: audioRecorder
+                width: 300
+                height: 125
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                x: (root.width - width) / 2
+                y: (root.height - height) / 2
+                
+                RemoteStt {
+                    id: remoteSttInstance
+                }
+                
+                onOpenedChanged: {
+                    if(audioRecorder.opened){
+                        remoteSttInstance.record = true;
+                    } else {
+                        remoteSttInstance.record = false;
                     }
                 }
             }
@@ -224,8 +258,14 @@ Kirigami.ApplicationWindow {
                 }
                 Button {
                     text: "Speak" // TODO generic microphone icon
-                    onClicked: speechIntent.start()
-                    visible: speechIntent.supported
+                    onClicked:  {
+                        if(applicationSettings.usesRemoteSTT){
+                            audioRecorder.open()  
+                        } else { 
+                            speechIntent.start() 
+                        }
+                    }
+                    visible: speechIntent.supported || applicationSettings.usesRemoteSTT
                 }
             }
             background: Rectangle {

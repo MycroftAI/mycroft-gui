@@ -21,6 +21,7 @@
 #include "abstractdelegate.h"
 #include "activeskillsmodel.h"
 #include "abstractskillview.h"
+#include "controllerconfig.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -34,6 +35,9 @@
 #include <QUuid>
 #include <QWebSocket>
 
+#ifdef BUILD_REMOTE_TTS
+#include <QMediaPlayer>
+#endif
 
 MycroftController *MycroftController::instance()
 {
@@ -93,6 +97,7 @@ MycroftController::MycroftController(QObject *parent)
 #ifdef Q_OS_ANDROID
     m_speech = new QTextToSpeech(this);
 #endif
+
 }
 
 
@@ -176,6 +181,26 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     }
 #endif
 
+#ifdef BUILD_REMOTE_TTS
+    if (type == QLatin1String("remote.tts.audio") && m_appSettingObj->usesRemoteTTS()) {
+        QString aud = doc[QStringLiteral("data")][QStringLiteral("wave")].toString();
+        auto innerdoc = QJsonDocument::fromJson(aud.toUtf8());
+        QJsonValue qjv = innerdoc[QStringLiteral("py/b64")];
+        QString aud_values = qjv.toString();
+        QByteArray audioopt;
+        audioopt.append(qUtf8Printable(aud_values));
+        QByteArray aud_array = QByteArray::fromBase64(audioopt, QByteArray::Base64UrlEncoding);
+        QByteArray ret_aud = QByteArray::fromBase64(aud_array);
+        QFile file(QStringLiteral("/tmp/incoming.wav"));
+        file.open(QIODevice::WriteOnly);
+        file.write(ret_aud);
+        file.close();
+        QMediaPlayer *player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(QStringLiteral("/tmp/incoming.wav")));
+        player->play();
+    }
+#endif
+
     if (type == QLatin1String("intent_failure")) {
         m_isListening = false;
         emit isListeningChanged();
@@ -252,6 +277,22 @@ void MycroftController::sendRequest(const QString &type, const QVariantMap &data
 
     QJsonDocument doc(root);
     m_mainWebSocket.sendTextMessage(QString::fromUtf8(doc.toJson()));
+}
+
+void MycroftController::sendBinary(const QString &type, const QJsonObject &data) 
+{
+    if (m_mainWebSocket.state() != QAbstractSocket::ConnectedState) {
+        qWarning() << "mycroft connection not open!";
+        return;
+    }
+    QJsonObject socketObject;
+    socketObject[QStringLiteral("type")] = type;
+    socketObject[QStringLiteral("data")] = data;
+
+    QJsonDocument doc;
+    doc.setObject(socketObject);
+    QByteArray docbin = doc.toJson(QJsonDocument::Compact);
+    m_mainWebSocket.sendBinaryMessage(docbin);
 }
 
 void MycroftController::sendText(const QString &message)
