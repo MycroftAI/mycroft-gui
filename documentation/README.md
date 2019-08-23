@@ -662,7 +662,7 @@ Mycroft.Delegate {
     id: root
     property var fooString: sessionData.exampleText
  
-    Kirigami.Header {
+    Kirigami.Heading {
         id: headerExample
         anchors.centerIn: parent
         text: fooString 
