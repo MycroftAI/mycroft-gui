@@ -1,4 +1,4 @@
-**Draft Version: 0.1 | Document Author: Aditya Mehra | Status: Incomplete | Last Modified: 24th May 2019**
+**Draft Version: 0.1 | Document Author: Aditya Mehra | Status: Incomplete | Last Modified: 23rd August 2019**
 
 In the age of information visualization is eminently essential to grab attention and create a promising communication strategy. Visual content that supports your spoken content can make it easier to present information well and more engaging for your audience and users.
 
@@ -62,9 +62,9 @@ Let's walk you through some basics of writing your QML user interface, this sect
 
 - [Using Mycroft Framework Components](#Using-Mycroft-Framework-Components)
 
-- Handling Data Models
-
 - [Event Handling](#Event-Handling)
+
+- [Resting Faces](#Resting-Faces)
 
 ##### Importing Modules
 
@@ -250,15 +250,15 @@ rawhtmlexample = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
 <p> <b>Tags</b> can be wrapped <i>inside other tags!</i> </p>
 
 <p>
-	HTML doesn't care about extra spaces, tabs or newlines,
-	so we can use indentation and spacing to keep everything
-	lined up nicely.
+    HTML doesn't care about extra spaces, tabs or newlines,
+    so we can use indentation and spacing to keep everything
+    lined up nicely.
 </p>
 
 <ul>
-	<li> This is how you create a bulleted list! </li>
-	<li> Item 2 </li>
-	<li> Item 3 </li>
+    <li> This is how you create a bulleted list! </li>
+    <li> Item 2 </li>
+    <li> Item 3 </li>
 </ul>
 </body>
 </html>
@@ -626,6 +626,46 @@ Mycroft.Delegate {
         id: fooRect
         anchors.fill: parent
         color: "#fff"
+    }
+}
+```
+
+##### Resting Faces
+
+The resting face API provides skill authors the ability to extend their skills to supply their own customized IDLE screens that will be displayed when there is no activity on the screen.
+
+**Simple Idle Screen Example**
+
+**Python Skill Example**
+
+```
+from mycroft.skills.core import resting_screen_handler
+...
+@resting_screen_handler('NameOfIdleScreen')
+def handle_idle(self, message):
+    self.gui.clear()
+    self.log.info('Activating foo/bar resting page')
+    self.gui["exampleText"] = "This Is A Idle Screen"
+    self.gui.show_page('idle.qml')
+```
+
+**QML Example**
+
+```
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.4
+import org.kde.kirigami 2.4 as Kirigami
+import Mycroft 1.0 as Mycroft
+
+Mycroft.Delegate {
+    id: root
+    property var fooString: sessionData.exampleText
+ 
+    Kirigami.Header {
+        id: headerExample
+        anchors.centerIn: parent
+        text: fooString 
     }
 }
 ```
