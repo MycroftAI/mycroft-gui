@@ -40,7 +40,7 @@ public:
 #ifndef Q_OS_ANDROID
     SettingPropertyKey(QString, webSocketAddress, setWebSocketAddress, webSocketChanged, QStringLiteral("webSocketAddress"), QStringLiteral("ws://0.0.0.0"))
 #else
-    SettingPropertyKey(QString, webSocketAddress, setWebSocketAddress, webSocketChanged, QStringLiteral("webSocketAddress"), QStringLiteral("ws://46.101.212.234"))
+    SettingPropertyKey(QString, webSocketAddress, setWebSocketAddress, webSocketChanged, QStringLiteral("webSocketAddress"), QStringLiteral("ws://104.248.21.254"))
 #endif
 
     bool autoConnect() const;
