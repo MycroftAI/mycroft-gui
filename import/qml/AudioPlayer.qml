@@ -37,6 +37,7 @@ Item {
     property bool titleVisible: true
     property var nextAction
     property var previousAction
+    property alias currentState: player.status
     readonly property bool horizontal: width > switchWidth
 
     onEnabledChanged: syncStatusTimer.restart()
@@ -131,7 +132,7 @@ Item {
                     focus: false
                     icon.name: "media-seek-backward"
                     onClicked: {
-                        triggerEvent(previousAction, {})
+                        triggerGuiEvent(previousAction, {})
                         previousButton.focus = false
                     }
                 }
@@ -163,7 +164,7 @@ Item {
                     focus: false
                     icon.name: "media-seek-forward"
                     onClicked: {
-                        triggerEvent(nextAction, {})
+                        triggerGuiEvent(nextAction, {})
                         nextButton.focus = false
                     }
                 }
