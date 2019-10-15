@@ -33,8 +33,9 @@ Item {
     property bool hasNextAction: true
     property bool hasPreviousAction: true
     property bool controlBarOpened: false
-    property var nextActioncontrolBarOpened
+    property var nextAction
     property var previousAction
+    readonly property var currentState: player.status
     
     onEnabledChanged: syncStatusTimer.restart()
     onSourceChanged: syncStatusTimer.restart()
