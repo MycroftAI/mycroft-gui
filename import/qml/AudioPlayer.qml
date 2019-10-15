@@ -37,7 +37,7 @@ Item {
     property bool titleVisible: true
     property var nextAction
     property var previousAction
-    readonly property var currentState: player.status
+    property alias currentState: player.status
     readonly property bool horizontal: width > switchWidth
 
     onEnabledChanged: syncStatusTimer.restart()
