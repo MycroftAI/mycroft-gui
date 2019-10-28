@@ -177,6 +177,13 @@ Mycroft.AbstractSkillView {
                         delegates.currentIndex = currentIndex
                     }
 
+                    Keys.onLeftPressed: {
+                        delegatesView.currentIndex--
+                    }
+                    Keys.onRightPressed: {
+                        delegatesView.currentIndex++
+                    }
+
                     Connections {
                         target: delegates
                         onCurrentIndexChanged: {
