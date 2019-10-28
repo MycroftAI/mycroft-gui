@@ -44,8 +44,10 @@ Mycroft.AbstractSkillView {
 
     onOpenChanged: {
         if (open) {
+            closeAnimation.running = false;
             openAnimation.restart();
         } else {
+            openAnimation.running = false;
             closeAnimation.restart();
         }
     }
