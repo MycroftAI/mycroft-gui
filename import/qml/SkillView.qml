@@ -179,9 +179,11 @@ Mycroft.AbstractSkillView {
 
                     Keys.onLeftPressed: {
                         delegatesView.currentIndex--
+                        delegatesView.currentItem.contentItem.forceActiveFocus()
                     }
                     Keys.onRightPressed: {
                         delegatesView.currentIndex++
+                        delegatesView.currentItem.contentItem.forceActiveFocus()
                     }
 
                     Connections {
