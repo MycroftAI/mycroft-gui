@@ -1,12 +1,7 @@
 Mycroft GUI 
 ===========
-```diff
-- NOTE:  This is pre-Alpha and likely to break at any time!
-```
 
 The KDE-based visual interface for working with [Mycroft](https://github.com/MycroftAI/mycroft-core).  For more on the Mycroft Skill side, see the [initial Mycroft Core GUI PR](https://github.com/MycroftAI/mycroft-core/pull/1899).
-
-
 
 # Getting Started
 
