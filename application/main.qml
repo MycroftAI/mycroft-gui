@@ -39,24 +39,31 @@ Kirigami.ApplicationWindow {
     //HACK!! needs proper api in kirigami
     Component.onCompleted: {
         globalDrawer.handle.handleAnchor = handleAnchor;
-        
-        //HACK for the hacky top panel, on android will fail silently
-        var component = Qt.createComponent(Qt.resolvedUrl("containments/panel/package/contents/ui/SlidingPanel.qml"));
-        var panel = component.createObject(root);
-        panel.Kirigami.Theme.colorSet = Kirigami.Theme.Complementary;
-        panel.width = Qt.binding(function(){return root.width});
 
+print("22222")
         // Maximize and auto connect if set
         if (deviceMaximized) {
             showMaximized()
         }
-
+print("3333")
         //FIXME
         if (qinput.visible) {
             qinput.forceActiveFocus();
         }
+        print("SSSSS"+singleSkill)
+        if (singleSkill.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
+            Mycroft.MycroftController.sendRequest(singleSkill + ".home", {});
+        }
     }
 
+    Connections {
+        target: Mycroft.MycroftController
+        onStatusChanged: {
+            if (singleSkill.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
+                Mycroft.MycroftController.sendRequest(singleSkill + ".home", {});
+            }
+        }
+    }
     // Uses Android's voice popup for speech recognition
     MycroftGui.SpeechIntent {
         id: speechIntent
@@ -204,6 +211,7 @@ Kirigami.ApplicationWindow {
 
             Mycroft.SkillView {
                 id: mainView
+                activeSkills.whiteList: singleSkill
                 Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
                 anchors.fill: parent
             }
@@ -216,11 +224,11 @@ Kirigami.ApplicationWindow {
 
             Mycroft.StatusIndicator {
                 id: si
-                visible: false
+                //visible: false
                 anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    bottom: parent.bottom
-                    bottomMargin: Kirigami.Units.largeSpacing
+                    top: parent.top
+                    right: parent.right
+                    margins: Kirigami.Units.largeSpacing
                 }
                 z: 999
             }
@@ -230,6 +238,7 @@ Kirigami.ApplicationWindow {
         footer: Control {
             Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
             visible: !hideTextInput
+            height: hideTextInput ? 0 : implicitHeight
             implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
             contentItem: RowLayout {
                 Item {

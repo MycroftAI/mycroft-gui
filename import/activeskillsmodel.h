@@ -25,6 +25,8 @@ class DelegatesModel;
 class ActiveSkillsModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList blackList READ blackList WRITE setBlackList NOTIFY blackListChanged)
+    Q_PROPERTY(QStringList whiteList READ whiteList WRITE setWhiteList NOTIFY whiteListChanged)
 
 public:
     enum Roles {
@@ -34,6 +36,12 @@ public:
 
     explicit ActiveSkillsModel(QObject *parent = nullptr);
     virtual ~ActiveSkillsModel();
+
+    QStringList blackList() const;
+    void setBlackList(const QStringList &list);
+
+    QStringList whiteList() const;
+    void setWhiteList(const QStringList &list);
 
     /**
      * Insert new skills in the model, at a given position
@@ -55,8 +63,14 @@ public:
     QVariant data(const QModelIndex &index, int role = SkillId) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+Q_SIGNALS:
+    void blackListChanged();
+    void whiteListChanged();
+
 private:
     QList<QString> m_skills;
+    QList<QString> m_blackList;
+    QList<QString> m_whiteList;
     //TODO
     QHash<QString, DelegatesModel*> m_delegatesModels;
 };
