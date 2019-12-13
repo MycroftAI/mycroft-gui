@@ -64,7 +64,7 @@ void ActiveSkillsModel::setWhiteList(const QStringList &list)
 }
 
 void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
-{qWarning()<<"AAAAAAAAAAAAA"<<skillList<<m_whiteList;
+{
     if (position < 0 || position > m_skills.count()) {
         return;
     }
@@ -75,7 +75,11 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
                  std::back_inserter(filteredList),
                  [this](const QString &val)
                  {
-                     return !m_skills.contains(val) && !m_blackList.contains(val) && (m_whiteList.isEmpty() || m_whiteList.contains(val));
+                     const bool blacklisted = m_blackList.contains(val);
+                     if (blacklisted) {
+                         emit skillBlackListed(val);
+                     }
+                     return !m_skills.contains(val) && !blacklisted && (m_whiteList.isEmpty() || m_whiteList.contains(val));
                  });
 
     if (filteredList.isEmpty()) {

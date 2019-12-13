@@ -66,6 +66,7 @@ public:
 Q_SIGNALS:
     void blackListChanged();
     void whiteListChanged();
+    void skillBlackListed(const QString &id);
 
 private:
     QList<QString> m_skills;
