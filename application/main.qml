@@ -40,17 +40,16 @@ Kirigami.ApplicationWindow {
     Component.onCompleted: {
         globalDrawer.handle.handleAnchor = handleAnchor;
 
-print("22222")
         // Maximize and auto connect if set
         if (deviceMaximized) {
             showMaximized()
         }
-print("3333")
+
         //FIXME
         if (qinput.visible) {
             qinput.forceActiveFocus();
         }
-        print("SSSSS"+singleSkill)
+
         if (singleSkill.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
             Mycroft.MycroftController.sendRequest(singleSkill + ".home", {});
         }
