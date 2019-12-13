@@ -101,7 +101,15 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
     engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
-    engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), parser.value(skillOption));
+
+    const QString singleSkill = parser.value(skillOption);
+    if (singleSkill.endsWith(QStringLiteral(".home"))) {
+        engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), singleSkill.left(singleSkill.indexOf(QStringLiteral(".home"))));
+        engine.rootContext()->setContextProperty(QStringLiteral("singleSkillHome"), singleSkill);
+    } else {
+        engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), singleSkill);
+        engine.rootContext()->setContextProperty(QStringLiteral("singleSkillHome"), QString());
+    }
 
     AppSettings *appSettings = new AppSettings(&view);
     engine.rootContext()->setContextProperty(QStringLiteral("applicationSettings"), appSettings);

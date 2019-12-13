@@ -50,16 +50,16 @@ Kirigami.ApplicationWindow {
             qinput.forceActiveFocus();
         }
 
-        if (singleSkill.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
-            Mycroft.MycroftController.sendRequest(singleSkill + ".home", {});
+        if (singleSkillHome.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
+            Mycroft.MycroftController.sendRequest(singleSkillHome, {});
         }
     }
 
     Connections {
         target: Mycroft.MycroftController
         onStatusChanged: {
-            if (singleSkill.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
-                Mycroft.MycroftController.sendRequest(singleSkill + ".home", {});
+            if (singleSkillHome.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
+                Mycroft.MycroftController.sendRequest(singleSkillHome, {});
             }
         }
     }
