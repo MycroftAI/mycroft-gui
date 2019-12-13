@@ -20,6 +20,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
 else()
 set(mycroft_gui_app_EXTRA_LIBS
         Qt5::Widgets
+        KF5::DBusAddons
     )
 endif()
 

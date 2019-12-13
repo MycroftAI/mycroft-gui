@@ -29,6 +29,7 @@
 #include <QGuiApplication>
 #else
 #include <QApplication>
+#include <KDBusService>
 #endif
 
 #include "speechintent.h"
@@ -67,6 +68,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 #endif
 
+    app.setApplicationName(QStringLiteral("mycroft.gui"));
+    app.setOrganizationDomain(QStringLiteral("kde.org"));
     app.setWindowIcon(QIcon::fromTheme(QStringLiteral("mycroft")));
 
     // NOTE: Have to manually implement a --help option because the parser.addHelpOption() would
@@ -84,6 +87,13 @@ int main(int argc, char *argv[])
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
     bool maximize = parser.isSet(maximizeOption);
+
+#ifndef Q_OS_ANDROID
+    if (parser.isSet(skillOption)) {
+        app.setApplicationName(QStringLiteral("mycroft.gui.") + parser.value(skillOption));
+    }
+    KDBusService service(KDBusService::Unique);
+#endif
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("deviceWidth"), width);
