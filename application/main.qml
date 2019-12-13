@@ -231,6 +231,25 @@ Kirigami.ApplicationWindow {
                     margins: Kirigami.Units.largeSpacing
                 }
                 z: 999
+            
+                Kirigami.Heading {
+                    id: inputQuery
+                    visible: hideTextInput
+                    Kirigami.Theme.colorSet: mainView.Kirigami.Theme.colorSet
+                    anchors.right: si.left
+                    anchors.rightMargin: Kirigami.Units.largeSpacing
+                    anchors.verticalCenter: si.verticalCenter
+                    level: 3
+
+                    Connections {
+                        target: Mycroft.MycroftController
+                        onIntentRecevied: {
+                            if(type == "recognizer_loop:utterance") {
+                                inputQuery.text = data.utterances[0]
+                            }
+                        }
+                    }
+                }
             }
         }
 
