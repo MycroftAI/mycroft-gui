@@ -37,7 +37,7 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
       m_id(QUuid::createUuid().toString()),
       m_controller(MycroftController::instance())
 {
-    m_activeSkillsModel = new ActiveSkillsModel(this);
+    m_activeSkillsModel = new ActiveSkillsFilterModel(this);
 
     m_guiWebSocket = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);
     m_controller->registerView(this);
@@ -207,11 +207,10 @@ MycroftController::Status AbstractSkillView::status() const
     }
 }
 
-ActiveSkillsModel *AbstractSkillView::activeSkills() const
+ActiveSkillsFilterModel *AbstractSkillView::activeSkills() const
 {
     return m_activeSkillsModel;
 }
-
 
 SessionDataMap *AbstractSkillView::sessionDataForSkill(const QString &skillId)
 {

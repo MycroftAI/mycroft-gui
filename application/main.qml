@@ -175,6 +175,7 @@ Kirigami.ApplicationWindow {
             rotation: globalScreenRotation || 0
             anchors.fill: parent
             Image {
+                visible: singleSkill.length === 0
                 source: "background.png"
                 fillMode: Image.PreserveAspectFit
                 anchors.fill: parent
@@ -210,7 +211,7 @@ Kirigami.ApplicationWindow {
 
             Mycroft.SkillView {
                 id: mainView
-                activeSkills.whiteList: singleSkill
+                activeSkills.whiteList: singleSkill.length > 0 ? singleSkill : null
                 Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
                 anchors.fill: parent
             }

@@ -70,6 +70,7 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterType<AudioRec>(uri, 1, 0, "AudioRec");
 
     qmlRegisterUncreatableType<ActiveSkillsModel>(uri, 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
+    qmlRegisterUncreatableType<ActiveSkillsFilterModel>(uri, 1, 0, "ActiveSkillsFilterModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsFilterModel"));
     qmlRegisterUncreatableType<DelegatesModel>(uri, 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
     qmlRegisterUncreatableType<SessionDataMap>(uri, 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
 

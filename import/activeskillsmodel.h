@@ -18,24 +18,22 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <QSortFilterProxyModel>
 
 class AbstractDelegate;
 class DelegatesModel;
+class ActiveSkillsModel;
 
-class ActiveSkillsModel : public QAbstractListModel
+class ActiveSkillsFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
+
     Q_PROPERTY(QStringList blackList READ blackList WRITE setBlackList NOTIFY blackListChanged)
     Q_PROPERTY(QStringList whiteList READ whiteList WRITE setWhiteList NOTIFY whiteListChanged)
 
 public:
-    enum Roles {
-        SkillId = Qt::UserRole + 1,
-        Delegates
-    };
-
-    explicit ActiveSkillsModel(QObject *parent = nullptr);
-    virtual ~ActiveSkillsModel();
+    ActiveSkillsFilterModel(QObject *parent = 0);
+    ~ActiveSkillsFilterModel();
 
     QStringList blackList() const;
     void setBlackList(const QStringList &list);
@@ -43,7 +41,9 @@ public:
     QStringList whiteList() const;
     void setWhiteList(const QStringList &list);
 
-    /**
+    bool skillAllowed(const QString skillId) const;
+
+     /**
      * Insert new skills in the model, at a given position
      */
     void insertSkills(int position, const QStringList &skillList);
@@ -56,6 +56,46 @@ public:
     DelegatesModel *delegatesModelForSkill(const QString &skillId);
     QList<DelegatesModel *> delegatesModels() const;
 
+protected:
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
+
+Q_SIGNALS:
+    void blackListChanged();
+    void whiteListChanged();
+    void skillBlackListed(const QString &skillId);
+
+private:
+    QList<QString> m_blackList;
+    QList<QString> m_whiteList;
+    ActiveSkillsModel *m_skillsModel;
+};
+
+class ActiveSkillsModel : public QAbstractListModel
+{
+    Q_OBJECT
+
+public:
+    enum Roles {
+        SkillId = Qt::UserRole + 1,
+        Delegates
+    };
+
+    explicit ActiveSkillsModel(QObject *parent = nullptr);
+    virtual ~ActiveSkillsModel();
+
+    /**
+     * Insert new skills in the model, at a given position
+     */
+    void insertSkills(int position, const QStringList &skillList);
+
+    /**
+     * @returns the index for a skill, an invalid QModelIndex() if not found
+     */
+    QModelIndex skillIndex(const QString &skillId);
+
+    DelegatesModel *delegatesModelForSkill(const QString &skillId);
+    QHash<QString, DelegatesModel*> delegatesModels() const;
+
 //REIMPLEMENTED
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
@@ -63,15 +103,8 @@ public:
     QVariant data(const QModelIndex &index, int role = SkillId) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-Q_SIGNALS:
-    void blackListChanged();
-    void whiteListChanged();
-    void skillBlackListed(const QString &id);
-
 private:
     QList<QString> m_skills;
-    QList<QString> m_blackList;
-    QList<QString> m_whiteList;
     //TODO
     QHash<QString, DelegatesModel*> m_delegatesModels;
 };

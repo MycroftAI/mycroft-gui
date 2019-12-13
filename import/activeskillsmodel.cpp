@@ -21,22 +21,22 @@
 
 #include <QDebug>
 
-ActiveSkillsModel::ActiveSkillsModel(QObject *parent)
-    : QAbstractListModel(parent)
+ActiveSkillsFilterModel::ActiveSkillsFilterModel(QObject *parent)
+    : QSortFilterProxyModel(parent),
+      m_skillsModel(new ActiveSkillsModel(parent))
 {
+    setSourceModel(m_skillsModel);
 }
 
-ActiveSkillsModel::~ActiveSkillsModel()
-{
-    //TODO: delete everything
-}
+ActiveSkillsFilterModel::~ActiveSkillsFilterModel()
+{}
 
-QStringList ActiveSkillsModel::blackList() const
+QStringList ActiveSkillsFilterModel::blackList() const
 {
     return m_blackList;
 }
 
-void ActiveSkillsModel::setBlackList(const QStringList &list)
+void ActiveSkillsFilterModel::setBlackList(const QStringList &list)
 {
     if (list == m_blackList) {
         return;
@@ -47,12 +47,12 @@ void ActiveSkillsModel::setBlackList(const QStringList &list)
     emit blackListChanged();
 }
 
-QStringList ActiveSkillsModel::whiteList() const
+QStringList ActiveSkillsFilterModel::whiteList() const
 {
     return m_whiteList;
 }
 
-void ActiveSkillsModel::setWhiteList(const QStringList &list)
+void ActiveSkillsFilterModel::setWhiteList(const QStringList &list)
 {
     if (list == m_whiteList) {
         return;
@@ -61,6 +61,63 @@ void ActiveSkillsModel::setWhiteList(const QStringList &list)
     m_whiteList = list;
 
     emit whiteListChanged();
+}
+
+bool ActiveSkillsFilterModel::skillAllowed(const QString skillId) const
+{
+    return !m_blackList.contains(skillId) && (m_whiteList.isEmpty() || m_whiteList.contains(skillId));
+}
+
+QModelIndex ActiveSkillsFilterModel::skillIndex(const QString &skillId)
+{
+    return mapFromSource(m_skillsModel->skillIndex(skillId));
+}
+
+void ActiveSkillsFilterModel::insertSkills(int position, const QStringList &skillList)
+{
+    m_skillsModel->insertSkills(position, skillList);
+}
+
+DelegatesModel *ActiveSkillsFilterModel::delegatesModelForSkill(const QString &skillId)
+{
+    if (!skillAllowed(skillId)) {
+        return nullptr;
+    }
+
+    return m_skillsModel->delegatesModelForSkill(skillId);
+}
+
+QList<DelegatesModel *> ActiveSkillsFilterModel::delegatesModels() const
+{
+    QList<DelegatesModel *> list;
+    QHash<QString, DelegatesModel*> m_delegatesModels = m_skillsModel->delegatesModels();
+
+    auto i = m_delegatesModels.constBegin();
+    while (i != m_delegatesModels.constEnd()) {
+        if (skillAllowed(i.key())) {
+            list << i.value();
+        }
+    }
+    return list;
+}
+
+bool ActiveSkillsFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+{
+    QModelIndex sourceIndex = sourceModel()->index(source_row, 0, source_parent);
+    const QString skillId = sourceModel()->data(sourceIndex, ActiveSkillsModel::SkillId).toString();
+
+    return skillAllowed(skillId);
+}
+
+
+ActiveSkillsModel::ActiveSkillsModel(QObject *parent)
+    : QAbstractListModel(parent)
+{
+}
+
+ActiveSkillsModel::~ActiveSkillsModel()
+{
+    //TODO: delete everything
 }
 
 void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
@@ -75,11 +132,7 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
                  std::back_inserter(filteredList),
                  [this](const QString &val)
                  {
-                     const bool blacklisted = m_blackList.contains(val);
-                     if (blacklisted) {
-                         emit skillBlackListed(val);
-                     }
-                     return !m_skills.contains(val) && !blacklisted && (m_whiteList.isEmpty() || m_whiteList.contains(val));
+                     return !m_skills.contains(val);
                  });
 
     if (filteredList.isEmpty()) {
@@ -125,9 +178,9 @@ DelegatesModel *ActiveSkillsModel::delegatesModelForSkill(const QString &skillId
     return model;
 }
 
-QList<DelegatesModel *> ActiveSkillsModel::delegatesModels() const
+QHash<QString, DelegatesModel*> ActiveSkillsModel::delegatesModels() const
 {
-    return m_delegatesModels.values();
+    return m_delegatesModels;
 }
 
 bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)

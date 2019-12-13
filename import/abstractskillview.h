@@ -23,7 +23,7 @@
 #include <QQuickItem>
 #include <QPointer>
 
-class ActiveSkillsModel;
+class ActiveSkillsFilterModel;
 class AbstractSkillView;
 class AbstractDelegate;
 class SessionDataMap;
@@ -33,7 +33,7 @@ class AbstractSkillView: public QQuickItem
     Q_OBJECT
     Q_PROPERTY(MycroftController::Status status READ status NOTIFY statusChanged)
 
-    Q_PROPERTY(ActiveSkillsModel *activeSkills READ activeSkills CONSTANT)
+    Q_PROPERTY(ActiveSkillsFilterModel *activeSkills READ activeSkills CONSTANT)
 
 public:
     enum CustomFocusReasons {
@@ -45,7 +45,7 @@ public:
 
     MycroftController::Status status() const;
 
-    ActiveSkillsModel *activeSkills() const;
+    ActiveSkillsFilterModel *activeSkills() const;
 
 
     //API for MycroftController, NOT QML
@@ -99,6 +99,6 @@ private:
 
     MycroftController *m_controller;
     QWebSocket *m_guiWebSocket;
-    ActiveSkillsModel *m_activeSkillsModel;
+    ActiveSkillsFilterModel *m_activeSkillsModel;
 };
 
