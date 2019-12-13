@@ -41,6 +41,7 @@ public:
     QStringList whiteList() const;
     void setWhiteList(const QStringList &list);
 
+    void checkGuiActivation(const QString &skillId);
     bool skillAllowed(const QString skillId) const;
 
      /**
@@ -56,13 +57,16 @@ public:
     DelegatesModel *delegatesModelForSkill(const QString &skillId);
     QList<DelegatesModel *> delegatesModels() const;
 
+    ActiveSkillsModel *skillsModel() const;
+
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
 Q_SIGNALS:
     void blackListChanged();
     void whiteListChanged();
-    void skillBlackListed(const QString &skillId);
+    void skillActivated(const QString &skillId);
+    void blacklistedSkillActivated(const QString &skillId);
 
 private:
     QList<QString> m_blackList;
@@ -92,6 +96,8 @@ public:
      * @returns the index for a skill, an invalid QModelIndex() if not found
      */
     QModelIndex skillIndex(const QString &skillId);
+
+    QStringList activeSkills() const;
 
     DelegatesModel *delegatesModelForSkill(const QString &skillId);
     QHash<QString, DelegatesModel*> delegatesModels() const;

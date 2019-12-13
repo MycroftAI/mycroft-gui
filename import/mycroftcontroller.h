@@ -83,6 +83,8 @@ Q_SIGNALS:
     //TODO: remove?
     void fallbackTextRecieved(const QString &skill, const QVariantMap &data);
 
+    void utteranceManagedBySkill(const QString &skill);
+
 public Q_SLOTS:
     void start();
     void disconnectSocket();

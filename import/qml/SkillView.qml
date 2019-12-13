@@ -52,6 +52,8 @@ Mycroft.AbstractSkillView {
         }
     }
 
+    activeSkills.onSkillActivated: open = true;
+
     SequentialAnimation {
         id: openAnimation
         ScriptAction {

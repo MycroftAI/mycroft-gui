@@ -232,11 +232,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         return;
     }
 
-    if (type == QLatin1String("mycroft.skill.handler.start")) {
-        m_currentSkill = doc[QStringLiteral("data")][QStringLiteral("name")].toString();
-        qDebug() << "Current skill:" << m_currentSkill;
-        emit currentSkillChanged();
-    } else if (type == QLatin1String("mycroft.skill.handler.complete")) {
+    if (type == QLatin1String("mycroft.skill.handler.complete")) {
         m_currentSkill = QString();
         emit currentSkillChanged();
     } else if (type == QLatin1String("speak")) {
@@ -261,6 +257,14 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         QUrl url(QStringLiteral("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
         m_views[guiId]->setUrl(url);
         m_reannounceGuiTimer.stop();
+    }
+
+    // Check if it's an utterance recognized as an intent
+    if (type.contains(QLatin1Char(':')) && !doc[QStringLiteral("data")][QStringLiteral("utterance")].toString().isEmpty()) {
+        m_currentSkill = type.split(QLatin1Char(':')).first();
+        qDebug() << "Current skill:" << m_currentSkill;
+        emit utteranceManagedBySkill(m_currentSkill);
+        emit currentSkillChanged();
     }
 }
 

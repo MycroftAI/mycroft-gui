@@ -44,6 +44,7 @@ void ActiveSkillsFilterModel::setBlackList(const QStringList &list)
 
     m_blackList = list;
 
+    invalidate();
     emit blackListChanged();
 }
 
@@ -60,7 +61,21 @@ void ActiveSkillsFilterModel::setWhiteList(const QStringList &list)
 
     m_whiteList = list;
 
+    invalidate();
     emit whiteListChanged();
+}
+
+void ActiveSkillsFilterModel::checkGuiActivation(const QString &skillId)
+{
+    if (m_skillsModel->activeSkills().first() == skillId) {
+        if (skillAllowed(skillId)) {
+            emit skillActivated(skillId);
+        } else {
+            emit blacklistedSkillActivated(skillId);
+        }
+    } else if (data(index(0,0), ActiveSkillsModel::SkillId).toString() == skillId) {
+        emit skillActivated(skillId);
+    }
 }
 
 bool ActiveSkillsFilterModel::skillAllowed(const QString skillId) const
@@ -99,6 +114,11 @@ QList<DelegatesModel *> ActiveSkillsFilterModel::delegatesModels() const
         }
     }
     return list;
+}
+
+ActiveSkillsModel *ActiveSkillsFilterModel::skillsModel() const
+{
+    return m_skillsModel;
 }
 
 bool ActiveSkillsFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
@@ -147,6 +167,11 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
         ++i;
     }
     endInsertRows();
+}
+
+QStringList ActiveSkillsModel::activeSkills() const
+{
+    return m_skills;
 }
 
 QModelIndex ActiveSkillsModel::skillIndex(const QString &skillId)
@@ -229,6 +254,7 @@ bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent
         }
     }
     m_skills.erase(m_skills.begin() + row, m_skills.begin() + row + count);
+
     endRemoveRows();
     return true;
 }
