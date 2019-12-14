@@ -234,7 +234,7 @@ Kirigami.ApplicationWindow {
             
                 Kirigami.Heading {
                     id: inputQuery
-                    visible: hideTextInput
+                    //visible: hideTextInput
                     Kirigami.Theme.colorSet: mainView.Kirigami.Theme.colorSet
                     anchors.right: si.left
                     anchors.rightMargin: Kirigami.Units.largeSpacing

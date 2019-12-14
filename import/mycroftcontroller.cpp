@@ -172,7 +172,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
 #ifdef DEBUG_MYCROFT_MESSAGEBUS
     qDebug() << "type" << type;
 #endif
-
+qWarning()<<"TYPEEEEEEEEEE"<<type;
     emit intentRecevied(type, doc[QStringLiteral("data")].toVariant().toMap());
 
 #ifdef Q_OS_ANDROID
