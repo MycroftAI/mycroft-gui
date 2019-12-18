@@ -231,22 +231,36 @@ Kirigami.ApplicationWindow {
                     margins: Kirigami.Units.largeSpacing
                 }
                 z: 999
-            
-                Kirigami.Heading {
-                    id: inputQuery
-                    //visible: hideTextInput
-                    Kirigami.Theme.colorSet: mainView.Kirigami.Theme.colorSet
-                    anchors.right: si.left
-                    anchors.rightMargin: Kirigami.Units.largeSpacing
-                    anchors.verticalCenter: si.verticalCenter
-                    level: 3
+            }
+            Kirigami.Heading {
+                id: inputQuery
+                Kirigami.Theme.colorSet: mainView.Kirigami.Theme.colorSet
+                anchors.right: si.left
+                anchors.rightMargin: Kirigami.Units.largeSpacing
+                anchors.verticalCenter: si.verticalCenter
+                level: 3
+                opacity: 0
+                onTextChanged: {
+                    opacity = 1;
+                    utteranceTimer.restart();
+                }
+                Timer {
+                    id: utteranceTimer
+                    interval: 3000
+                    onTriggered: inputQuery.opacity = 0
+                }
+                Behavior on opacity {
+                    OpacityAnimator {
+                        duration: Kirigami.units.longDuration
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
-                    Connections {
-                        target: Mycroft.MycroftController
-                        onIntentRecevied: {
-                            if(type == "recognizer_loop:utterance") {
-                                inputQuery.text = data.utterances[0]
-                            }
+                Connections {
+                    target: Mycroft.MycroftController
+                    onIntentRecevied: {
+                        if(type == "recognizer_loop:utterance") {
+                            inputQuery.text = data.utterances[0]
                         }
                     }
                 }

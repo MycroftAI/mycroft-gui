@@ -258,5 +258,6 @@ private:
 
     bool m_contentItemAutoWidth = true;
     bool m_contentItemAutoHeight = true;
+    friend class ServerTest;
 };
 

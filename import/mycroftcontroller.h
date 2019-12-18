@@ -41,8 +41,9 @@ class MycroftController : public QObject
     //FIXME: make those two enums?
     Q_PROPERTY(bool speaking READ isSpeaking NOTIFY isSpeakingChanged)
     Q_PROPERTY(bool listening READ isListening NOTIFY isListeningChanged)
-    //FIXME: to remove?
+
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
+    Q_PROPERTY(QString currentIntent READ currentIntent NOTIFY currentIntentChanged)
 
     Q_ENUMS(Status)
 public:
@@ -59,6 +60,7 @@ public:
     bool isListening() const;
     Status status() const;
     QString currentSkill() const;
+    QString currentIntent() const;
 
     //Public API NOT to be used with QML
     void registerView(AbstractSkillView *view);
@@ -74,6 +76,7 @@ Q_SIGNALS:
     void stopped();
     void notUnderstood();
     void currentSkillChanged();
+    void currentIntentChanged();
 
     //signal with nearly all data
     //TODO: remove?
@@ -105,6 +108,7 @@ private:
 
     //TODO: remove
     QString m_currentSkill;
+    QString m_currentIntent;
 
     QHash<QString, AbstractSkillView *> m_views;
 

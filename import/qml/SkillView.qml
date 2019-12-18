@@ -52,7 +52,10 @@ Mycroft.AbstractSkillView {
         }
     }
 
-    activeSkills.onSkillActivated: open = true;
+    Connections {
+        target: root.activeSkills
+        onSkillActivated: root.open = true;
+    }
 
     SequentialAnimation {
         id: openAnimation

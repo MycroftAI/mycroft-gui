@@ -192,8 +192,8 @@ Item {
                 break;
             }
         }
-        onCurrentSkillChanged: {
-            if (Mycroft.MycroftController.currentSkill.length == 0) {
+        onCurrentIntentChanged: {
+            if (Mycroft.MycroftController.currentIntent.length == 0) {
                 if (root.state == "loading") {
                     root.state = "idle";
                 }

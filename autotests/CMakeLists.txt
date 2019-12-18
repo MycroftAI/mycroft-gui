@@ -3,6 +3,8 @@ include(ECMAddTests)
 find_package(Qt5 ${REQUIRED_QT_VERSION} NO_MODULE REQUIRED Test)
 set_package_properties(Qt5Test PROPERTIES PURPOSE "Required for autotests")
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/../import)
+
 ecm_add_test(
   servertest.cpp
   ${CMAKE_SOURCE_DIR}/import/abstractdelegate.cpp

@@ -104,12 +104,12 @@ AbstractDelegate *ServerTest::delegateForSkill(const QString &skill, const QUrl 
         return nullptr;
     }
 
-    AbstractDelegate *delegate = nullptr;
     for (auto d : delegatesModel->delegates()) {
         if (d->qmlUrl() == url) {
             return d;
         }
     }
+    return nullptr;
 }
 
 QList <AbstractDelegate *>ServerTest::delegatesForSkill(const QString &skill)
@@ -131,6 +131,7 @@ void ServerTest::initTestCase()
     qmlRegisterType<AbstractDelegate>("Mycroft", 1, 0, "AbstractDelegate");
 
     qmlRegisterUncreatableType<ActiveSkillsModel>("Mycroft", 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
+    qmlRegisterUncreatableType<ActiveSkillsFilterModel>("Mycroft", 1, 0, "ActiveSkillsFilterModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsFilterModel"));
     qmlRegisterUncreatableType<DelegatesModel>("Mycroft", 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
     qmlRegisterUncreatableType<SessionDataMap>("Mycroft", 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
 
@@ -158,6 +159,7 @@ void ServerTest::initTestCase()
     }
     m_window->show();
     m_view = qobject_cast<AbstractSkillView *>(m_window->rootObject());
+    qWarning()<<"AAAAA"<<m_view;
     QVERIFY(m_view);
 
     new QAbstractItemModelTester(m_view->activeSkills(), QAbstractItemModelTester::FailureReportingMode::QtTest, this);
@@ -565,7 +567,7 @@ void ServerTest::testEventsFromClient()
     QSignalSpy eventSpy(m_guiWebSocket, &QWebSocket::textMessageReceived);
 
     //skill own event
-    delegate->triggerEvent(QStringLiteral("mycroft.weather.refresh_forecast"), QVariantMap({{QStringLiteral("when"), QStringLiteral("Monday")}}));
+    delegate->triggerGuiEvent(QStringLiteral("mycroft.weather.refresh_forecast"), QVariantMap({{QStringLiteral("when"), QStringLiteral("Monday")}}));
     eventSpy.wait();
 
     QJsonDocument doc = QJsonDocument::fromJson(eventSpy.first().first().toString().toUtf8());
@@ -576,7 +578,7 @@ void ServerTest::testEventsFromClient()
     QCOMPARE(doc[QStringLiteral("parameters")][QStringLiteral("when")], QStringLiteral("Monday"));
 
     //system event
-    delegate->triggerEvent(QStringLiteral("system.next"), QVariantMap());
+    delegate->triggerGuiEvent(QStringLiteral("system.next"), QVariantMap());
     eventSpy.wait();
 
     doc = QJsonDocument::fromJson(eventSpy[1].first().toString().toUtf8());

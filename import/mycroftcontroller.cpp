@@ -232,7 +232,11 @@ qWarning()<<"TYPEEEEEEEEEE"<<type;
         return;
     }
 
-    if (type == QLatin1String("mycroft.skill.handler.complete")) {
+    if (type == QLatin1String("mycroft.skill.handler.start")) {
+        m_currentSkill = doc[QStringLiteral("data")][QStringLiteral("name")].toString();
+        qDebug() << "Current intent:" << m_currentIntent;
+        emit currentIntentChanged();
+    } else if (type == QLatin1String("mycroft.skill.handler.complete")) {
         m_currentSkill = QString();
         emit currentSkillChanged();
     } else if (type == QLatin1String("speak")) {
@@ -343,6 +347,11 @@ MycroftController::Status MycroftController::status() const
 QString MycroftController::currentSkill() const
 {
     return m_currentSkill;
+}
+
+QString MycroftController::currentIntent() const
+{
+    return m_currentIntent;
 }
 
 bool MycroftController::isSpeaking() const
