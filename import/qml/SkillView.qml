@@ -178,6 +178,11 @@ Mycroft.AbstractSkillView {
                     separatorVisible: false
                     anchors.fill: parent
 
+                    onCountChanged: {
+                        if (count > 0 && currentIndex < 0) {
+                            currentIndex = 0;
+                        }
+                    }
                     onCurrentIndexChanged: {
                         delegates.currentIndex = currentIndex
                     }
