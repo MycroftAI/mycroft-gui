@@ -247,7 +247,10 @@ Kirigami.ApplicationWindow {
                 Timer {
                     id: utteranceTimer
                     interval: 3000
-                    onTriggered: inputQuery.opacity = 0
+                    onTriggered: {
+                        inputQuery.text = "";
+                        inputQuery.opacity = 0
+                    }
                 }
                 Behavior on opacity {
                     OpacityAnimator {
