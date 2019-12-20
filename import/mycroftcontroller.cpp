@@ -265,10 +265,13 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
 
     // Check if it's an utterance recognized as an intent
     if (type.contains(QLatin1Char(':')) && !doc[QStringLiteral("data")][QStringLiteral("utterance")].toString().isEmpty()) {
-        m_currentSkill = type.split(QLatin1Char(':')).first();
-        qDebug() << "Current skill:" << m_currentSkill;
-        emit utteranceManagedBySkill(m_currentSkill);
-        emit currentSkillChanged();
+        const QString skill = type.split(QLatin1Char(':')).first();
+        if (skill.contains(QLatin1Char('.'))) {
+            m_currentSkill = skill;
+            qDebug() << "Current skill:" << m_currentSkill;
+            emit utteranceManagedBySkill(m_currentSkill);
+            emit currentSkillChanged();
+        }
     }
 }
 
