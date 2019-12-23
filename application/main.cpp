@@ -88,13 +88,6 @@ int main(int argc, char *argv[])
     int height = parser.value(heightOption).toInt();
     bool maximize = parser.isSet(maximizeOption);
 
-#ifndef Q_OS_ANDROID
-    if (parser.isSet(skillOption)) {
-        app.setApplicationName(QStringLiteral("mycroft.gui.") + parser.value(skillOption));
-    }
-    KDBusService service(KDBusService::Unique);
-#endif
-
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("deviceWidth"), width);
     engine.rootContext()->setContextProperty(QStringLiteral("deviceHeight"), height);
@@ -102,14 +95,22 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
     engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
 
-    const QString singleSkill = parser.value(skillOption);
+    QString singleSkill = parser.value(skillOption);
     if (singleSkill.endsWith(QStringLiteral(".home"))) {
-        engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), singleSkill.left(singleSkill.indexOf(QStringLiteral(".home"))));
+        singleSkill = singleSkill.left(singleSkill.indexOf(QStringLiteral(".home")));
+        engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), singleSkill);
         engine.rootContext()->setContextProperty(QStringLiteral("singleSkillHome"), singleSkill);
     } else {
         engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), singleSkill);
         engine.rootContext()->setContextProperty(QStringLiteral("singleSkillHome"), QString());
     }
+
+#ifndef Q_OS_ANDROID
+    if (parser.isSet(skillOption)) {
+        app.setApplicationName(QStringLiteral("mycroft.gui.") + singleSkill);
+        KDBusService service(KDBusService::Unique);
+    }
+#endif
 
     AppSettings *appSettings = new AppSettings(&view);
     engine.rootContext()->setContextProperty(QStringLiteral("applicationSettings"), appSettings);
