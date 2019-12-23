@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     if (singleSkill.endsWith(QStringLiteral(".home"))) {
         singleSkill = singleSkill.left(singleSkill.indexOf(QStringLiteral(".home")));
         engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), singleSkill);
-        engine.rootContext()->setContextProperty(QStringLiteral("singleSkillHome"), singleSkill);
+        engine.rootContext()->setContextProperty(QStringLiteral("singleSkillHome"), parser.value(skillOption));
     } else {
         engine.rootContext()->setContextProperty(QStringLiteral("singleSkill"), singleSkill);
         engine.rootContext()->setContextProperty(QStringLiteral("singleSkillHome"), QString());
