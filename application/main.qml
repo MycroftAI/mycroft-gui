@@ -246,7 +246,7 @@ Kirigami.ApplicationWindow {
                 }
                 Timer {
                     id: utteranceTimer
-                    interval: 3000
+                    interval: 8000
                     onTriggered: {
                         inputQuery.text = "";
                         inputQuery.opacity = 0
@@ -262,15 +262,6 @@ Kirigami.ApplicationWindow {
                 Connections {
                     target: Mycroft.MycroftController
                     onIntentRecevied: {
-                        if(type == "recognizer_loop:wakeword") {
-                            inputQuery.text = "Hey Mycroft"
-                        }
-                        if(type == "recognizer_loop:record_begin") {
-                            inputQuery.text = "Recording Speech"
-                        }
-                        if(type == "recognizer_loop:record_end") {
-                            inputQuery.text = "Converting Speech To Text"
-                        }
                         if(type == "recognizer_loop:utterance") {
                             inputQuery.text = data.utterances[0]
                         }
