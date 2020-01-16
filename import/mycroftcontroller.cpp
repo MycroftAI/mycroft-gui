@@ -69,6 +69,13 @@ MycroftController::MycroftController(QObject *parent)
                                     QVariantMap({{QStringLiteral("gui_id"), guiId}}));
                     }
                     m_reannounceGuiTimer.start();
+
+                    sendRequest(QStringLiteral("mycroft.skills.all_loaded"), QVariantMap());
+                } else {
+                    if (m_serverReady) {
+                        m_serverReady = false;
+                        emit serverReadyChanged();
+                    }
                 }
             });
 
@@ -261,6 +268,14 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         QUrl url(QStringLiteral("%1:%2/gui").arg(m_appSettingObj->webSocketAddress()).arg(port));
         m_views[guiId]->setUrl(url);
         m_reannounceGuiTimer.stop();
+    } else if (type == QLatin1String("mycroft.skills.all_loaded.response")) {
+        if (doc[QStringLiteral("data")][QStringLiteral("status")].toBool() == true) {
+            m_serverReady = true;
+            emit serverReadyChanged();
+        }
+    } else if (type == QLatin1String("mycroft.ready")) {
+        m_serverReady = true;
+        emit serverReadyChanged();
     }
 
     // Check if it's an utterance recognized as an intent
@@ -365,6 +380,11 @@ bool MycroftController::isSpeaking() const
 bool MycroftController::isListening() const
 {
     return m_isListening;
+}
+
+bool MycroftController::serverReady() const
+{
+    return m_serverReady;
 }
 
 #include "moc_mycroftcontroller.cpp"

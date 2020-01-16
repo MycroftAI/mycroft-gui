@@ -178,10 +178,15 @@ Item {
                 root.state = "ok";
             }
         }
+        onServerReadyChanged: {
+            if (Mycroft.MycroftController.serverReady) {
+                root.state = "ok";
+            }
+        }
         onStatusChanged: {
             switch (Mycroft.MycroftController.status) {
             case Mycroft.MycroftController.Open:
-                root.state = "ok";
+                root.state = Mycroft.MycroftController.serverReady ? "ok" : "loading";
                 break;
             case Mycroft.MycroftController.Connecting:
                 root.state = "loading";

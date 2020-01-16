@@ -45,6 +45,8 @@ class MycroftController : public QObject
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
     Q_PROPERTY(QString currentIntent READ currentIntent NOTIFY currentIntentChanged)
 
+    Q_PROPERTY(bool serverReady READ serverReady NOTIFY serverReadyChanged)
+
     Q_ENUMS(Status)
 public:
     enum Status {
@@ -58,6 +60,7 @@ public:
 
     bool isSpeaking() const;
     bool isListening() const;
+    bool serverReady() const;
     Status status() const;
     QString currentSkill() const;
     QString currentIntent() const;
@@ -77,6 +80,7 @@ Q_SIGNALS:
     void notUnderstood();
     void currentSkillChanged();
     void currentIntentChanged();
+    void serverReadyChanged();
 
     //signal with nearly all data
     //TODO: remove?
@@ -104,6 +108,7 @@ private:
 
     QTimer m_reconnectTimer;
     QTimer m_reannounceGuiTimer;
+
     GlobalSettings *m_appSettingObj;
 
     //TODO: remove
@@ -121,5 +126,6 @@ private:
     bool m_isSpeaking = false;
     bool m_isListening = false;
     bool m_mycroftLaunched = false;
+    bool m_serverReady = false;
 };
 
