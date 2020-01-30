@@ -121,7 +121,7 @@ bool SessionDataModel::moveRows(const QModelIndex &sourceParent, int sourceRow, 
 
 bool SessionDataModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (row <= 0 || count <= 0 || row + count > m_data.count() || parent.isValid()) {
+    if (row < 0 || count <= 0 || row + count > m_data.count() || parent.isValid()) {
         return false;
     }
 
