@@ -67,6 +67,10 @@ void ActiveSkillsFilterModel::setWhiteList(const QStringList &list)
 
 void ActiveSkillsFilterModel::checkGuiActivation(const QString &skillId)
 {
+    if (m_skillsModel->activeSkills().isEmpty()) {
+        return;
+    }
+
     if (m_skillsModel->activeSkills().first() == skillId) {
         if (skillAllowed(skillId)) {
             emit skillActivated(skillId);
