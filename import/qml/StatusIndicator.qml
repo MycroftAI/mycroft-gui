@@ -295,7 +295,7 @@ Item {
 
         anchors {
             fill: background
-            margins: innerCircle.unit * 2
+            margins: innerCircle.unit * 3
         }
 
         // the little dot
