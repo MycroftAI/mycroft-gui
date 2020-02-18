@@ -23,8 +23,8 @@ import Mycroft 1.0 as Mycroft
 
 Item {
     id: root
-    width: Kirigami.Units.gridUnit * 5
-    height: width
+    implicitWidth: Kirigami.Units.gridUnit * 5
+    implicitHeight: width
 
     state: "idle"
     states: [
@@ -217,6 +217,7 @@ Item {
         radius: height
         layer.enabled: true
         layer.effect: DropShadow {
+            cached: true
             transparentBorder: true
             horizontalOffset: 0
             verticalOffset: 2
@@ -233,7 +234,7 @@ Item {
         id: innerCircleGraphics
         anchors {
             fill: outerCircle
-            margins: Kirigami.Units.smallSpacing * 4
+            margins: innerCircle.unit * 5
         }
         visible: false
 
@@ -257,6 +258,7 @@ Item {
     }
     OpacityMask {
         id: innerCircle
+        property int unit: Math.max(1, background.width/20)
         property color graphicsColor
         property color backgroundColor
         property int animationLength: 1000
@@ -292,13 +294,13 @@ Item {
         id: outerCircle
 
         anchors {
-            fill: parent
-            margins: Kirigami.Units.largeSpacing
+            fill: background
+            margins: innerCircle.unit * 2
         }
 
         // the little dot
         Rectangle {
-            width: Kirigami.Units.smallSpacing * 2
+            width: innerCircle.unit * 2
             height: width
             radius: width
             color: innerCircle.graphicsColor
@@ -308,11 +310,11 @@ Item {
         Rectangle {
             anchors {
                 fill: parent
-                margins: Kirigami.Units.smallSpacing * 3
+                margins: innerCircle.unit * 3
             }
             radius: width
             color: "transparent"
-            border.width: Kirigami.Units.devicePixelRatio * 2
+            border.width: innerCircle.unit 
             border.color: innerCircle.graphicsColor
         }
         RotationAnimator {
