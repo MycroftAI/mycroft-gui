@@ -116,6 +116,7 @@ QList<DelegatesModel *> ActiveSkillsFilterModel::delegatesModels() const
         if (skillAllowed(i.key())) {
             list << i.value();
         }
+        i++;
     }
     return list;
 }

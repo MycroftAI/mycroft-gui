@@ -527,7 +527,7 @@ void ServerTest::testEventsFromServer()
     QVERIFY(delegate);
     QCOMPARE(delegate->skillId(), QStringLiteral("mycroft.weather"));
 
-    QSignalSpy eventSpy(delegate, &AbstractDelegate::event);
+    QSignalSpy eventSpy(delegate, &AbstractDelegate::guiEvent);
 
     //An event of the weather skill
     m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.events.triggered\", \"namespace\": \"mycroft.weather\", \"event_name\": \"show_alert\", \"data\": {\"alert_name\": \"blizzard\", \"condition\": \"severe\"}}"));
