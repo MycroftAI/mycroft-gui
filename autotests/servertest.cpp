@@ -159,7 +159,6 @@ void ServerTest::initTestCase()
     }
     m_window->show();
     m_view = qobject_cast<AbstractSkillView *>(m_window->rootObject());
-    qWarning()<<"AAAAA"<<m_view;
     QVERIFY(m_view);
 
     new QAbstractItemModelTester(m_view->activeSkills(), QAbstractItemModelTester::FailureReportingMode::QtTest, this);

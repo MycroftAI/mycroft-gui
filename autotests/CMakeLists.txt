@@ -48,3 +48,25 @@ ecm_add_test(
     Qt5::Network
     Qt5::WebSockets
 )
+
+ecm_add_test(
+  stresstest.cpp
+  ${CMAKE_SOURCE_DIR}/import/abstractdelegate.cpp
+  ${CMAKE_SOURCE_DIR}/import/mycroftcontroller.cpp
+  ${CMAKE_SOURCE_DIR}/import/activeskillsmodel.cpp
+  ${CMAKE_SOURCE_DIR}/import/delegatesmodel.cpp
+  ${CMAKE_SOURCE_DIR}/import/sessiondatamap.cpp
+  ${CMAKE_SOURCE_DIR}/import/sessiondatamodel.cpp
+  ${CMAKE_SOURCE_DIR}/import/filereader.cpp
+  ${CMAKE_SOURCE_DIR}/import/globalsettings.cpp
+  ${CMAKE_SOURCE_DIR}/import/abstractskillview.cpp
+
+  TEST_NAME stresstest
+
+  LINK_LIBRARIES
+    Qt5::Test
+    Qt5::Qml
+    Qt5::Quick
+    Qt5::Network
+    Qt5::WebSockets
+)
