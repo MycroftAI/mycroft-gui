@@ -222,7 +222,7 @@ void ServerTest::create100Skills()
 
     QCOMPARE(m_view->activeSkills()->rowCount(), 10);
     for (int i = 0; i < 10; ++i) {
-        QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(99-i,0), ActiveSkillsModel::SkillId).toString(), QString::number(i));
+        QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(9-i,0), ActiveSkillsModel::SkillId).toString(), QString::number(i));
     }
 }
 
