@@ -37,7 +37,7 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
       m_id(QUuid::createUuid().toString()),
       m_controller(MycroftController::instance())
 {
-    m_activeSkillsModel = new ActiveSkillsFilterModel(this);
+    m_activeSkillsModel = new ActiveSkillsModel(this);
 
     m_guiWebSocket = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);
     m_controller->registerView(this);
@@ -51,7 +51,7 @@ AbstractSkillView::AbstractSkillView(QQuickItem *parent)
     connect(m_guiWebSocket, &QWebSocket::disconnected, this, &AbstractSkillView::closed);
 
     connect(m_guiWebSocket, &QWebSocket::disconnected, this, [this]() {
-        m_activeSkillsModel->removeRows(0, m_activeSkillsModel->skillsModel()->rowCount());
+        m_activeSkillsModel->removeRows(0, m_activeSkillsModel->rowCount());
     });
 
     connect(m_guiWebSocket, &QWebSocket::stateChanged, this,
@@ -212,7 +212,7 @@ MycroftController::Status AbstractSkillView::status() const
     }
 }
 
-ActiveSkillsFilterModel *AbstractSkillView::activeSkills() const
+ActiveSkillsModel *AbstractSkillView::activeSkills() const
 {
     return m_activeSkillsModel;
 }
@@ -315,7 +315,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             qWarning() << "Empty skill_id in mycroft.session.set";
             return;
         }
-        if (!m_activeSkillsModel->skillsModel()->skillIndex(skillId).isValid()) {
+        if (!m_activeSkillsModel->skillIndex(skillId).isValid()) {
             qWarning() << "Invalid skill_id in mycroft.session.set:" << skillId;
             return;
         }
@@ -386,7 +386,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
     } else if (type == QLatin1String("mycroft.session.list.insert") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
         const int position = doc[QStringLiteral("position")].toInt();
 
-        if (position < 0 || position > m_activeSkillsModel->skillsModel()->rowCount()) {
+        if (position < 0 || position > m_activeSkillsModel->rowCount()) {
             qWarning() << "Error: Invalid position in mycroft.session.list.insert of mycroft.system.active_skills";
             return;
         }
@@ -398,7 +398,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
             return;
         }
 
-        m_activeSkillsModel->skillsModel()->insertSkills(position, skillList);
+        m_activeSkillsModel->insertSkills(position, skillList);
 
 
     // Active skill removed
@@ -406,18 +406,18 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         const int position = doc[QStringLiteral("position")].toInt();
         const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
-        if (position < 0 || position > m_activeSkillsModel->skillsModel()->rowCount() - 1) {
+        if (position < 0 || position > m_activeSkillsModel->rowCount() - 1) {
             qWarning() << "Error: Invalid position in mycroft.session.list.remove of mycroft.system.active_skills";
             return;
         }
-        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->skillsModel()->rowCount() - position) {
+        if (itemsNumber < 0 || itemsNumber > m_activeSkillsModel->rowCount() - position) {
             qWarning() << "Error: Invalid items_number in mycroft.session.list.remove of mycroft.system.active_skills";
             return;
         }
 
         for (int i = 0; i < itemsNumber; ++i) {
 
-            const QString skillId = m_activeSkillsModel->skillsModel()->data(m_activeSkillsModel->skillsModel()->index(position+i, 0)).toString();
+            const QString skillId = m_activeSkillsModel->data(m_activeSkillsModel->index(position+i, 0)).toString();
 
             //TODO: do this after an animation
             {
@@ -428,7 +428,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
                 }
             }
         }
-        m_activeSkillsModel->skillsModel()->removeRows(position, itemsNumber);
+        m_activeSkillsModel->removeRows(position, itemsNumber);
 
     // Active skill moved
     } else if (type == QLatin1String("mycroft.session.list.move") && doc[QStringLiteral("namespace")].toString() == QLatin1String("mycroft.system.active_skills")) {
@@ -436,20 +436,20 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         const int to = doc[QStringLiteral("to")].toInt();
         const int itemsNumber = doc[QStringLiteral("items_number")].toInt();
 
-        if (from < 0 || from > m_activeSkillsModel->skillsModel()->rowCount() - 1) {
+        if (from < 0 || from > m_activeSkillsModel->rowCount() - 1) {
             qWarning() << "Error: Invalid from position in mycroft.session.list.move of mycroft.system.active_skills";
             return;
         }
-        if (to < 0 || to > m_activeSkillsModel->skillsModel()->rowCount() - 1) {
+        if (to < 0 || to > m_activeSkillsModel->rowCount() - 1) {
             qWarning() << "Error: Invalid to position in mycroft.session.list.move of mycroft.system.active_skills";
             return;
         }
-        if (itemsNumber <= 0 || itemsNumber > m_activeSkillsModel->skillsModel()->rowCount() - from) {
+        if (itemsNumber <= 0 || itemsNumber > m_activeSkillsModel->rowCount() - from) {
             qWarning() << "Error: Invalid items_number in mycroft.session.list.move of mycroft.system.active_skills";
             return;
         }
 
-        m_activeSkillsModel->skillsModel()->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
+        m_activeSkillsModel->moveRows(QModelIndex(), from, itemsNumber, QModelIndex(), to);
 //END ACTIVESKILLS
 
 
@@ -633,7 +633,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
         const int position = doc[QStringLiteral("position")].toInt();
 
-        if (position < 0 || position > m_activeSkillsModel->skillsModel()->rowCount()) {
+        if (position < 0 || position > m_activeSkillsModel->rowCount()) {
             qWarning() << "Error: Invalid position in mycroft.session.list.update";
             return;
         }

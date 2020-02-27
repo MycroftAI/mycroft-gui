@@ -134,7 +134,7 @@ Mycroft.AbstractSkillView {
 
             delegate: Item {
                 id: delegate
-                readonly property bool current: index == 0
+                readonly property bool current: index == activeSkills.activeIndex
                 property alias view: delegatesView
 
                 width: parent.width

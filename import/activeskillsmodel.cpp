@@ -21,22 +21,51 @@
 
 #include <QDebug>
 
-ActiveSkillsFilterModel::ActiveSkillsFilterModel(QObject *parent)
-    : QSortFilterProxyModel(parent),
-      m_skillsModel(new ActiveSkillsModel(parent))
+
+ActiveSkillsModel::ActiveSkillsModel(QObject *parent)
+    : QAbstractListModel(parent)
 {
-    setSourceModel(m_skillsModel);
 }
 
-ActiveSkillsFilterModel::~ActiveSkillsFilterModel()
-{}
+ActiveSkillsModel::~ActiveSkillsModel()
+{
+    //TODO: delete everything
+}
 
-QStringList ActiveSkillsFilterModel::blackList() const
+void ActiveSkillsModel::syncActiveIndex()
+{
+    if (m_skills.isEmpty()) {
+        m_activeIndex = -1;
+        emit activeIndexChanged();
+    }
+
+    int index = -1;
+    int i = 0;
+    for (const auto &skill : m_skills) {
+        if (skillAllowed(skill)) {
+            index = i;
+            break;
+        }
+        ++i;
+    }
+
+    if (m_activeIndex != index) {
+        m_activeIndex = index;
+        emit activeIndexChanged();
+    }
+}
+
+int ActiveSkillsModel::activeIndex() const
+{
+    return m_activeIndex;
+}
+
+QStringList ActiveSkillsModel::blackList() const
 {
     return m_blackList;
 }
 
-void ActiveSkillsFilterModel::setBlackList(const QStringList &list)
+void ActiveSkillsModel::setBlackList(const QStringList &list)
 {
     if (list == m_blackList) {
         return;
@@ -44,16 +73,16 @@ void ActiveSkillsFilterModel::setBlackList(const QStringList &list)
 
     m_blackList = list;
 
-    invalidate();
+    // TODO: delete/create delegates?
     emit blackListChanged();
 }
 
-QStringList ActiveSkillsFilterModel::whiteList() const
+QStringList ActiveSkillsModel::whiteList() const
 {
     return m_whiteList;
 }
 
-void ActiveSkillsFilterModel::setWhiteList(const QStringList &list)
+void ActiveSkillsModel::setWhiteList(const QStringList &list)
 {
     if (list == m_whiteList) {
         return;
@@ -61,17 +90,16 @@ void ActiveSkillsFilterModel::setWhiteList(const QStringList &list)
 
     m_whiteList = list;
 
-    invalidate();
     emit whiteListChanged();
 }
 
-void ActiveSkillsFilterModel::checkGuiActivation(const QString &skillId)
+void ActiveSkillsModel::checkGuiActivation(const QString &skillId)
 {
-    if (m_skillsModel->activeSkills().isEmpty()) {
+    if (activeSkills().isEmpty()) {
         return;
     }
-
-    if (m_skillsModel->activeSkills().first() == skillId) {
+qWarning()<<"AAAAA"<<skillId<<skillAllowed(skillId);
+    if (activeSkills().first() == skillId) {
         if (skillAllowed(skillId)) {
             emit skillActivated(skillId);
         } else {
@@ -82,67 +110,9 @@ void ActiveSkillsFilterModel::checkGuiActivation(const QString &skillId)
     }
 }
 
-bool ActiveSkillsFilterModel::skillAllowed(const QString skillId) const
+bool ActiveSkillsModel::skillAllowed(const QString skillId) const
 {
     return !m_blackList.contains(skillId) && (m_whiteList.isEmpty() || m_whiteList.contains(skillId));
-}
-
-QModelIndex ActiveSkillsFilterModel::skillIndex(const QString &skillId)
-{
-    return mapFromSource(m_skillsModel->skillIndex(skillId));
-}
-
-void ActiveSkillsFilterModel::insertSkills(int position, const QStringList &skillList)
-{
-    m_skillsModel->insertSkills(position, skillList);
-}
-
-DelegatesModel *ActiveSkillsFilterModel::delegatesModelForSkill(const QString &skillId)
-{
-    if (!skillAllowed(skillId)) {
-        return nullptr;
-    }
-
-    return m_skillsModel->delegatesModelForSkill(skillId);
-}
-
-QList<DelegatesModel *> ActiveSkillsFilterModel::delegatesModels() const
-{
-    QList<DelegatesModel *> list;
-    QHash<QString, DelegatesModel*> m_delegatesModels = m_skillsModel->delegatesModels();
-
-    auto i = m_delegatesModels.constBegin();
-    while (i != m_delegatesModels.constEnd()) {
-        if (skillAllowed(i.key())) {
-            list << i.value();
-        }
-        i++;
-    }
-    return list;
-}
-
-ActiveSkillsModel *ActiveSkillsFilterModel::skillsModel() const
-{
-    return m_skillsModel;
-}
-
-bool ActiveSkillsFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
-{
-    QModelIndex sourceIndex = sourceModel()->index(source_row, 0, source_parent);
-    const QString skillId = sourceModel()->data(sourceIndex, ActiveSkillsModel::SkillId).toString();
-
-    return skillAllowed(skillId);
-}
-
-
-ActiveSkillsModel::ActiveSkillsModel(QObject *parent)
-    : QAbstractListModel(parent)
-{
-}
-
-ActiveSkillsModel::~ActiveSkillsModel()
-{
-    //TODO: delete everything
 }
 
 void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
@@ -172,6 +142,7 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
         ++i;
     }
     endInsertRows();
+    syncActiveIndex();
 }
 
 QStringList ActiveSkillsModel::activeSkills() const
@@ -192,6 +163,10 @@ QModelIndex ActiveSkillsModel::skillIndex(const QString &skillId)
 
 DelegatesModel *ActiveSkillsModel::delegatesModelForSkill(const QString &skillId)
 {
+
+    if (!skillAllowed(skillId)) {
+        return nullptr;
+    }
 
     if (!skillId.isEmpty() && !m_skills.contains(skillId)) {
         return nullptr;
@@ -241,6 +216,7 @@ bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow,
     }
 
     endMoveRows();
+    syncActiveIndex();
     return true;
 }
 
@@ -261,6 +237,7 @@ bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent
     m_skills.erase(m_skills.begin() + row, m_skills.begin() + row + count);
 
     endRemoveRows();
+    syncActiveIndex();
     return true;
 }
 

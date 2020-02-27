@@ -131,7 +131,6 @@ void ServerTest::initTestCase()
     qmlRegisterType<AbstractDelegate>("Mycroft", 1, 0, "AbstractDelegate");
 
     qmlRegisterUncreatableType<ActiveSkillsModel>("Mycroft", 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
-    qmlRegisterUncreatableType<ActiveSkillsFilterModel>("Mycroft", 1, 0, "ActiveSkillsFilterModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsFilterModel"));
     qmlRegisterUncreatableType<DelegatesModel>("Mycroft", 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
     qmlRegisterUncreatableType<SessionDataMap>("Mycroft", 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
 

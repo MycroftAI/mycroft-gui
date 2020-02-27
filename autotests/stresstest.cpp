@@ -41,6 +41,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void testGuiConnection();
     void create100Skills();
+    void move100Skills();
     void delete100Skills();
     void repeat100();
 
@@ -124,7 +125,6 @@ void ServerTest::initTestCase()
     qmlRegisterType<AbstractDelegate>("Mycroft", 1, 0, "AbstractDelegate");
 
     qmlRegisterUncreatableType<ActiveSkillsModel>("Mycroft", 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
-    qmlRegisterUncreatableType<ActiveSkillsFilterModel>("Mycroft", 1, 0, "ActiveSkillsFilterModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsFilterModel"));
     qmlRegisterUncreatableType<DelegatesModel>("Mycroft", 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
     qmlRegisterUncreatableType<SessionDataMap>("Mycroft", 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
 
@@ -224,6 +224,22 @@ void ServerTest::create100Skills()
     for (int i = 0; i < 10; ++i) {
         QCOMPARE(m_view->activeSkills()->data(m_view->activeSkills()->index(9-i,0), ActiveSkillsModel::SkillId).toString(), QString::number(i));
     }
+}
+
+void ServerTest::move100Skills()
+{
+    QSignalSpy skillMovedSpy(m_view->activeSkills(), &ActiveSkillsModel::rowsMoved);
+
+   // QTest::qWait(3000);
+    const QUrl url(QStringLiteral("file://") + QFINDTESTDATA("delegatewithloader.qml"));
+
+    for (int i = 0; i < 10; ++i) {
+
+        m_guiWebSocket->sendTextMessage(QStringLiteral("{\"type\": \"mycroft.session.list.move\", \"namespace\": \"mycroft.system.active_skills\", \"from\": 9, \"to\": 0, \"items_number\": 1}"));
+
+        skillMovedSpy.wait();
+    }
+    
 }
 
 void ServerTest::delete100Skills()
