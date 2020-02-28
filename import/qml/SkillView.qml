@@ -184,9 +184,7 @@ Mycroft.AbstractSkillView {
                             root.open = true;
                             enterAnim.restart();
                         }
-                    }
 
-                    onCountChanged: {
                         if (count > 0 && currentIndex < 0) {
                             currentIndex = 0;
                         }
