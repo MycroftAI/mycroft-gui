@@ -98,7 +98,7 @@ void ActiveSkillsModel::checkGuiActivation(const QString &skillId)
     if (activeSkills().isEmpty()) {
         return;
     }
-qWarning()<<"AAAAA"<<skillId<<skillAllowed(skillId);
+
     if (activeSkills().first() == skillId) {
         if (skillAllowed(skillId)) {
             emit skillActivated(skillId);

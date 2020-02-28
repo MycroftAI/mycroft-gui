@@ -146,7 +146,7 @@ Mycroft.AbstractSkillView {
                 z: current ? 1 : 0
 
                 onCurrentChanged: {
-                    if (current) {
+                    if (current && delegatesView.count > 0) {
                         activeSkillsRepeater.currentDelegate = delegate;
                         root.open = true;
                         enterAnim.restart();
@@ -179,6 +179,14 @@ Mycroft.AbstractSkillView {
                     anchors.fill: parent
 
                     onCountChanged: {
+                        if (root.open === false && delegate.current && delegatesView.count > 0) {
+                            activeSkillsRepeater.currentDelegate = delegate;
+                            root.open = true;
+                            enterAnim.restart();
+                        }
+                    }
+
+                    onCountChanged: {
                         if (count > 0 && currentIndex < 0) {
                             currentIndex = 0;
                         }
@@ -205,6 +213,7 @@ Mycroft.AbstractSkillView {
 
                     Repeater {
                         model: delegates
+
                         delegate: Controls.Control {
                             id: delegate
 
