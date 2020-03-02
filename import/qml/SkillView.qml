@@ -74,7 +74,7 @@ Mycroft.AbstractSkillView {
                 easing.type: Easing.InOutQuad
             }
             YAnimator {
-                target: itemsParent
+                target: delegatesContainer
                 from: root.height / 4
                 to: root.topPadding
                 duration: Kirigami.Units.longDuration
@@ -94,7 +94,7 @@ Mycroft.AbstractSkillView {
                 easing.type: Easing.InOutQuad
             }
             YAnimator {
-                target: itemsParent
+                target: delegatesContainer
                 from: root.topPadding
                 to: root.height / 4
                 duration: Kirigami.Units.longDuration
@@ -179,10 +179,12 @@ Mycroft.AbstractSkillView {
                     anchors.fill: parent
 
                     onCountChanged: {
-                        if (root.open === false && delegate.current && delegatesView.count > 0) {
+                        if (delegate.current && delegatesView.count > 0) {
                             activeSkillsRepeater.currentDelegate = delegate;
-                            root.open = true;
-                            enterAnim.restart();
+                            if (root.open === false) {
+                                root.open = true;
+                                enterAnim.restart();
+                            }
                         }
 
                         if (count > 0 && currentIndex < 0) {
