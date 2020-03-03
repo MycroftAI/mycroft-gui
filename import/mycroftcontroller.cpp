@@ -208,11 +208,21 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     }
 #endif
 
-    if (type == QLatin1String("intent_failure")) {
+    // Try catching intent_failure from another method because of issue: https://github.com/MycroftAI/mycroft-core/issues/2490
+    if (type == QLatin1String("active_skill_request")) {         
+        QString skill_id = doc[QStringLiteral("data")][QStringLiteral("skill_id")].toString();
+        if (skill_id == QStringLiteral("fallback-unknown.mycroftai")) {
+            m_isListening = false;
+            emit isListeningChanged();
+            emit notUnderstood();
+        }
+        return;
+    }
+    // Instead of intent_failure which is handled by fallback skills, use complete_intent_failure where all skills failed to parse intent
+    if (type == QLatin1String("complete_intent_failure")) {
         m_isListening = false;
         emit isListeningChanged();
         emit notUnderstood();
-        return;
     }
     if (type == QLatin1String("recognizer_loop:audio_output_start")) {
         m_isSpeaking = true;
@@ -224,7 +234,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         emit isSpeakingChanged();
         return;
     }
-    if (type == QLatin1String("recognizer_loop:record_begin")) {
+    if (type == QLatin1String("recognizer_loop:wakeword")) {
         m_isListening = true;
         emit isListeningChanged();
         return;
