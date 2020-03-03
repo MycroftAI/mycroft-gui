@@ -25,6 +25,8 @@ Item {
     id: root
     implicitWidth: Kirigami.Units.gridUnit * 5
     implicitHeight: width
+    
+    property bool hasShadow: true
 
     state: "idle"
     states: [
@@ -215,7 +217,7 @@ Item {
         height: width
         color: innerCircle.backgroundColor
         radius: height
-        layer.enabled: true
+        layer.enabled: hasShadow
         layer.effect: DropShadow {
             cached: true
             transparentBorder: true
