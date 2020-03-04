@@ -32,34 +32,6 @@ ActiveSkillsModel::~ActiveSkillsModel()
     //TODO: delete everything
 }
 
-void ActiveSkillsModel::syncActiveIndex()
-{
-    if (m_skills.isEmpty()) {
-        m_activeIndex = -1;
-        emit activeIndexChanged();
-    }
-
-    int index = -1;
-    int i = 0;
-    for (const auto &skill : m_skills) {
-        if (skillAllowed(skill)) {
-            index = i;
-            break;
-        }
-        ++i;
-    }
-
-    if (m_activeIndex != index) {
-        m_activeIndex = index;
-        emit activeIndexChanged();
-    }
-}
-
-int ActiveSkillsModel::activeIndex() const
-{
-    return m_activeIndex;
-}
-
 QStringList ActiveSkillsModel::blackList() const
 {
     return m_blackList;
@@ -99,6 +71,7 @@ void ActiveSkillsModel::checkGuiActivation(const QString &skillId)
         emit blacklistedSkillActivated(skillId);
         return;
     }
+
     if (activeSkills().isEmpty()) {
         return;
     }
@@ -140,7 +113,10 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
         ++i;
     }
     endInsertRows();
-    syncActiveIndex();
+
+    if (position == 0) {
+        checkGuiActivation(filteredList.first());
+    }
 }
 
 QStringList ActiveSkillsModel::activeSkills() const
@@ -214,7 +190,11 @@ bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow,
     }
 
     endMoveRows();
-    syncActiveIndex();
+
+    if (destinationChild == 0) {
+        checkGuiActivation(m_skills.first());
+    }
+
     return true;
 }
 
@@ -235,7 +215,6 @@ bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent
     m_skills.erase(m_skills.begin() + row, m_skills.begin() + row + count);
 
     endRemoveRows();
-    syncActiveIndex();
     return true;
 }
 

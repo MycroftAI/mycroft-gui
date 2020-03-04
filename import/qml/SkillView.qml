@@ -134,7 +134,7 @@ Mycroft.AbstractSkillView {
 
             delegate: Item {
                 id: delegate
-                readonly property bool current: index == activeSkills.activeIndex
+                readonly property bool current: index == 0
                 property alias view: delegatesView
 
                 width: parent.width
@@ -146,10 +146,9 @@ Mycroft.AbstractSkillView {
                 z: current ? 1 : 0
 
                 onCurrentChanged: {
-                    if (current && delegatesView.count > 0) {
-                        activeSkillsRepeater.currentDelegate = delegate;
-                        root.open = true;
-                        enterAnim.restart();
+                    activeSkillsRepeater.currentDelegate = delegate;
+                    if (current && delegatesView.count === 0) {
+                        root.open = false;
                     }
                 }
                 Behavior on opacity {
