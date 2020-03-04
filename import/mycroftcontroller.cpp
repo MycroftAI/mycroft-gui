@@ -234,7 +234,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         emit isSpeakingChanged();
         return;
     }
-    if (type == QLatin1String("recognizer_loop:wakeword")) {
+    if (type == QLatin1String("recognizer_loop:record_begin")) {
         m_isListening = true;
         emit isListeningChanged();
         return;
