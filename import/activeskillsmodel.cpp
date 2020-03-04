@@ -95,17 +95,15 @@ void ActiveSkillsModel::setWhiteList(const QStringList &list)
 
 void ActiveSkillsModel::checkGuiActivation(const QString &skillId)
 {
+    if (!skillAllowed(skillId)) {
+        emit blacklistedSkillActivated(skillId);
+        return;
+    }
     if (activeSkills().isEmpty()) {
         return;
     }
 
     if (activeSkills().first() == skillId) {
-        if (skillAllowed(skillId)) {
-            emit skillActivated(skillId);
-        } else {
-            emit blacklistedSkillActivated(skillId);
-        }
-    } else if (data(index(0,0), ActiveSkillsModel::SkillId).toString() == skillId) {
         emit skillActivated(skillId);
     }
 }
