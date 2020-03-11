@@ -125,7 +125,7 @@ void MycroftController::start()
 
         //don't try to launch mycroft more than once
         if (!m_mycroftLaunched) {
-            QProcess::startDetached(QStringLiteral("mycroft-gui-core-loader"));
+            QProcess::startDetached(QStringLiteral("mycroft-gui-core-loader"), QStringList());
             m_mycroftLaunched = true;
         }
         m_reconnectTimer.start();
@@ -141,7 +141,7 @@ void MycroftController::disconnectSocket()
     m_mainWebSocket.close();
     m_reconnectTimer.stop();
     if (m_mycroftLaunched) {
-        QProcess::startDetached(QStringLiteral("mycroft-gui-core-stop"));
+        QProcess::startDetached(QStringLiteral("mycroft-gui-core-stop"), QStringList());
         m_mycroftLaunched = false;
     }
     emit socketStatusChanged();
