@@ -45,6 +45,12 @@ Item {
     Component.onCompleted: syncStatusTimer.restart()
 
     // Sometimes can't be restarted reliably immediately, put it in a timer
+    onActiveFocusChanged: {
+        if(activeFocus){
+            playButton.forceActiveFocus();
+        }
+    }
+    
     Timer {
         id: syncStatusTimer
         interval: 0
@@ -131,9 +137,20 @@ Item {
                     Layout.maximumHeight: width
                     focus: false
                     icon.name: "media-seek-backward"
+                    KeyNavigation.right: playButton
+                    KeyNavigation.down: seekableslider
                     onClicked: {
                         triggerGuiEvent(previousAction, {})
-                        previousButton.focus = false
+                    }
+                    
+                    background: Rectangle {
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                        radius: width
+                        color: previousButton.activeFocus ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
+                    }
+                    
+                    Keys.onReturnPressed: {
+                        clicked()
                     }
                 }
 
@@ -147,9 +164,21 @@ Item {
                     Layout.maximumHeight: width
                     focus: false
                     icon.name: player.playbackState === MediaPlayer.PlayingState ? "media-playback-pause" : "media-playback-start"
+                    KeyNavigation.left: previousButton
+                    KeyNavigation.right: nextButton
+                    KeyNavigation.down: seekableslider
                     onClicked: {
                         player.playbackState === MediaPlayer.PlayingState ? player.pause() : player.play()
-                        playButton.focus = false
+                    }
+                    
+                    background: Rectangle {
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                        radius: width
+                        color: playButton.activeFocus ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
+                    }
+                    
+                    Keys.onReturnPressed: {
+                        clicked()
                     }
                 }
 
@@ -163,9 +192,20 @@ Item {
                     Layout.maximumHeight: width
                     focus: false
                     icon.name: "media-seek-forward"
+                    KeyNavigation.left: playButton
+                    KeyNavigation.down: seekableslider
                     onClicked: {
                         triggerGuiEvent(nextAction, {})
-                        nextButton.focus = false
+                    }
+                    
+                    background: Rectangle {
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                        radius: width
+                        color: nextButton.activeFocus ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
+                    }
+                    
+                    Keys.onReturnPressed: {
+                        clicked()
                     }
                 }
             }
@@ -194,6 +234,18 @@ Item {
                             seekableslider.value = player.position
                             seekableslider.sync = false
                         }
+                    }
+                    
+                    Keys.onLeftPressed: {
+                        var l = 0
+                        l = seekableslider.position - 0.05
+                        seekableslider.value = seekableslider.valueAt(l);                        
+                    }
+                    
+                    Keys.onRightPressed: {
+                        var l = 0
+                        l = seekableslider.position + 0.05
+                        seekableslider.value = seekableslider.valueAt(l);
                     }
                 }
 
