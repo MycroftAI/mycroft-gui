@@ -32,6 +32,36 @@ ActiveSkillsModel::~ActiveSkillsModel()
     //TODO: delete everything
 }
 
+void ActiveSkillsModel::syncActiveIndex()
+{
+    if (m_skills.isEmpty()) {
+        m_activeIndex = -1;
+        emit activeIndexChanged();
+    }
+
+    int index = -1;
+    int i = 0;
+    for (const auto &skill : m_skills) {
+
+        if (skillAllowed(skill)) {
+            index = i;
+            break;
+        }
+        ++i;
+    }
+
+    if (m_activeIndex != index) {
+        m_activeIndex = index;
+        emit activeIndexChanged();
+    }
+}
+
+int ActiveSkillsModel::activeIndex() const
+{
+    return m_activeIndex;
+}
+
+
 QStringList ActiveSkillsModel::blackList() const
 {
     return m_blackList;
@@ -112,9 +142,12 @@ void ActiveSkillsModel::insertSkills(int position, const QStringList &skillList)
         m_skills.insert(position + i, skillId);
         ++i;
     }
+    //First syncactiveindex then endInserRows as it could make the view think we don't have any delegates for current skill
+    syncActiveIndex();
     endInsertRows();
 
-    if (position == 0) {
+    //TODO: activate proper skills
+    if (position == m_activeIndex) {
         checkGuiActivation(filteredList.first());
     }
 }
@@ -191,7 +224,8 @@ bool ActiveSkillsModel::moveRows(const QModelIndex &sourceParent, int sourceRow,
 
     endMoveRows();
 
-    if (destinationChild == 0) {
+    syncActiveIndex();
+    if (destinationChild == m_activeIndex) {
         checkGuiActivation(m_skills.first());
     }
 
@@ -215,6 +249,7 @@ bool ActiveSkillsModel::removeRows(int row, int count, const QModelIndex &parent
     m_skills.erase(m_skills.begin() + row, m_skills.begin() + row + count);
 
     endRemoveRows();
+    syncActiveIndex();
     return true;
 }
 

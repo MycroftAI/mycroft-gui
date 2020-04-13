@@ -26,6 +26,7 @@ class DelegatesModel;
 class ActiveSkillsModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int activeIndex READ activeIndex NOTIFY activeIndexChanged)
     Q_PROPERTY(QStringList blackList READ blackList WRITE setBlackList NOTIFY blackListChanged)
     Q_PROPERTY(QStringList whiteList READ whiteList WRITE setWhiteList NOTIFY whiteListChanged)
 
@@ -37,6 +38,8 @@ public:
 
     explicit ActiveSkillsModel(QObject *parent = nullptr);
     virtual ~ActiveSkillsModel();
+
+    int activeIndex() const;
 
     QStringList blackList() const;
     void setBlackList(const QStringList &list);
@@ -70,12 +73,15 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
 Q_SIGNALS:
+    void activeIndexChanged();
     void blackListChanged();
     void whiteListChanged();
     void skillActivated(const QString &skillId);
     void blacklistedSkillActivated(const QString &skillId);
 
 private:
+    void syncActiveIndex();
+    int m_activeIndex = -1;
     QList<QString> m_skills;
     QList<QString> m_blackList;
     QList<QString> m_whiteList;
