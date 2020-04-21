@@ -18,6 +18,7 @@ find_package(ECM 1.6.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDEInstallDirs)
+include(KDECMakeSettings)
 include(ECMInstallIcons)
 set(CMAKE_AUTOMOC ON)
 
