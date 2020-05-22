@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     auto dpiOption = QCommandLineOption(QStringLiteral("dpi"), QStringLiteral("dpi"), QStringLiteral("dpi"));
     auto skillOption = QCommandLineOption(QStringLiteral("skill"), QStringLiteral("Single skill to load"), QStringLiteral("skill"));
     auto maximizeOption = QCommandLineOption(QStringLiteral("maximize"), QStringLiteral("When set, start maximized."));
-    auto rotateScreen = QCommandLineOption(QStringLiteral("rotateScreen"), QStringLiteral("When set, rotate the screen 180 degrees."));
+    auto rotateScreen = QCommandLineOption(QStringLiteral("rotateScreen"), QStringLiteral("When set, rotate the screen by set degrees."), QStringLiteral("degrees"));
     auto helpOption = QCommandLineOption(QStringLiteral("help"), QStringLiteral("Show this help message"));
     parser.addOptions({widthOption, heightOption, hideTextInputOption, skillOption,
                        dpiOption, maximizeOption,
@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     int width = parser.value(widthOption).toInt();
     int height = parser.value(heightOption).toInt();
+    int rotation = parser.value(rotateScreen).toInt();
     bool maximize = parser.isSet(maximizeOption);
 
     QQmlApplicationEngine engine;
@@ -93,7 +94,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("deviceHeight"), height);
     engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
-    engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? 180 : 0);
+    engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? rotation : 0);
 
     QString singleSkill = parser.value(skillOption);
     if (singleSkill.endsWith(QStringLiteral(".home"))) {
