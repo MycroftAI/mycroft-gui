@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/AudioPlayer.qml</file>
+        <file>qml/AutoFitLabel.qml</file>
+        <file>qml/Delegate.qml</file>
+        <file>qml/PaginatedText.qml</file>
+        <file>qml/ProportionalDelegate.qml</file>
+        <file>qml/ScrollableDelegate.qml</file>
+        <file>qml/SkillView.qml</file>
+        <file>qml/SlideShow.qml</file>
+        <file>qml/SlidingImage.qml</file>
+        <file>qml/StatusIndicator.qml</file>
+        <file>qml/VideoPlayer.qml</file>
+        <file>qml/private/ImageBackground.qml</file>
+    </qresource>
+</RCC>

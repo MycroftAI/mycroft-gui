@@ -68,6 +68,17 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterType<AbstractSkillView>(uri, 1, 0, "AbstractSkillView");
     qmlRegisterType<AbstractDelegate>(uri, 1, 0, "AbstractDelegate");
     qmlRegisterType<AudioRec>(uri, 1, 0, "AudioRec");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/AudioPlayer.qml")), uri, 1, 0, "AudioPlayer");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/AutoFitLabel.qml")), uri, 1, 0, "AutoFitLabel");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/Delegate.qml")), uri, 1, 0, "Delegate");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/PaginatedText.qml")), uri, 1, 0, "PaginatedText");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/ProportionalDelegate.qml")), uri, 1, 0, "ProportionalDelegate");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/ScrollableDelegate.qml")), uri, 1, 0, "ScrollableDelegate");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/SkillView.qml")), uri, 1, 0, "SkillView");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/SlideShow.qml")), uri, 1, 0, "SlideShow");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/SlidingImage.qml")), uri, 1, 0, "SlidingImage");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/StatusIndicator.qml")), uri, 1, 0, "StatusIndicator");
+    qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/VideoPlayer.qml")), uri, 1, 0, "VideoPlayer");
 
     qmlRegisterUncreatableType<ActiveSkillsModel>(uri, 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
     qmlRegisterUncreatableType<DelegatesModel>(uri, 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));

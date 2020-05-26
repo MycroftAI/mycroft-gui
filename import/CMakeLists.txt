@@ -19,6 +19,8 @@ set(mycroftimport_SRCS
 configure_file(controllerconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/controllerconfig.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+qt5_add_resources(mycroftimport_SRCS mycroft.qrc)
+
 add_library(mycroftplugin SHARED ${mycroftimport_SRCS} ${RESOURCES})
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")

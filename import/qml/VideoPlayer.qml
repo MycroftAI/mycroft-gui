@@ -35,7 +35,7 @@ Item {
     property bool controlBarOpened: false
     property var nextAction
     property var previousAction
-    property alias currentState: player.status
+    property alias currentState: video.status
     
     onEnabledChanged: syncStatusTimer.restart()
     onSourceChanged: syncStatusTimer.restart()
