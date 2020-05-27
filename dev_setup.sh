@@ -20,7 +20,7 @@ function found_exe() {
 if [ ! -f .installed ] || ! md5sum -c &> /dev/null < .installed ; then
    # Update package dependencies whenever this file changes
    if found_exe apt-get ; then
-      sudo apt-get install -y git-core g++ cmake extra-cmake-modules kio-dev gettext pkg-config
+      sudo apt-get install -y git-core g++ cmake extra-cmake-modules kio-dev gettext pkg-config qml-module-qtwebengine
       sudo apt-get install -y pkg-kde-tools qtbase5-dev qtdeclarative5-dev kio-dev
       sudo apt-get install -y libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libkf5kio-dev libqt5webview5-dev
    else
