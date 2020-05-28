@@ -118,20 +118,6 @@ QList <AbstractDelegate *>ServerTest::delegatesForSkill(const QString &skill)
 
 void ServerTest::initTestCase()
 {
-    qmlRegisterSingletonType<MycroftController>("Mycroft", 1, 0, "MycroftController", mycroftControllerSingletonProvider);
-    qmlRegisterSingletonType<GlobalSettings>("Mycroft", 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
-    qmlRegisterSingletonType<FileReader>("Mycroft", 1, 0, "FileReader", fileReaderSingletonProvider);
-    qmlRegisterType<AbstractSkillView>("Mycroft", 1, 0, "AbstractSkillView");
-    qmlRegisterType<AbstractDelegate>("Mycroft", 1, 0, "AbstractDelegate");
-
-    qmlRegisterUncreatableType<ActiveSkillsModel>("Mycroft", 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
-    qmlRegisterUncreatableType<DelegatesModel>("Mycroft", 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
-    qmlRegisterUncreatableType<SessionDataMap>("Mycroft", 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
-
-    qmlRegisterType(QUrl::fromLocalFile(QFINDTESTDATA(QStringLiteral("../import/qml/Delegate.qml"))), "Mycroft", 1, 0, "Delegate");
-
-    qmlProtectModule("Mycroft", 1);
-
     m_mainServerSocket = new QWebSocketServer(QStringLiteral("core"),
                                             QWebSocketServer::NonSecureMode, this);
     m_mainServerSocket->listen(QHostAddress::Any, 8181);
@@ -142,6 +128,44 @@ void ServerTest::initTestCase()
     //TODO: delete
     //m_view = new AbstractSkillView;
     m_window = new QQuickView;
+
+    bool pluginFound = false;
+    for (const auto &path : m_window->engine()->importPathList()) {
+        QDir importDir(path);
+        if (importDir.entryList().contains(QStringLiteral("Mycroft"))) {
+            pluginFound = true;
+            break;
+        }
+    }
+
+    if (!pluginFound) {
+        qmlRegisterSingletonType<MycroftController>("Mycroft", 1, 0, "MycroftController", mycroftControllerSingletonProvider);
+        qmlRegisterSingletonType<GlobalSettings>("Mycroft", 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
+        qmlRegisterSingletonType<FileReader>("Mycroft", 1, 0, "FileReader", fileReaderSingletonProvider);
+        qmlRegisterType<AbstractSkillView>("Mycroft", 1, 0, "AbstractSkillView");
+        qmlRegisterType<AbstractDelegate>("Mycroft", 1, 0, "AbstractDelegate");
+
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/AudioPlayer.qml")), "Mycroft", 1, 0, "AudioPlayer");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/AutoFitLabel.qml")), "Mycroft", 1, 0, "AutoFitLabel");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/Delegate.qml")), "Mycroft", 1, 0, "Delegate");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/PaginatedText.qml")), "Mycroft", 1, 0, "PaginatedText");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/ProportionalDelegate.qml")), "Mycroft", 1, 0, "ProportionalDelegate");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/ScrollableDelegate.qml")), "Mycroft", 1, 0, "ScrollableDelegate");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/SkillView.qml")), "Mycroft", 1, 0, "SkillView");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/SlideShow.qml")), "Mycroft", 1, 0, "SlideShow");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/SlidingImage.qml")), "Mycroft", 1, 0, "SlidingImage");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/StatusIndicator.qml")), "Mycroft", 1, 0, "StatusIndicator");
+        qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/VideoPlayer.qml")), "Mycroft", 1, 0, "VideoPlayer");
+
+        qmlRegisterUncreatableType<ActiveSkillsModel>("Mycroft", 1, 0, "ActiveSkillsModel", QStringLiteral("You cannot instantiate items of type ActiveSkillsModel"));
+        qmlRegisterUncreatableType<DelegatesModel>("Mycroft", 1, 0, "DelegatesModel", QStringLiteral("You cannot instantiate items of type DelegatesModel"));
+        qmlRegisterUncreatableType<SessionDataMap>("Mycroft", 1, 0, "SessionDataMap", QStringLiteral("You cannot instantiate items of type SessionDataMap"));
+
+        qmlRegisterType(QUrl::fromLocalFile(QFINDTESTDATA(QStringLiteral("../import/qml/Delegate.qml"))), "Mycroft", 1, 0, "Delegate");
+
+        qmlProtectModule("Mycroft", 1);
+    }
+
     m_window->setResizeMode(QQuickView::SizeRootObjectToView);
     m_window->resize(400, 800);
 
