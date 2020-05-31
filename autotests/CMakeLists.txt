@@ -17,8 +17,7 @@ set(import_SRCS
     ${CMAKE_SOURCE_DIR}/import/abstractskillview.cpp
    )
 
-
-qt5_add_resources(import_SRCS mycroft.qrc)
+qt5_add_resources(import_SRCS ${CMAKE_SOURCE_DIR}/import/mycroft.qrc)
 
 ecm_add_test(
   servertest.cpp
