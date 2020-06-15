@@ -27,7 +27,7 @@ Kirigami.ScrollablePage {
     title: "Hints"
     objectName: "hints"
     property var modelCreatedObject
-    
+
     Component.onCompleted: {
         createHintModel()
     }
@@ -72,7 +72,7 @@ Kirigami.ScrollablePage {
         var match = re.exec(fileText);
         return match;
     }
-    
+
     Kirigami.CardsListView {
         id: skillslistmodelview
         anchors.fill: parent;
@@ -117,7 +117,7 @@ Kirigami.ScrollablePage {
                             width: Kirigami.Units.gridUnit * 2
                             height: Kirigami.Units.gridUnit * 2
                         }
-                        
+
                         ColorOverlay {
                             id: colorOverlay
                             anchors.fill: innerskImg
