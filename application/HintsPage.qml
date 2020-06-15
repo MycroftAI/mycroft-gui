@@ -76,72 +76,11 @@ Kirigami.ScrollablePage {
         anchors.fill: parent;
         clip: true;
         model: modelCreatedObject
-        delegate: Kirigami.AbstractCard {
-            id: skillDelegate;
-
-            contentItem: Item {
-                implicitWidth: delegateLayout.implicitWidth;
-                implicitHeight: delegateLayout.implicitHeight;
-
-                ColumnLayout {
-                    id: delegateLayout
-                    anchors {
-                        left: parent.left;
-                        top: parent.top;
-                        right: parent.right;
-                    }
-
-                    Kirigami.Heading {
-                        id: skillName
-                        Layout.fillWidth: true;
-                        wrapMode: Text.WordWrap;
-                        font.bold: true;
-                        text: qsTr(modelData.title);
-                        level: 3;
-                        color: Kirigami.Theme.textColor;
-                    }
-
-                    RowLayout {
-                        id: skillTopRowLayout
-                        spacing: Kirigami.Units.largeSpacing
-                        Layout.fillWidth: true;
-
-                        Image {
-                            id: innerskImg
-                            source: modelData.imgSrc;
-                            fillMode: PreserveAspectFit
-                            Layout.preferredWidth: innerskImg.width
-                            Layout.preferredHeight: innerskImg.height
-                            width: Kirigami.Units.gridUnit * 2
-                            height: Kirigami.Units.gridUnit * 2
-                        }
-
-                        ColorOverlay {
-                            id: colorOverlay
-                            anchors.fill: innerskImg
-                            source: innerskImg
-                            color: Kirigami.Theme.linkColor
-                        }
-
-                        ColumnLayout {
-                            id: innerskillscolumn
-                            spacing: 2;
-                            Controls.Label {
-                                wrapMode: Text.WordWrap;
-                                width: skillDelegate.width;
-                                color: Kirigami.Theme.textColor;
-                                text: modelData.examples[1];
-                            }
-                            Controls.Label {
-                                wrapMode: Text.WordWrap;
-                                width: skillDelegate.width;
-                                color: Kirigami.Theme.textColor;
-                                text: modelData.examples[2];
-                            }
-                        }
-                    }
-                }
-            }
+        delegate: HintsDelegate {
+            imageSource: modelData.imgSrc
+            title: modelData.title
+            examples: modelData.examples
+            category: modelData.category
         }
     }
 }
