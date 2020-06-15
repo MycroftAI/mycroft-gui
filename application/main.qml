@@ -187,7 +187,7 @@ Kirigami.ApplicationWindow {
                     }
                 }
             }
-            
+
             Popup {
                 id: audioRecorder
                 width: 300
@@ -195,11 +195,11 @@ Kirigami.ApplicationWindow {
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 x: (root.width - width) / 2
                 y: (root.height - height) / 2
-                
+
                 RemoteStt {
                     id: remoteSttInstance
                 }
-                
+
                 onOpenedChanged: {
                     if(audioRecorder.opened){
                         remoteSttInstance.record = true;
@@ -305,9 +305,9 @@ Kirigami.ApplicationWindow {
                     text: "Speak" // TODO generic microphone icon
                     onClicked:  {
                         if(applicationSettings.usesRemoteSTT){
-                            audioRecorder.open()  
-                        } else { 
-                            speechIntent.start() 
+                            audioRecorder.open()
+                        } else {
+                            speechIntent.start()
                         }
                     }
                     visible: speechIntent.supported || applicationSettings.usesRemoteSTT
@@ -344,5 +344,3 @@ Kirigami.ApplicationWindow {
         }
     }
 }
-
-
