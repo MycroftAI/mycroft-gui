@@ -17,13 +17,13 @@
  */
 
 import QtQuick 2.9
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.2 as Controls
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12 as QQC2
 import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
 import Mycroft 1.0 as Mycroft
 
-Kirigami.ScrollablePage {
+Kirigami.Page {
     title: "Hints"
     objectName: "hints"
     property var modelCreatedObject
@@ -71,16 +71,29 @@ Kirigami.ScrollablePage {
         return match;
     }
 
-    Kirigami.CardsListView {
-        id: skillslistmodelview
-        anchors.fill: parent;
-        clip: true;
-        model: modelCreatedObject
-        delegate: HintsDelegate {
-            imageSource: modelData.imgSrc
-            title: modelData.title
-            examples: modelData.examples
-            category: modelData.category
+    ColumnLayout {
+        anchors.fill: parent
+
+        QQC2.TextField {
+            id: filterHints
+            Layout.fillWidth: true
+        }
+        Kirigami.ScrollablePage {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Kirigami.CardsListView {
+                id: skillslistmodelview
+                clip: true;
+                model: modelCreatedObject
+                anchors.fill: parent
+
+                delegate: HintsDelegate {
+                    imageSource: modelData.imgSrc
+                    title: modelData.title
+                    examples: modelData.examples
+                    category: modelData.category
+                }
+            }
         }
     }
 }

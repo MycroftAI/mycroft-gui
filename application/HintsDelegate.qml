@@ -69,7 +69,6 @@ Kirigami.AbstractCard {
 
                 ColorOverlay {
                     id: colorOverlay
-                    anchors.fill: innerskImg
                     source: innerskImg
                     color: Kirigami.Theme.linkColor
                 }
