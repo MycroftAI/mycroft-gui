@@ -38,11 +38,14 @@ Kirigami.ScrollablePage {
         var fileToFind = "README.md"
         var getList = Mycroft.FileReader.checkForMeta(defaultFold, fileToFind)
         for(var i=0; i < getList.length; i++){
-            var fileParse = Mycroft.FileReader.read(getList[i]+"/"+fileToFind);
-            var matchedRegex = getImgSrc(fileParse)
-            var matchedExamples = getExamples(fileParse)
-            var matchedCategory = getCategory(fileParse)
+            var fileName = getList[i] + "/" + fileToFind;
+            var fileParse = Mycroft.FileReader.read(fileName);
+            console.log("Loading hints from", fileName);
+            var matchedRegex = getDataFromRegex(fileName, fileParse, /<img[^>]*src='([^']*)'.*\/>\s(.*)/g)
+            var matchedExamples = getDataFromRegex(fileName, fileParse, /Examples \n.*"(.*)"\n\*\s"(.*)"/g)
+            var matchedCategory = getDataFromRegex(fileName, fileParse, /## Category\n\*\*(.*)\*\*/g)
             if(matchedRegex !== null && matchedRegex.length > 0 && matchedExamples !== null && matchedExamples.length > 0 && matchedCategory !== null && matchedCategory.length > 0) {
+                console.log("All good. \n");
                 var metaFileObject = {
                     imgSrc: matchedRegex[1],
                     title: matchedRegex[2],
@@ -55,21 +58,16 @@ Kirigami.ScrollablePage {
         modelCreatedObject = hintList
     }
 
-    function getImgSrc(fileText){
-        var re = new RegExp(/<img[^>]*src='([^']*)'.*\/>\s(.*)/g);
+    function getDataFromRegex(fileName, fileText, matchRegex){
+        var re = new RegExp(matchRegex);
         var match = re.exec(fileText);
-        return match;
-    }
-
-    function getExamples(fileText){
-        var re = new RegExp(/Examples \n.*"(.*)"\n\*\s"(.*)"/g);
-        var match = re.exec(fileText);
-        return match;
-    }
-
-    function getCategory(fileText){
-        var re = new RegExp(/## Category\n\*\*(.*)\*\*/g);
-        var match = re.exec(fileText);
+        if (match === null || match.length == 0) {
+            console.log("README.md file is not properly defined, it's missing data for the following regex:");
+            console.log(re);
+            console.log("Please fix the README.md file of the skill");
+            console.log("This warning is for skill developers");
+            console.log("if you are not a developer, fill a bug on the corresponding skill.\n");
+        }
         return match;
     }
 
