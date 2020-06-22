@@ -65,12 +65,13 @@ Kirigami.AbstractCard {
                     Layout.preferredHeight: innerskImg.height
                     width: Kirigami.Units.gridUnit * 2
                     height: Kirigami.Units.gridUnit * 2
-                }
+                    ColorOverlay {
+                        id: colorOverlay
+                        source: innerskImg
+                        color: Kirigami.Theme.linkColor
+                        anchors.fill: parent
+                    }
 
-                ColorOverlay {
-                    id: colorOverlay
-                    source: innerskImg
-                    color: Kirigami.Theme.linkColor
                 }
 
                 ColumnLayout {
