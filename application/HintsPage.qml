@@ -27,6 +27,7 @@ Kirigami.Page {
     title: "Hints"
     objectName: "hints"
     property var modelCreatedObject
+    property var filteredModel
 
     Component.onCompleted: {
         createHintModel()
@@ -56,6 +57,7 @@ Kirigami.Page {
             }
         }
         modelCreatedObject = hintList
+        filteredModel = modelCreatedObject
     }
 
     function getDataFromRegex(fileName, fileText, matchRegex){
@@ -71,20 +73,38 @@ Kirigami.Page {
         return match;
     }
 
+    function filterModel(text) {
+        var result = []
+        for (var i = 0; i < modelCreatedObject.length; i++) {
+            var obj = modelCreatedObject[i];
+            if (obj.title.toLowerCase().includes(text)
+            || obj.category.toLowerCase().includes(text)
+            || obj.examples[0].toLowerCase().includes(text)
+            || obj.examples[1].toLowerCase().includes(text)) {
+                result.push(obj)
+            }
+        }
+        return result;
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
         QQC2.TextField {
             id: filterHints
             Layout.fillWidth: true
+            onTextChanged: {
+                filteredModel = filterModel(text.toLowerCase())
+            }
         }
+
         Kirigami.ScrollablePage {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Kirigami.CardsListView {
                 id: skillslistmodelview
                 clip: true;
-                model: modelCreatedObject
+                model: filteredModel
                 anchors.fill: parent
 
                 delegate: HintsDelegate {
