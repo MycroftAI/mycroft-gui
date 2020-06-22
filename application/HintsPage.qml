@@ -92,6 +92,7 @@ Kirigami.Page {
 
         QQC2.TextField {
             id: filterHints
+            placeholderText: qsTr("Search:")
             Layout.fillWidth: true
             onTextChanged: {
                 filteredModel = filterModel(text.toLowerCase())
