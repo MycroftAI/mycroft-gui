@@ -32,6 +32,7 @@ ecm_add_test(
     Qt5::Quick
     Qt5::Network
     Qt5::WebSockets
+    Qt5::TextToSpeech
 )
 
 ecm_add_test(
@@ -47,6 +48,7 @@ ecm_add_test(
     Qt5::Quick
     Qt5::Network
     Qt5::WebSockets
+    Qt5::TextToSpeech
 )
 
 ecm_add_test(
@@ -62,4 +64,5 @@ ecm_add_test(
     Qt5::Quick
     Qt5::Network
     Qt5::WebSockets
+    Qt5::TextToSpeech
 )
