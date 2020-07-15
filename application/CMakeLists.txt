@@ -16,6 +16,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         Qt5::Svg
         Qt5::WebSockets
         OpenSSL::SSL
+        Qt5::TextToSpeech
     )
 else()
 set(mycroft_gui_app_EXTRA_LIBS
