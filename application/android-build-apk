@@ -6,10 +6,11 @@ export PATH=/opt/helpers:$PATH
 export PATH=/scripts:$PATH
 sudo chown -R user /home/user/src/mycroft-gui || true
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 build-kde-dependencies --withProject kconfig kcoreaddons kguiaddons ki18n kirigami
 build-cmake lottie-qml https://github.com/kbroulik/lottie-qml
 
-APK_ARGS=`python3 /opt/helpers/get-apk-args.py mycroft-gui`
-#build-cmake mycroft-gui "<irrelevant>" -DCMAKE_BUILD_TYPE=Debug $APK_ARGS $@
-build-cmake mycroft-gui "<irrelevant>" -DCMAKE_BUILD_TYPE=Debug $@
+APK_ARGS=`python3 $DIR/get-apk-args.py mycroft-gui`
+build-cmake mycroft-gui "<irrelevant>" -DCMAKE_BUILD_TYPE=Debug $APK_ARGS $@
 create-apk mycroft-gui
