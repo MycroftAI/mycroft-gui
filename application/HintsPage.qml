@@ -43,8 +43,8 @@ Kirigami.Page {
             var fileParse = Mycroft.FileReader.read(fileName);
             console.log("Loading hints from", fileName);
             var matchedRegex = getDataFromRegex(fileName, fileParse, /<img[^>]*src='([^']*)'.*\/>\s(.*)/g)
-            var matchedExamples = getDataFromRegex(fileName, fileParse, /Examples \n.*"(.*)"\n\*\s"(.*)"/g)
-            var matchedCategory = getDataFromRegex(fileName, fileParse, /## Category\n\*\*(.*)\*\*/g)
+            var matchedExamples = getDataFromRegex(fileName, fileParse, /## Examples.*\n.*"(.*)"\n\*\s"(.*)"/g)
+            var matchedCategory = getDataFromRegex(fileName, fileParse, /## Category.*\n\*\*(.*)\*\*/g)
             if(matchedRegex !== null && matchedRegex.length > 0 && matchedExamples !== null && matchedExamples.length > 0 && matchedCategory !== null && matchedCategory.length > 0) {
                 console.log("All good. \n");
                 var metaFileObject = {
