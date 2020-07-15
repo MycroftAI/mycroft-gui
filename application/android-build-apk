@@ -12,5 +12,5 @@ build-kde-dependencies --withProject kconfig kcoreaddons kguiaddons ki18n kiriga
 build-cmake lottie-qml https://github.com/kbroulik/lottie-qml
 
 APK_ARGS=`python3 /opt/helpers/get-apk-args.py /home/user/src/mycroft-gui`
-build-cmake mycroft-gui "<irrelevant>" -DCMAKE_BUILD_TYPE=Debug $APK_ARGS $@
+build-cmake mycroft-gui "<irrelevant>" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_VERBOSE_MAKEFILE=ON $APK_ARGS $@
 create-apk mycroft-gui
