@@ -24,5 +24,8 @@ function sync_from() {
 }
 
 # Read the IP from the mycroft-gui-app
-ip=$( sed -nr "/^\[General\]/ { :l /^webSocketAddress[ ]*=/ { s/.*=[ ]*ws:\/\///; p; q;}; n; b l;}" ~/.config/Unknown\ Organization/mycroft-gui-app.conf )
-sync_from $ip
+FILE=~/.config/Unknown\ Organization/mycroft-gui-app.conf
+if test -f "$FILE"; then
+    ip=$( sed -nr "/^\[General\]/ { :l /^webSocketAddress[ ]*=/ { s/.*=[ ]*ws:\/\///; p; q;}; n; b l;}" $FILE )
+    sync_from $ip
+fi

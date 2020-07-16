@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.12)
 option(BUILD_REMOTE_TTS "Build remote TTS support" OFF)
 set(QT_MIN_VERSION "5.9.0")
 set(KF5_MIN_VERSION "5.50.0")
- 
+
 PROJECT(mycroft-gui)
 
 # Use Extra CMake Modules (ECM) for common functionality.

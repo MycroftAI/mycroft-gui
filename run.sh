@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -Ee
 
 # Build
 bash dev_setup.sh

@@ -1,6 +1,6 @@
 include(ECMAddTests)
 
-find_package(Qt5 ${REQUIRED_QT_VERSION} NO_MODULE REQUIRED Test)
+find_package(Qt5 ${REQUIRED_QT_VERSION} NO_MODULE REQUIRED TextToSpeech Test)
 set_package_properties(Qt5Test PROPERTIES PURPOSE "Required for autotests")
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/../import)
