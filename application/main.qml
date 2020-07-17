@@ -90,6 +90,8 @@ Kirigami.ApplicationWindow {
     globalDrawer: Kirigami.GlobalDrawer {
         bannerImageSource: "banner.png"
         handleVisible: !hideTextInput
+        Kirigami.Theme.inherit: false
+        Kirigami.Theme.colorSet: applicationSettings.darkMode ? Kirigami.Theme.Complementary : Kirigami.Theme.View
 
         actions: [
             Kirigami.Action {
@@ -136,6 +138,7 @@ Kirigami.ApplicationWindow {
         }
         Switch {
             id: nightSwitch
+            visible: !Kirigami.Settings.isMobile
             text: "Dark Mode"
             checked: applicationSettings.darkMode
             onCheckedChanged: applicationSettings.darkMode = checked
