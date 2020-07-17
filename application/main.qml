@@ -24,6 +24,7 @@ import org.kde.kirigami 2.4 as Kirigami
 import QtQuick.Window 2.2
 import Mycroft 1.0 as Mycroft
 import org.kde.private.mycroftgui 1.0 as MycroftGui
+import QtQuick.Controls.Material 2.0
 
 Kirigami.ApplicationWindow {
     id: root
