@@ -27,6 +27,9 @@
 
 #ifdef Q_OS_ANDROID
 #include <QGuiApplication>
+#include <QtAndroid>
+#define FLAG_TRANSLUCENT_STATUS 0x04000000
+#define FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS 0x80000000
 #else
 #include <QApplication>
 #include <KDBusService>
@@ -120,5 +123,15 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+#ifdef Q_OS_ANDROID
+    QtAndroid::runOnAndroidThread([=]() {
+        QAndroidJniObject window = QtAndroid::androidActivity().callObjectMethod("getWindow", "()Landroid/view/Window;");
+        window.callMethod<void>("addFlags", "(I)V", FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.callMethod<void>("clearFlags", "(I)V", FLAG_TRANSLUCENT_STATUS);
+        window.callMethod<void>("setStatusBarColor", "(I)V", QColor("#31363b").rgba());
+        window.callMethod<void>("setNavigationBarColor", "(I)V", QColor("#31363b").rgba());
+    });
+#endif
+    
     return app.exec();
 }

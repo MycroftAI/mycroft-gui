@@ -305,8 +305,18 @@ Kirigami.ApplicationWindow {
                         }
                     }
                 }
-                Button {
-                    text: "Speak" // TODO generic microphone icon
+                
+                ToolButton {
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                    Layout.preferredWidth: handleAnchor.width
+                    Layout.fillHeight: true
+                    Layout.rightMargin: Kirigami.Units.smallSpacing
+                    
+                    contentItem: Kirigami.Icon {
+                        anchors.centerIn: parent
+                        source: "audio-input-microphone"
+                    }
+                    
                     onClicked:  {
                         if(applicationSettings.usesRemoteSTT){
                             audioRecorder.open()

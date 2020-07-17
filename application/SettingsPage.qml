@@ -26,38 +26,104 @@ Kirigami.ScrollablePage {
     title: "Settings"
     objectName: "Settings"
     
-
     ColumnLayout {
         id: settingsLayout
-        anchors.fill: parent
-        Layout.fillWidth: true
         width: parent.width
+        implicitHeight: childrenRect.height
+        spacing: Kirigami.Units.largeSpacing
         
-        Controls.Label {
-            id: websocketLabel 
-            text: "<h1>Websocket Address</h1> Example: <tt>ws://192.168.1.1</tt>"
+        Kirigami.Heading {
+            id: websocketLabel
+            level: 2
+            font.bold: true
+            color: Kirigami.Theme.textColor;
+            Layout.fillWidth: true
+            text: "Websocket Address"
         }
         
-        Controls.TextField {
-            id: webSocketAddressField
-            width: parent.width
+        Controls.Label {
+            id: exampleLabel
+            text: "Example: <tt>ws://192.168.1.1</tt>"
             Layout.fillWidth: true
-            Layout.columnSpan: 2
-            Component.onCompleted:{
-                webSocketAddressField.text = Mycroft.GlobalSettings.webSocketAddress
+        }
+                
+        Controls.Control{ 
+            Layout.fillWidth: true
+            Layout.preferredHeight: Kirigami.Units.gridUnit * 3
+            leftPadding: Kirigami.Units.largeSpacing
+            rightPadding: Kirigami.Units.largeSpacing
+            
+            background: Rectangle {
+                Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                color: Kirigami.Theme.backgroundColor
+                radius: 5
+            }
+            
+            contentItem: Controls.TextField {
+                id: webSocketAddressField
+                
+                Component.onCompleted:{
+                    webSocketAddressField.text = Mycroft.GlobalSettings.webSocketAddress
+                }
             }
         }
 
-        Controls.Button{
-            id: applySettings
-            Layout.fillWidth: true
-            Layout.preferredHeight: Kirigami.Units.gridUnit * 2
-            text: "Apply"
-            
-            onClicked:{ 
-                Mycroft.GlobalSettings.webSocketAddress = webSocketAddressField.text
-                Mycroft.MycroftController.reconnect()
+        RowLayout {
+           Layout.fillWidth: true
+           Layout.preferredHeight: Kirigami.Units.gridUnit * 4
+                       
+           Controls.Button {
+                id: applySettings
+                Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                Layout.fillWidth: true
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 3
+                text: "Apply"
+                
+                onClicked:{ 
+                    Mycroft.GlobalSettings.webSocketAddress = webSocketAddressField.text
+                    Mycroft.MycroftController.reconnect()
+                }
             }
+           
+           Controls.Button{
+                id: reverSettings
+                Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                Layout.fillWidth: true
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 3
+                text: "Revert"
+                
+                onClicked: {
+                    webSocketAddressField.text = "ws://0.0.0.0"
+                    Mycroft.GlobalSettings.webSocketAddress = webSocketAddressField.text
+                    Mycroft.MycroftController.reconnect()
+                }
+            }
+        }
+        
+        Item {
+            Layout.preferredHeight: Kirigami.Units.largeSpacing * 2
+        }
+        
+        Kirigami.Heading {
+            level: 2
+            text: "About Application"
+            font.bold: true
+            Layout.fillWidth: true
+            color: Kirigami.Theme.textColor
+        }
+
+        Controls.Label {
+            id: mycroftAndroidAppVersionLabel
+            text: "Application Version: 0.80"
+            Layout.fillWidth: true
+            color: Kirigami.Theme.textColor;
+        }
+        
+        Controls.Label {
+            id: mycroftGuiVersionLabel
+            text: "GUI Version: 1.0"
+            Layout.fillWidth: true
+            color: Kirigami.Theme.textColor;
         }
     }
 }
