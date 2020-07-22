@@ -2,11 +2,20 @@ PROJECT(mycroft-gui-app)
 
 
 
-SET(mycroft_gui_app_SRC
-    main.cpp
-    appsettings.cpp
-    speechintent.cpp
-)
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    SET(mycroft_gui_app_SRC
+        main.cpp
+        appsettings.cpp
+        speechintent.cpp
+        keyfilter.cpp
+    )
+else()
+    SET(mycroft_gui_app_SRC
+        main.cpp
+        appsettings.cpp
+        speechintent.cpp
+    )
+endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(mycroft_gui_app_EXTRA_LIBS

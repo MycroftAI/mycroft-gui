@@ -64,6 +64,14 @@ Kirigami.ApplicationWindow {
             }
         }
     }
+    
+    Connections {
+        target: keyFilter
+        onGlobalBackReceived: {
+            mainView.currentItem.backRequested()
+        }
+    }
+    
     // Uses Android's voice popup for speech recognition
     MycroftGui.SpeechIntent {
         id: speechIntent

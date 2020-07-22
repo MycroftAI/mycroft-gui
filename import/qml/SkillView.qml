@@ -203,6 +203,15 @@ Mycroft.AbstractSkillView {
                         delegatesView.currentIndex++
                         delegatesView.currentItem.contentItem.forceActiveFocus()
                     }
+                    
+                    function globalBackRequest(){
+                        if(delegatesView.currentIndex !== 0){
+                            delegatesView.currentIndex--
+                            delegatesView.currentItem.contentItem.forceActiveFocus()
+                        } else {
+                            Mycroft.MycroftController.sendRequest("mycroft.gui.screen.close", {})
+                        }
+                    }
 
                     Connections {
                         target: delegates
@@ -231,6 +240,12 @@ Mycroft.AbstractSkillView {
                             padding: 0
                             visible: x + width >= delegatesView.contentX || x >= delegatesView.contentX + delegatesView.width
                             property int extraBottomPadding: pageIndicator.visible ? Kirigami.Units.largeSpacing * 2 + pageIndicator.height : 0
+                            signal backRequested
+                                                        
+                            Component.onCompleted: {
+                                    backRequested.connect(delegatesView.globalBackRequest)
+                            }
+                            
                             Connections {
                                 target: model.delegateUi
                                 onFocusChanged: {
