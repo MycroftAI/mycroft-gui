@@ -114,7 +114,7 @@ Kirigami.ScrollablePage {
 
         Controls.Label {
             id: mycroftAndroidAppVersionLabel
-            text: "Application Version: 0.80"
+            text: "Application Version: 0.82"
             Layout.fillWidth: true
             color: Kirigami.Theme.textColor;
         }
