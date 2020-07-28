@@ -140,8 +140,8 @@ int main(int argc, char *argv[])
         QAndroidJniObject window = QtAndroid::androidActivity().callObjectMethod("getWindow", "()Landroid/view/Window;");
         window.callMethod<void>("addFlags", "(I)V", FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.callMethod<void>("clearFlags", "(I)V", FLAG_TRANSLUCENT_STATUS);
-        window.callMethod<void>("setStatusBarColor", "(I)V", QColor("#31363b").rgba());
-        window.callMethod<void>("setNavigationBarColor", "(I)V", QColor("#31363b").rgba());
+        window.callMethod<void>("setStatusBarColor", "(I)V", QColor("#303030").rgba());
+        window.callMethod<void>("setNavigationBarColor", "(I)V", QColor("#303030").rgba());
     });
 #endif
     
