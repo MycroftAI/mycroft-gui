@@ -114,6 +114,8 @@ Note: Remote device / server must have mycroft services running or  `./start-myc
 4. Talk to your Mycroft!
 
 5. Additional Notes:
+
+   - CAUTION: The Mycroft messagebus is an open websocket with no built-in security measures by default. We strongly recommend that you do not expose the messagebus ports outside a secure LAN/PAN unless you have other security measures in place. 
    
    - For Externally Hosted Mycroft-Core, one would require to sync skills, one can simply use the provided sync script from the repository to perform a sync
      
