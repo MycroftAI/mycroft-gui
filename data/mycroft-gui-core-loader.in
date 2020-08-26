@@ -1,3 +1,11 @@
 #!/bin/sh
-cd ${MYCROFT_CORE_DIR}
-./start-mycroft.sh all
+
+#If startup command is defined use it
+if ! test -z "$MYCROFT_START_CMD"; then
+	$MYCROFT_START_CMD
+else
+	# Use default git install location
+	cd ${MYCROFT_CORE_DIR}
+	./start-mycroft.sh all
+fi
+

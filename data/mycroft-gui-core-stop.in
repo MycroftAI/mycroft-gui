@@ -1,3 +1,8 @@
 #!/bin/sh
-cd ${MYCROFT_CORE_DIR}
-./stop-mycroft.sh
+#If stop command is defined use it
+if ! test -z "$MYCROFT_STOP_CMD"; then
+	$MYCROFT_STOP_CMD
+else
+	# Use default git install
+	cd ${MYCROFT_CORE_DIR}
+	./stop-mycroft.sh
