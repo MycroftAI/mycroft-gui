@@ -63,6 +63,12 @@ Kirigami.ApplicationWindow {
                 Mycroft.MycroftController.sendRequest(singleSkillHome, {});
             }
         }
+        
+        onSpeechRequestedChanged: {
+            if(expectingResponse) {
+                micButton.clicked()
+            }
+        }
     }
     
     Connections {
@@ -315,6 +321,7 @@ Kirigami.ApplicationWindow {
                 }
                 
                 ToolButton {
+                    id: micButton
                     Kirigami.Theme.colorSet: Kirigami.Theme.Button
                     Layout.preferredWidth: handleAnchor.width
                     Layout.fillHeight: true

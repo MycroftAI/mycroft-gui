@@ -103,6 +103,16 @@ MycroftController::MycroftController(QObject *parent)
 
 #ifdef Q_OS_ANDROID
     m_speech = new QTextToSpeech(this);
+    connect(m_speech, &QTextToSpeech::stateChanged, this, [this] () {
+        if (!ttsqueue.isEmpty() && m_speech->state() != QTextToSpeech::Speaking) {
+            m_speech->say(ttsqueue.dequeue());
+        }
+        
+        if (ttsqueue.isEmpty() && m_speech->state() != QTextToSpeech::Speaking && m_isExpectingSpeechResponse) {
+            emit speechRequestedChanged(m_isExpectingSpeechResponse);
+            m_isExpectingSpeechResponse = false;
+        }
+    });
 #endif
 
 }
@@ -183,8 +193,14 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     emit intentRecevied(type, doc[QStringLiteral("data")].toVariant().toMap());
 
 #ifdef Q_OS_ANDROID
-    if (type == QLatin1String("speak")) {
+    if (type == QLatin1String("speak") && m_speech->state() != QTextToSpeech::Speaking) {
         m_speech->say(doc[QStringLiteral("data")][QStringLiteral("utterance")].toString());
+    } else if (type == QLatin1String("speak") && m_speech->state() == QTextToSpeech::Speaking) {
+        ttsqueue.enqueue(doc[QStringLiteral("data")][QStringLiteral("utterance")].toString());
+    }
+    
+    if (type == QLatin1String("mycroft.mic.listen")) {
+        m_isExpectingSpeechResponse = true;
     }
 #endif
 

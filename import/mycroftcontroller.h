@@ -25,6 +25,7 @@
 
 #ifdef Q_OS_ANDROID
 #include <QTextToSpeech>
+#include <QQueue>
 #endif
 
 #include <QTimer>
@@ -81,6 +82,7 @@ Q_SIGNALS:
     void currentSkillChanged();
     void currentIntentChanged();
     void serverReadyChanged();
+    void speechRequestedChanged(bool expectingResponse);
 
     //signal with nearly all data
     //TODO: remove?
@@ -121,6 +123,8 @@ private:
 
 #ifdef Q_OS_ANDROID
     QTextToSpeech *m_speech;
+    bool m_isExpectingSpeechResponse = false;
+    QQueue<QString> ttsqueue;
 #endif
     
     bool m_isSpeaking = false;
