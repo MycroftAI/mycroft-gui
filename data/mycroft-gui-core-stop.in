@@ -4,5 +4,6 @@ if ! test -z "$MYCROFT_STOP_CMD"; then
 	$MYCROFT_STOP_CMD
 else
 	# Use default git install
-	cd ${MYCROFT_CORE_DIR}
+	cd "${MYCROFT_CORE_DIR}"|| exit
 	./stop-mycroft.sh
+fi

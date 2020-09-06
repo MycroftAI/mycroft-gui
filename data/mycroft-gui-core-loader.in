@@ -5,7 +5,7 @@ if ! test -z "$MYCROFT_START_CMD"; then
 	$MYCROFT_START_CMD
 else
 	# Use default git install location
-	cd ${MYCROFT_CORE_DIR}
+	cd "${MYCROFT_CORE_DIR}" || exit
 	./start-mycroft.sh all
 fi
 
