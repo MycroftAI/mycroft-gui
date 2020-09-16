@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>qml/AudioPlayer.qml</file>
         <file>qml/AutoFitLabel.qml</file>
+        <file>qml/BoxLayout.qml</file>
         <file>qml/Delegate.qml</file>
         <file>qml/PaginatedText.qml</file>
         <file>qml/ProportionalDelegate.qml</file>

@@ -26,24 +26,20 @@ Delegate {
 
     property int unitDensity: 100
     property real proportionalGridUnit: root.contentHeight / unitDensity
-    property alias spacing: layout.spacing
+    property int spacing: proportionalGridUnit * 10
+    property alias enforceUniformSizes: layout.enforceUniformSizes
 
     leftPadding: Math.min(root.width, root.height)/15
     topPadding: Math.min(root.width, root.height)/15
     rightPadding: Math.min(root.width, root.height)/15
     bottomPadding: Math.min(root.width, root.height)/15 + root.parent.extraBottomPadding
 
-    contentItemAutoHeight: false
-    contentItem: ColumnLayout {
+    //contentItemAutoHeight: false
+    contentItem: Mycroft.BoxLayout {
         id: layout
 
-        anchors {
-            verticalCenter: root.verticalCenter
-            verticalCenterOffset: (topPadding - bottomPadding) / 2
-        }
-        height: implicitHeight
-
         //TODO: default to zero?
-        spacing: proportionalGridUnit * 10
+        rowSpacing: root.spacing
+        columnSpacing: root.spacing
     }
 }
