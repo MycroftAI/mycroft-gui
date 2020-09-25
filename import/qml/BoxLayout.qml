@@ -20,43 +20,61 @@ import QtQuick 2.6
 import QtQuick.Layouts 1.4
 import Mycroft 1.0 as Mycroft
 
-GridLayout {
+Item {
     id: root
+    property alias rowSpacing: lay.rowSpacing
+    property alias columnSpacing: lay.columnSpacing
+
     property int orientation: width > height ? Qt.Horizontal : Qt.Vertical
     property bool enforceUniformSizes: true
-    columns: orientation === Qt.Horizontal ? Infinity : 1
-    rows: orientation === Qt.Vertical ? 1 : Infinity
 
-    onWidthChanged: sizingTimer.restart()
-    onHeightChanged: sizingTimer.restart()
+    GridLayout {
+        id: lay
+        anchors.fill: parent
 
-    Timer {
-        id: sizingTimer
-        interval: 0
-        onTriggered: {
-            if (!root.enforceUniformSizes) {
-                return;
-            }
-            if (root.orientation === Qt.Horizontal) {
-                for (let i in root.children) {
-                    root.children[i].Layout.preferredWidth = root.width//(root.width - (root.columnSpacing * root.children.length - 1)) / root.children.length;
-                    root.children[i].Layout.minimumWidth = -1;
-                    root.children[i].Layout.maximumWidth = -1;
+        columns: root.orientation === Qt.Horizontal ? Infinity : 1
+        rows: root.orientation === Qt.Vertical ? 1 : Infinity
 
-                    root.children[i].Layout.preferredHeight = -1;
-                    root.children[i].Layout.alignmnent = Qt.AlignCenter;
-                    root.children[i].Layout.fillWidth = true;
-                    root.children[i].Layout.fillHeight = true;
+        Repeater {
+            model: root.children.length-1
+            delegate: Item {
+                Layout.fillWidth: root.enforceUniformSizes ?  true : item.Layout.fillWidth
+                Layout.fillHeight: root.enforceUniformSizes ?  true : item.Layout.fillHeight
+
+                Layout.minimumWidth: root.enforceUniformSizes ? 0 : item.Layout.minimumWidth
+                Layout.minimumHeight: root.enforceUniformSizes ? 0 : item.Layout.minimumHeight
+
+                Layout.maximumWidth: root.enforceUniformSizes ? Infinity : item.Layout.maximumWidth
+                Layout.maximumHeight: root.enforceUniformSizes ? Infinity : item.Layout.maximumHeight
+
+                Layout.preferredWidth: root.enforceUniformSizes ? -1 : item.Layout.preferredWidth
+                Layout.preferredHeight: root.enforceUniformSizes ? -1 : item.Layout.preferredHeight
+
+                readonly property Item item: root.children[modelData+1]
+                visible: item.visible && !(item instanceof Repeater)
+                onItemChanged: syncGeometry()
+
+                function syncGeometry() {
+                    item.width = width
+                    if (item.implicitHeight > 0
+                        && !item.Layout.fillHeight
+                        && root.orientation === Qt.Horizontal) {
+                        item.height = Math.min(height, item.implicitHeight);
+                    } else {
+                        item.height = height;
+                    }
+                    item.x = x
+                    
+                    if (root.orientation === Qt.Horizontal) {
+                        item.y = y + (height - item.height) / 2;
+                    } else {
+                        item.y = y;
+                    }
                 }
-            } else {
-                for (let i in root.children) {
-                    root.children[i].Layout.preferredHeight = root.height//(root.height - (root.rowSpacing * root.children.length - 1)) / root.children.length;
-
-                    root.children[i].Layout.preferredWidth = -1;
-                    root.children[i].Layout.alignmnent = Qt.AlignCenter;
-                    root.children[i].Layout.fillWidth = true;
-                    root.children[i].Layout.fillHeight = true;
-                }
+                onWidthChanged: Qt.callLater(syncGeometry)
+                onHeightChanged: Qt.callLater(syncGeometry)
+                onXChanged: Qt.callLater(syncGeometry)
+                onYChanged: Qt.callLater(syncGeometry)
             }
         }
     }
