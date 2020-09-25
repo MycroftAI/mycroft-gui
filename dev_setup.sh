@@ -28,9 +28,10 @@ show_menus() {
     echo "1. KDE NEON BIONIC"
     echo "2. K/UBUNTU 20.04+ / KDE NEON FOCAL"
     echo "3. MANJARO/ARCH"
-    echo "4. OTHERS"
-    echo "5. UPDATE INSTALLATION"
-    echo "6. EXIT"
+    echo "4. ALPINE LINUX"
+    echo "5. OTHERS"
+    echo "6. UPDATE INSTALLATION"
+    echo "7. EXIT"
 }
 
 read_options() {
@@ -41,9 +42,10 @@ read_options() {
 		1) neon ;;
 		2) kubuntu ;;
 		3) manjaro ;;
-		4) others ;;
-		5) updateinstall;;
-		6) exit 0;;
+		4) alpine ;;
+		5) others ;;
+		6) updateinstall;;
+		7) exit 0;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
 }
@@ -82,6 +84,17 @@ manjaro() {
     echo "Please Enter Authentication For Installing System Dependencies"
     yes | sudo pacman -S git cmake extra-cmake-modules kio kio-extras plasma-framework qt5-websockets qt5-webview qt5-declarative qt5-multimedia qt5-quickcontrols2 qt5-webengine qt5-base
     build_gui   
+}
+
+alpine() {
+    echo "Starting Installation For Alpine Linux"
+    echo ""
+    echo "The development headers for the following packages will be installed: cmake extra-cmake-modules kio kio-extras plasma-framework qt5-qtwebsockets qt5-qtwebview qt5-qtdeclarative qt5-qtmultimedia qt5-qtquickcontrols2 qt5-qtwebengine qt5-qtbase"
+    echo ""
+    echo "Please Enter Authentication For Installing System Dependencies"
+    yes | sudo apk add alpine-sdk cmake extra-cmake-modules kio-dev kio-extras-dev plasma-framework-dev qt5-qtwebsockets-dev qt5-qtwebview-dev qt5-qtdeclarative-dev qt5-qtmultimedia-dev qt5-qtquickcontrols2-dev qt5-qtwebengine-dev qt5-qtbase-dev
+    build_gui   
+
 }
 
 updateinstall() {
