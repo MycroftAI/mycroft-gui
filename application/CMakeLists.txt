@@ -3,7 +3,7 @@ PROJECT(mycroftguiapp)
 include(ECMSetupVersion)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
-    PROJECT(mycroftguiapp VERSION "0.84")
+    PROJECT(mycroftguiapp VERSION "0.86")
     SET(mycroft_gui_app_SRC
         main.cpp
         appsettings.cpp
