@@ -1,8 +1,9 @@
-PROJECT(mycroft-gui-app)
+PROJECT(mycroftguiapp)
 
-
+include(ECMSetupVersion)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    PROJECT(mycroftguiapp VERSION "0.84")
     SET(mycroft_gui_app_SRC
         main.cpp
         appsettings.cpp
@@ -10,12 +11,15 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         keyfilter.cpp
     )
 else()
+    PROJECT(mycroftguiapp VERSION "1.0.1")
     SET(mycroft_gui_app_SRC
         main.cpp
         appsettings.cpp
         speechintent.cpp
     )
 endif()
+
+ecm_setup_version(PROJECT VERSION_HEADER version.h)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(mycroft_gui_app_EXTRA_LIBS

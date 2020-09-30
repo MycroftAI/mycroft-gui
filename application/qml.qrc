@@ -7,6 +7,7 @@
         <file>HintsPage.qml</file>
         <file>SettingsPage.qml</file>
         <file>RemoteStt.qml</file>
+        <file>AboutPage.qml</file>
         <file alias="background.png">background.png</file>
         <file alias="banner.png">banner.png</file>
     </qresource>

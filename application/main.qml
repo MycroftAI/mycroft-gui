@@ -20,7 +20,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.0
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.11 as Kirigami
 import QtQuick.Window 2.2
 import Mycroft 1.0 as Mycroft
 import org.kde.private.mycroftgui 1.0 as MycroftGui
@@ -112,6 +112,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Action {
                 text: "Hints"
                 iconName: "help-hint"
+                visible: !Kirigami.Settings.isMobile
                 checked: pageStack.layers.currentItem.objectName == "hints"
                 onTriggered: {
                     if (checked) {
@@ -136,6 +137,20 @@ Kirigami.ApplicationWindow {
                         pageStack.layers.push(Qt.resolvedUrl("SettingsPage.qml"));
                     }
                 }
+            },
+            Kirigami.Action {
+                text: "About"
+                iconName: "help-about"
+                checked: pageStack.layers.currentItem.objectName == "About"
+                onTriggered: {
+                    if (checked) {
+                        pageStack.layers.pop(pageStack.layers.initialItem);
+                    } else if (pageStack.layers.depth > 1) {
+                        pageStack.layers.replace(Qt.resolvedUrl("AboutPage.qml"));
+                    } else {
+                        pageStack.layers.push(Qt.resolvedUrl("AboutPage.qml"));
+                    }
+                }
             }
         ]
         Switch {
@@ -157,11 +172,6 @@ Kirigami.ApplicationWindow {
             text: "Dark Mode"
             checked: applicationSettings.darkMode
             onCheckedChanged: applicationSettings.darkMode = checked
-        }
-        Switch {
-            text: "Connect Automatically"
-            checked: Mycroft.GlobalSettings.autoConnect
-            onCheckedChanged: Mycroft.GlobalSettings.autoConnect = checked
         }
     }
 

@@ -19,7 +19,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2 as Controls
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.11 as Kirigami
 import Mycroft 1.0 as Mycroft
 
 Kirigami.ScrollablePage {
@@ -104,26 +104,10 @@ Kirigami.ScrollablePage {
             Layout.preferredHeight: Kirigami.Units.largeSpacing * 2
         }
         
-        Kirigami.Heading {
-            level: 2
-            text: "About Application"
-            font.bold: true
-            Layout.fillWidth: true
-            color: Kirigami.Theme.textColor
-        }
-
-        Controls.Label {
-            id: mycroftAndroidAppVersionLabel
-            text: "Application Version: 0.82"
-            Layout.fillWidth: true
-            color: Kirigami.Theme.textColor;
-        }
-        
-        Controls.Label {
-            id: mycroftGuiVersionLabel
-            text: "GUI Version: 1.0"
-            Layout.fillWidth: true
-            color: Kirigami.Theme.textColor;
+        Controls.Switch {
+            text: "Connect Automatically"
+            checked: Mycroft.GlobalSettings.autoConnect
+            onCheckedChanged: Mycroft.GlobalSettings.autoConnect = checked
         }
     }
 }

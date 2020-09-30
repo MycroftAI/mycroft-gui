@@ -38,6 +38,7 @@
 
 #include "speechintent.h"
 #include "appsettings.h"
+#include "version.h"
 
 int main(int argc, char *argv[])
 {
@@ -104,6 +105,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("deviceMaximized"), maximize);
     engine.rootContext()->setContextProperty(QStringLiteral("hideTextInput"), parser.isSet(hideTextInputOption));
     engine.rootContext()->setContextProperty(QStringLiteral("globalScreenRotation"), parser.isSet(rotateScreen) ? rotation : 0);
+    engine.rootContext()->setContextProperty(QStringLiteral("versionNumber"), QStringLiteral(mycroftguiapp_VERSION_STRING));
     
 #ifdef Q_OS_ANDROID
     engine.rootContext()->setContextProperty(QStringLiteral("keyFilter"), kf);

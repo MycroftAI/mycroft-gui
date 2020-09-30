@@ -5,7 +5,12 @@ option(BUILD_REMOTE_TTS "Build remote TTS support" OFF)
 set(QT_MIN_VERSION "5.9.0")
 set(KF5_MIN_VERSION "5.50.0")
 
+IF(POLICY CMP0048)
+    CMAKE_POLICY(SET CMP0048 NEW)
+ENDIF(POLICY CMP0048)
+
 PROJECT(mycroft-gui)
+PROJECT(mycroft-gui VERSION "1.0.1")
 
 # Use Extra CMake Modules (ECM) for common functionality.
 # See http://api.kde.org/ecm/manual/ecm.7.html
