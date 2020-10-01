@@ -34,8 +34,8 @@ Item {
             name: "idle"
             PropertyChanges {
                 target: innerCircle
-                graphicsColor: Kirigami.Theme.highlightedTextColor
-                backgroundColor: Kirigami.Theme.highlightColor
+                graphicsColor: "white"
+                backgroundColor: "deepskyblue"
             }
             PropertyChanges {
                 target: root
@@ -59,8 +59,8 @@ Item {
             name: "waiting"
             PropertyChanges {
                 target: innerCircle
-                graphicsColor: Kirigami.Theme.highlightedTextColor
-                backgroundColor: Kirigami.Theme.highlightColor
+                graphicsColor: "white"
+                backgroundColor: "deepskyblue"
             }
             PropertyChanges {
                 target: root
@@ -85,8 +85,8 @@ Item {
             PropertyChanges {
                 target: innerCircle
                 targetRotation: 0
-                graphicsColor: Kirigami.Theme.highlightedTextColor
-                backgroundColor: Kirigami.Theme.highlightColor
+                graphicsColor: "white"
+                backgroundColor: "deepskyblue"
             }
             PropertyChanges {
                 target: root
