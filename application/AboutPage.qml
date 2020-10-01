@@ -25,7 +25,9 @@ import Mycroft 1.0 as Mycroft
 Kirigami.ScrollablePage {
     title: "About"
     objectName: "About"
-    
+
+    globalToolBarStyle: Kirigami.ApplicationHeaderStyle.Titles
+
     ColumnLayout {
         id: aboutLayout
         width: parent.width
