@@ -37,6 +37,7 @@ Kirigami.ApplicationWindow {
     x: deviceWidth ? Screen.desktopAvailableHeight - width : undefined
     y: deviceHeight ? Screen.desktopAvailableHeight - height : undefined
 
+    color: "black"
     //HACK!! needs proper api in kirigami
     Component.onCompleted: {
         globalDrawer.handle.handleAnchor = handleAnchor;
