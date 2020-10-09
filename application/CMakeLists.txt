@@ -5,7 +5,7 @@ include(ECMSetupVersion)
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
     if ($ENV{BUILD_NUMBER})
-        PROJECT(mycroftguiapp VERSION $ENV{BUILD_NUMBER})
+        PROJECT(mycroftguiapp VERSION "0.$ENV{BUILD_NUMBER}")
     else()
         PROJECT(mycroftguiapp VERSION "0.91")
     endif()
