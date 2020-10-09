@@ -1,0 +1,10 @@
+if ($ENV{BUILD_NUMBER})
+    SET(MYCROFT_MANIFEST_VERSION "0.$ENV{BUILD_NUMBER}")
+else()
+    SET(MYCROFT_MANIFEST_VERSION "0.91")
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/AndroidManifest.xml.in)
+    configure_file(AndroidManifest.xml.in ${CMAKE_CURRENT_SOURCE_DIR}/AndroidManifest.xml) 
+    file(REMOVE AndroidManifest.xml.in)
+endif()

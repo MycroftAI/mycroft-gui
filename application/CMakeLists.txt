@@ -3,6 +3,7 @@ PROJECT(mycroftguiapp)
 include(ECMSetupVersion)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    add_subdirectory("android")
 
     if ($ENV{BUILD_NUMBER})
         PROJECT(mycroftguiapp VERSION "0.$ENV{BUILD_NUMBER}")

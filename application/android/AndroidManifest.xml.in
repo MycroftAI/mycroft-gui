@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<manifest package="ai.mycroft.kirigami" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="2.3" android:versionCode="1594817663" android:installLocation="auto">
+<manifest package="ai.mycroft.kirigami" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="@MYCROFT_MANIFEST_VERSION@" android:versionCode="1601460420" android:installLocation="auto">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Mycroft AI" android:icon="@drawable/icon">
@@ -57,4 +57,4 @@
          Remove the comment if you do not require these default features. -->
     <!-- %%INSERT_FEATURES -->
 
-</manifest>
+</manifest> 
