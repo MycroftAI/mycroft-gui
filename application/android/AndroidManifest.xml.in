@@ -8,7 +8,7 @@
                   android:label="Mycroft AI"
                   android:theme="@style/AppTheme"
                   android:screenOrientation="unspecified"
-                  android:windowSoftInputMode="adjustResize"
+                  android:windowSoftInputMode="adjustUnspecified"
                   android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
