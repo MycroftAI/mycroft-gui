@@ -55,15 +55,20 @@ Label {
     Layout.preferredHeight: paintedHeight
     font.pixelSize: height
 
-    /*onHeightChanged: {print(height)
-        metrics.font.pixelSize = height*1.2;
-        while ((metrics.tightBoundingRect.width > width || metrics.tightBoundingRect.height > height) && metrics.font.pixelSize > 8) {
-            --metrics.font.pixelSize;
+    onHeightChanged: pixelSizeTimer.restart()
+    onWidthChanged: pixelSizeTimer.restart()
+
+    Timer {
+        id: pixelSizeTimer
+        interval: 250
+        onTriggered: {//print(height)
+            metrics.font.pixelSize = height*1.2;
+            while ((metrics.tightBoundingRect.width > width || metrics.tightBoundingRect.height > height) && metrics.font.pixelSize > 8) {
+                --metrics.font.pixelSize;
+            }
+            font.pixelSize = metrics.font.pixelSize
         }
-        font.pixelSize = metrics.font.pixelSize
     }
-    onWidthChanged: heightChanged();
-*/
 
     renderType: height > 40
         ? Text.QtRendering
