@@ -254,7 +254,7 @@ bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) {
         forceActiveFocus(Qt::MouseFocusReason);
-        triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap());
+        triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap({{QStringLiteral("skillId"), m_skillId}}));
     }
     return QQuickItem::childMouseEventFilter(item, event);
 }
@@ -262,7 +262,7 @@ bool AbstractDelegate::childMouseEventFilter(QQuickItem *item, QEvent *event)
 void AbstractDelegate::mousePressEvent(QMouseEvent *event)
 {
     forceActiveFocus(Qt::MouseFocusReason);
-    triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap());
+    triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap({{QStringLiteral("skillId"), m_skillId}}));
 }
 
 void AbstractDelegate::focusInEvent(QFocusEvent *event)
@@ -284,7 +284,7 @@ void AbstractDelegate::focusInEvent(QFocusEvent *event)
 
     int index = context->contextProperty(QStringLiteral("index")).toInt();
     if (index >= 0) {
-        triggerGuiEvent(QStringLiteral("page_gained_focus"), QVariantMap({{QStringLiteral("number"), index}}));
+        triggerGuiEvent(QStringLiteral("page_gained_focus"), QVariantMap({{QStringLiteral("number"), index}, {QStringLiteral("skillId"), m_skillId}}));
     }
 }
 
