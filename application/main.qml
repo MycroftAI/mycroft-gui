@@ -70,6 +70,12 @@ Kirigami.ApplicationWindow {
                 micButton.clicked()
             }
         }
+        
+        onSkillTimeoutReceived: {
+            if(mainView.currentItem.contentItem.skillId() == skillidleid) {
+                root.close()
+            }
+        }
     }
     
     Connections {

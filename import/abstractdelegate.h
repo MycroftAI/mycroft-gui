@@ -169,7 +169,6 @@ public:
      * @internal skill id this delegate belongs to
      */
     void setSkillId(const QString &skillId);
-    QString skillId() const;
 
 public Q_SLOTS:
     /**
@@ -177,6 +176,7 @@ public Q_SLOTS:
      * Is not possible to trigger events belonging to different skills
      */
     void triggerGuiEvent(const QString &eventName, const QVariantMap &parameters);
+    QString skillId() const;
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
