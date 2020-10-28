@@ -265,6 +265,11 @@ void AbstractDelegate::mousePressEvent(QMouseEvent *event)
     triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap({{QStringLiteral("skillId"), m_skillId}}));
 }
 
+void AbstractDelegate::keyReleaseEvent(QKeyEvent *event)
+{
+    triggerGuiEvent(QStringLiteral("system.gui.user.interaction"), QVariantMap({{QStringLiteral("skillId"), m_skillId}}));
+}
+
 void AbstractDelegate::focusInEvent(QFocusEvent *event)
 {
     //if the focus came from the server, don't ask the server again
