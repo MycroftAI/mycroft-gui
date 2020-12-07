@@ -42,6 +42,7 @@ class MycroftController : public QObject
     //FIXME: make those two enums?
     Q_PROPERTY(bool speaking READ isSpeaking NOTIFY isSpeakingChanged)
     Q_PROPERTY(bool listening READ isListening NOTIFY isListeningChanged)
+    Q_PROPERTY(int listeningVolume READ listeningVolume NOTIFY listeningVolumeChanged)
 
     Q_PROPERTY(QString currentSkill READ currentSkill NOTIFY currentSkillChanged)
     Q_PROPERTY(QString currentIntent READ currentIntent NOTIFY currentIntentChanged)
@@ -61,6 +62,7 @@ public:
 
     bool isSpeaking() const;
     bool isListening() const;
+    int listeningVolume() const;
     bool serverReady() const;
     Status status() const;
     QString currentSkill() const;
@@ -77,6 +79,7 @@ Q_SIGNALS:
     //mycroft
     void isSpeakingChanged();
     void isListeningChanged();
+    void listeningVolumeChanged();
     void stopped();
     void notUnderstood();
     void currentSkillChanged();
@@ -127,7 +130,7 @@ private:
     bool m_isExpectingSpeechResponse = false;
     QQueue<QString> ttsqueue;
 #endif
-    
+    int m_listeningVolume = 0;
     bool m_isSpeaking = false;
     bool m_isListening = false;
     bool m_mycroftLaunched = false;

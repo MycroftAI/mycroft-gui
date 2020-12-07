@@ -189,7 +189,7 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
 #ifdef DEBUG_MYCROFT_MESSAGEBUS
     qDebug() << "type" << type;
 #endif
-
+qWarning()<<doc;
     emit intentRecevied(type, doc[QStringLiteral("data")].toVariant().toMap());
 
 #ifdef Q_OS_ANDROID
@@ -229,6 +229,8 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         QString skill_id = doc[QStringLiteral("data")][QStringLiteral("skill_id")].toString();
         if (skill_id == QStringLiteral("fallback-unknown.mycroftai")) {
             m_isListening = false;
+            m_listeningVolume = 0;
+            emit listeningVolumeChanged();
             emit isListeningChanged();
             emit notUnderstood();
         }
@@ -307,6 +309,14 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     } else if (type == QLatin1String("mycroft.ready")) {
         m_serverReady = true;
         emit serverReadyChanged();
+    } else if (m_isListening
+        && type == QLatin1String("gui.value.set")
+        && doc[QStringLiteral("data")][QStringLiteral("state")] == QStringLiteral("listening")) {
+        const int volume = doc[QStringLiteral("data")][QStringLiteral("volume")].toInt();
+        if (volume >= 0 && volume != m_listeningVolume) {
+            m_listeningVolume = volume;
+            emit listeningVolumeChanged();
+        }
     }
     
     if (type == QLatin1String("screen.close.idle.event")) {
@@ -416,6 +426,11 @@ bool MycroftController::isSpeaking() const
 bool MycroftController::isListening() const
 {
     return m_isListening;
+}
+
+int MycroftController::listeningVolume() const
+{
+    return m_listeningVolume;
 }
 
 bool MycroftController::serverReady() const
