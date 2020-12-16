@@ -27,6 +27,7 @@ class ActiveSkillsModel;
 class AbstractSkillView;
 class AbstractDelegate;
 class SessionDataMap;
+class QTranslator;
 
 class AbstractSkillView: public QQuickItem
 {
@@ -95,7 +96,8 @@ private:
     QTimer m_trimComponentsTimer;
     QString m_id;
     QUrl m_url;
-    QHash<QString, SessionDataMap*> m_skillData;
+    QHash<QString, SessionDataMap *> m_skillData;
+    QHash<QString, QTranslator *> m_translatorsForSkill;
 
     MycroftController *m_controller;
     QWebSocket *m_guiWebSocket;

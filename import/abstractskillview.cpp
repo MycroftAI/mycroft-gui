@@ -30,7 +30,7 @@
 #include <QJsonDocument>
 #include <QQmlContext>
 #include <QQmlEngine>
-
+#include <QTranslator>
 
 AbstractSkillView::AbstractSkillView(QQuickItem *parent)
     : QQuickItem(parent),
@@ -419,6 +419,12 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
             const QString skillId = m_activeSkillsModel->data(m_activeSkillsModel->index(position+i, 0)).toString();
 
+            if (!m_translatorsForSkill.contains(skillId)) {
+                QTranslator *translator = m_translatorsForSkill[skillId];
+                QCoreApplication::removeTranslator(translator);
+                m_translatorsForSkill.remove(skillId);
+                delete translator;
+            }
             //TODO: do this after an animation
             {
                 auto i = m_skillData.find(skillId);
@@ -492,6 +498,17 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
 
             DelegateLoader *loader = new DelegateLoader(this);
             loader->init(skillId, delegateUrl);
+
+            if (!m_translatorsForSkill.contains(skillId)) {
+                QTranslator *translator = new QTranslator(this);
+                // TODO: download translations if skills are remote
+                if (translator->load(QLocale(), skillId, QLatin1String("_"), loader->translationsUrl().path())) {
+                    QCoreApplication::installTranslator(translator);
+                    m_translatorsForSkill[skillId] = translator;
+                } else {
+                    translator->deleteLater();
+                }
+            }
 
             connect(loader, &QObject::destroyed, &m_trimComponentsTimer, QOverload<>::of(&QTimer::start));
 
