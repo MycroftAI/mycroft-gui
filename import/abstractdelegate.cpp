@@ -69,7 +69,7 @@ void DelegateLoader::init(const QString skillId, const QUrl &delegateUrl)
 QUrl DelegateLoader::translationsUrl() const
 {
     QUrl url(m_delegateUrl);
-    url.setPath(m_delegateUrl.path().mid(0, m_delegateUrl.path().indexOf(QLatin1Char('/'), -1)) + QStringLiteral("translations"));
+    url.setPath(m_delegateUrl.path().mid(0, m_delegateUrl.path().lastIndexOf(QLatin1Char('/')) + 1) + QStringLiteral("translations"));
     return url;
 }
 
