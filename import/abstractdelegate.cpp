@@ -70,7 +70,7 @@ QUrl DelegateLoader::translationsUrl() const
 {
     QUrl url(m_delegateUrl);
     url.setPath(m_delegateUrl.path().mid(0, m_delegateUrl.path().indexOf(QStringLiteral("/ui/")) + 4) + QStringLiteral("translations"));
-qWarning()<<"AAAAAAAAAA"<<url;
+
     return url;
 }
 
