@@ -66,6 +66,14 @@ void DelegateLoader::init(const QString skillId, const QUrl &delegateUrl)
     }
 }
 
+QUrl DelegateLoader::translationsUrl() const
+{
+    QUrl url(m_delegateUrl);
+    url.setPath(m_delegateUrl.path().mid(0, m_delegateUrl.path().indexOf(QStringLiteral("/ui/")) + 4) + QStringLiteral("translations"));
+
+    return url;
+}
+
 void DelegateLoader::createObject()
 {
     QQmlContext *context = QQmlEngine::contextForObject(m_view);

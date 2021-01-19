@@ -38,6 +38,8 @@ public:
 
     void setFocus(bool focus);
 
+    QUrl translationsUrl() const;
+
 Q_SIGNALS:
     void delegateCreated();
 
