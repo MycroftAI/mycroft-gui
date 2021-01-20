@@ -28,6 +28,9 @@ Item {
     property int orientation: width > height ? Qt.Horizontal : Qt.Vertical
     property bool enforceUniformSizes: true
 
+    implicitWidth: lay.implicitWidth
+    implicitHeight: lay.implicitHeight
+
     GridLayout {
         id: lay
         anchors.fill: parent

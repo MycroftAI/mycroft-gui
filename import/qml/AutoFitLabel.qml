@@ -55,18 +55,25 @@ Label {
     Layout.preferredHeight: paintedHeight
     font.pixelSize: height
 
-    onHeightChanged: pixelSizeTimer.restart()
-    onWidthChanged: pixelSizeTimer.restart()
+    Binding {
+        target: font
+        property: "pixelSize"
+        value: root.height
+        when: root.wrapMode === Text.NoWrap
+    }
+
+    onHeightChanged: if (!root.wrapMode !== Text.NoWrap) pixelSizeTimer.restart()
+    onWidthChanged: if (!root.wrapMode !== Text.NoWrap) pixelSizeTimer.restart()
 
     Timer {
         id: pixelSizeTimer
         interval: 250
         onTriggered: {//print(height)
-            metrics.font.pixelSize = height*1.2;
+            metrics.font.pixelSize = root.height*1.2;
             while ((metrics.tightBoundingRect.width > width || metrics.tightBoundingRect.height > height) && metrics.font.pixelSize > 8) {
                 --metrics.font.pixelSize;
             }
-            font.pixelSize = metrics.font.pixelSize
+            root.font.pixelSize = metrics.font.pixelSize
         }
     }
 
