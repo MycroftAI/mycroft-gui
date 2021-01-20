@@ -29,9 +29,10 @@ show_menus() {
     echo "2. K/UBUNTU 20.04+ / KDE NEON FOCAL"
     echo "3. MANJARO/ARCH"
     echo "4. ALPINE LINUX"
-    echo "5. OTHERS"
-    echo "6. UPDATE INSTALLATION"
-    echo "7. EXIT"
+    echo "5. openSUSE Leap 15.x"
+    echo "6. OTHERS"
+    echo "7. UPDATE INSTALLATION"
+    echo "8. EXIT"
 }
 
 read_options() {
@@ -43,9 +44,10 @@ read_options() {
 		2) kubuntu ;;
 		3) manjaro ;;
 		4) alpine ;;
-		5) others ;;
-		6) updateinstall;;
-		7) exit 0;;
+		5) opensuse ;;
+		6) others ;;
+		7) updateinstall;;
+		8) exit 0;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
 }
@@ -95,6 +97,16 @@ alpine() {
     yes | sudo apk add alpine-sdk cmake extra-cmake-modules kio-dev kio-extras-dev plasma-framework-dev qt5-qtwebsockets-dev qt5-qtwebview-dev qt5-qtdeclarative-dev qt5-qtmultimedia-dev qt5-qtquickcontrols2-dev qt5-qtwebengine-dev qt5-qtbase-dev
     build_gui   
 
+}
+
+opensuse() {
+    echo "Starting Installation For openSUSE Leap 15.x"
+    echo ""
+    echo "The development headers for the following packages will be installed: cmake extra-cmake-modules kio-devel kio-extras5 plasma-framework libqt5-qtwebsockets libqt5-qtwebview libqt5-qtdeclarative libqt5-qtmultimedia libQt5QuickControls2 libqt5-qtwebengine libqt5-qtbase ki18n kdbusaddons"
+    echo ""
+    echo "Please Enter Authentication For Installing System Dependencies"
+    sudo zypper --non-interactive install cmake extra-cmake-modules kio-devel kio-extras5 plasma-framework-devel libqt5-qtwebsockets-devel libqt5-qtwebview-devel libqt5-qtdeclarative-devel libqt5-qtmultimedia-devel libQt5QuickControls2-devel libqt5-qtwebengine-devel libqt5-qtbase-devel ki18n-devel kdbusaddons-devel
+  
 }
 
 updateinstall() {
