@@ -32,8 +32,8 @@ Label {
     font.family: "Noto Sans Display"
 
     //HACK: needs a better way to fit its box
-    topPadding: -height/5
-    bottomPadding: -height/5
+    topPadding: root.wrapMode === Text.NoWrap ? -height/5 : 0
+    bottomPadding: root.wrapMode === Text.NoWrap ? -height/5 : 0
     fontSizeMode: Text.Fit;
     TextMetrics {
         id: metrics
@@ -56,19 +56,24 @@ Label {
     font.pixelSize: height
 
     Binding {
-        target: font
-        property: "pixelSize"
+        target: root
+        property: "font.pixelSize"
         value: root.height
-        when: root.wrapMode === Text.NoWrap
+        when: root.wrapMode !== Text.NoWrap
     }
-
-    onHeightChanged: if (!root.wrapMode !== Text.NoWrap) pixelSizeTimer.restart()
-    onWidthChanged: if (!root.wrapMode !== Text.NoWrap) pixelSizeTimer.restart()
+Timer {
+    repeat: true
+    interval: 500
+    running: true
+    onTriggered: print(root.font.pixelSize+ " "+root.paintedHeight+" "+root.height)
+}
+    onHeightChanged: if (root.wrapMode === Text.NoWrap) pixelSizeTimer.restart()
+    onWidthChanged: if (root.wrapMode === Text.NoWrap) pixelSizeTimer.restart()
 
     Timer {
         id: pixelSizeTimer
         interval: 250
-        onTriggered: {//print(height)
+        onTriggered: {
             metrics.font.pixelSize = root.height*1.2;
             while ((metrics.tightBoundingRect.width > width || metrics.tightBoundingRect.height > height) && metrics.font.pixelSize > 8) {
                 --metrics.font.pixelSize;

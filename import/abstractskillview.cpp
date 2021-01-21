@@ -303,7 +303,7 @@ void AbstractSkillView::onGuiSocketMessageReceived(const QString &message)
         return;
     }
 
-    //qDebug() << "gui message type" << type;
+    qDebug() << "gui message type" << type;
 
 //BEGIN SKILLDATA
     // The SkillData was updated by the server
