@@ -38,7 +38,7 @@ show_menus() {
 read_options() {
     echo " "
 	local choice
-	read -p "Enter choice [ 1 - 5 ] " choice
+	read -p "Enter choice [ 1 - 8 ] " choice
 	case $choice in
 		1) neon ;;
 		2) kubuntu ;;
