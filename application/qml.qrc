@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>qtquickcontrols2.conf</file>
         <file>main.qml</file>
         <file>Idler.qml</file>
         <file>HintsDelegate.qml</file>

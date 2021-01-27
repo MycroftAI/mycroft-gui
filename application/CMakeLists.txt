@@ -38,6 +38,9 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         OpenSSL::SSL
         Qt5::TextToSpeech
     )
+    qt5_add_resources(mycroft_gui_app_SRC
+        controlsconf.qrc
+    )
 else()
 set(mycroft_gui_app_EXTRA_LIBS
         Qt5::Widgets
