@@ -27,6 +27,7 @@ Kirigami.ScrollablePage {
     objectName: "Settings"
 
     globalToolBarStyle: Kirigami.ApplicationHeaderStyle.Titles
+    Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
 
     ColumnLayout {
         id: settingsLayout
@@ -56,13 +57,14 @@ Kirigami.ScrollablePage {
             rightPadding: Kirigami.Units.largeSpacing
             
             background: Rectangle {
-                Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
                 color: Kirigami.Theme.backgroundColor
                 radius: 5
             }
             
             contentItem: Controls.TextField {
                 id: webSocketAddressField
+                Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
                 
                 Component.onCompleted:{
                     webSocketAddressField.text = Mycroft.GlobalSettings.webSocketAddress
@@ -76,7 +78,7 @@ Kirigami.ScrollablePage {
                        
            Controls.Button {
                 id: applySettings
-                Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
                 Layout.fillWidth: true
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 3
                 text: "Apply"
@@ -89,7 +91,7 @@ Kirigami.ScrollablePage {
            
            Controls.Button{
                 id: reverSettings
-                Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
                 Layout.fillWidth: true
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 3
                 text: "Revert"

@@ -27,6 +27,7 @@ Kirigami.ScrollablePage {
     objectName: "About"
 
     globalToolBarStyle: Kirigami.ApplicationHeaderStyle.Titles
+    Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
 
     ColumnLayout {
         id: aboutLayout

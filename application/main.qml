@@ -55,6 +55,11 @@ Kirigami.ApplicationWindow {
         if (singleSkillHome.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
             Mycroft.MycroftController.sendRequest(singleSkillHome, {});
         }
+        
+        if(!isAndroid && Kirigami.Settings.isMobile){
+            applicationSettings.usesRemoteSTT = true
+            Mycroft.GlobalSettings.usesRemoteTTS = true
+        }
     }
 
     Connections {
