@@ -5,6 +5,8 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <QAudioBuffer>
+#include <QIODevice>
 
 AudioRec::AudioRec(QObject *parent) :
     QObject(parent),
@@ -15,10 +17,12 @@ AudioRec::AudioRec(QObject *parent) :
 
 void AudioRec::recordTStart()
 {
-    destinationFile.setFileName(QStringLiteral("/tmp/mycroft_in.raw"));
-    destinationFile.open( QIODevice::WriteOnly | QIODevice::Truncate );
-
-#ifdef BUILD_REMOTE_TTS    
+//    destinationFile.setFileName(QStringLiteral("/tmp/mycroft_in.raw"));
+//    destinationFile.open( QIODevice::WriteOnly | QIODevice::Truncate );
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+    buffer.open( QIODevice::ReadWrite | QIODevice::Truncate );
+    //connect(&buffer, &QBuffer::bytesWritten, this, &AudioRec::bytesWritten);
     QAudioFormat format;
     format.setSampleRate(8000);
     format.setChannelCount(1);
@@ -34,15 +38,18 @@ void AudioRec::recordTStart()
      }
 
     audio = new QAudioInput(format, this);
-    audio->start(&destinationFile);
-#endif
+    //audio->start(&destinationFile);
+    device = audio->start();
+    destinationFile.setFileName(QStringLiteral("/tmp/mycroft_in.raw"));
+    destinationFile.open( QIODevice::WriteOnly | QIODevice::Truncate );
+    connect(device, &QIODevice::readyRead, this, &AudioRec::captureDataFromDevice);
+    //audio->start();
 }
 
 void AudioRec::recordTStop()
 {
-#ifdef BUILD_REMOTE_TTS
+    qDebug() << "I SHOULD NOT BE HERE";
     audio->stop();
-#endif
     destinationFile.close();
     emit recordTStatus(QStringLiteral("Completed"));
 }
@@ -69,4 +76,27 @@ void AudioRec::returnStream()
     dataObject.insert(QStringLiteral("lang"), QStringLiteral("en-us"));
     dataObject.insert(QStringLiteral("audio"), QJsonValue::fromVariant(utteranceArray));
     m_controller->sendBinary(QStringLiteral("recognizer_loop:incoming_aud"), dataObject);
+}
+
+void AudioRec::captureDataFromDevice()
+{
+    QByteArray inputByteArray = device->readAll();
+    destinationFile.write(inputByteArray);
+    const int channelbytes = audio->format().sampleSize() / 8;
+    const int samplebytes = audio->format().channelCount() * channelbytes;
+    const int samplecount = inputByteArray.size() / samplebytes;
+    quint32 maxvalue= 0;
+    quint32 value = 0;
+    quint32 amp = 255;
+    const unsigned char* ptr = reinterpret_cast<const unsigned char*>(inputByteArray.data());
+    for (int i = 0; i < samplecount; ++i) {
+        for (int j = 0; j < audio->format().channelCount(); ++j) {
+            value = *reinterpret_cast<const quint8*>(ptr);
+        }
+        maxvalue = qMax(value, maxvalue);
+        ptr += channelbytes;
+    }
+    maxvalue = qMin(maxvalue, amp);
+    qreal m_level = qreal(maxvalue) / amp;
+    emit micAudioLevelChanged(m_level);
 }

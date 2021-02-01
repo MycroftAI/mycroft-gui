@@ -58,6 +58,14 @@ static QObject *mycroftControllerSingletonProvider(QQmlEngine *engine, QJSEngine
     return MycroftController::instance();
 }
 
+static QObject *audioRecSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return new AudioRec;
+}
+
 void MycroftPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(QLatin1String(uri) == QLatin1String("Mycroft"));
@@ -65,9 +73,9 @@ void MycroftPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<MycroftController>(uri, 1, 0, "MycroftController", mycroftControllerSingletonProvider);
     qmlRegisterSingletonType<GlobalSettings>(uri, 1, 0, "GlobalSettings", globalSettingsSingletonProvider);
     qmlRegisterSingletonType<FileReader>(uri, 1, 0, "FileReader", fileReaderSingletonProvider);
+    qmlRegisterSingletonType<AudioRec>(uri, 1, 0, "AudioRec", audioRecSingletonProvider);
     qmlRegisterType<AbstractSkillView>(uri, 1, 0, "AbstractSkillView");
     qmlRegisterType<AbstractDelegate>(uri, 1, 0, "AbstractDelegate");
-    qmlRegisterType<AudioRec>(uri, 1, 0, "AudioRec");
     qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/AudioPlayer.qml")), uri, 1, 0, "AudioPlayer");
     qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/AutoFitLabel.qml")), uri, 1, 0, "AutoFitLabel");
     qmlRegisterType(QUrl(QStringLiteral("qrc:/qml/Delegate.qml")), uri, 1, 0, "Delegate");

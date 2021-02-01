@@ -34,10 +34,7 @@
 #include <QQmlContext>
 #include <QUuid>
 #include <QWebSocket>
-
-#ifdef BUILD_REMOTE_TTS
 #include <QMediaPlayer>
-#endif
 
 MycroftController *MycroftController::instance()
 {
@@ -204,7 +201,6 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
     }
 #endif
 
-#ifdef BUILD_REMOTE_TTS
     if (type == QLatin1String("remote.tts.audio") && m_appSettingObj->usesRemoteTTS()) {
         QString aud = doc[QStringLiteral("data")][QStringLiteral("wave")].toString();
         auto innerdoc = QJsonDocument::fromJson(aud.toUtf8());
@@ -222,7 +218,6 @@ void MycroftController::onMainSocketMessageReceived(const QString &message)
         player->setMedia(QUrl::fromLocalFile(QStringLiteral("/tmp/incoming.wav")));
         player->play();
     }
-#endif
 
     // Try catching intent_failure from another method because of issue: https://github.com/MycroftAI/mycroft-core/issues/2490
     if (type == QLatin1String("active_skill_request")) {         

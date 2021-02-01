@@ -57,7 +57,7 @@ void GlobalSettings::setUsesRemoteTTS(bool usesRemoteTTS)
 
 bool GlobalSettings::displayRemoteConfig() const
 {
-#ifdef BUILD_REMOTE_TTS
+#ifndef Q_OS_ANDROID
     return m_settings.value(QStringLiteral("displayRemoteConfig"), true).toBool();
 #else
     return m_settings.value(QStringLiteral("displayRemoteConfig"), false).toBool();

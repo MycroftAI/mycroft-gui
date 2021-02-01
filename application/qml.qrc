@@ -9,5 +9,6 @@
         <file>AboutPage.qml</file>
         <file alias="background.png">background.png</file>
         <file alias="banner.png">banner.png</file>
+        <file>images/microphone.svg</file>
     </qresource>
 </RCC>

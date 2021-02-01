@@ -61,12 +61,7 @@ Label {
         value: root.height
         when: root.wrapMode !== Text.NoWrap
     }
-Timer {
-    repeat: true
-    interval: 500
-    running: true
-    onTriggered: print(root.font.pixelSize+ " "+root.paintedHeight+" "+root.height)
-}
+
     onHeightChanged: if (root.wrapMode === Text.NoWrap) pixelSizeTimer.restart()
     onWidthChanged: if (root.wrapMode === Text.NoWrap) pixelSizeTimer.restart()
 

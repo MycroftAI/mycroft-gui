@@ -1,7 +1,5 @@
 project(mycroftimport)
 
-
-
 set(mycroftimport_SRCS
     mycroftplugin.cpp
     mycroftcontroller.cpp
@@ -29,15 +27,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
     )
 endif()
 
-if (BUILD_REMOTE_TTS)
-    set(mycroftplugin_EXTRA_LIBS
-        Qt5::Multimedia
-    )
-endif()
-
 target_link_libraries(mycroftplugin
         PUBLIC
             Qt5::Core
+            Qt5::Multimedia
             ${mycroftplugin_EXTRA_LIBS}
         PRIVATE
             Qt5::Qml

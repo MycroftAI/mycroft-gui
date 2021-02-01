@@ -64,7 +64,7 @@ neon() {
     echo "Following Packages Will Be Installed: git-core g++ cmake extra-cmake-modules kio-dev gettext pkg-config qml-module-qtwebengine pkg-kde-tools qtbase5-dev qtdeclarative5-dev libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libkf5kio-dev libqt5webview5-dev"
     echo ""
     echo "Please Enter Authentication For Installing System Dependencies"
-    sudo apt-get install -y git-core g++ cmake extra-cmake-modules kio-dev gettext pkg-config qml-module-qtwebengine pkg-kde-tools qtbase5-dev qtdeclarative5-dev libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libkf5kio-dev libqt5webview5-dev
+    sudo apt-get install -y git-core g++ cmake extra-cmake-modules kio-dev gettext pkg-config qml-module-qtwebengine pkg-kde-tools qtbase5-dev qtdeclarative5-dev libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libkf5kio-dev libqt5webview5-dev qtmultimedia5-dev
     build_gui
 }
 
@@ -74,7 +74,7 @@ kubuntu() {
     echo "Following Packages Will Be Installed: git-core g++ cmake extra-cmake-modules gettext pkg-config qml-module-qtwebengine pkg-kde-tools qtbase5-dev qtdeclarative5-dev libkf5kio-dev libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libqt5webview5-dev"
     echo ""
     echo "Please Enter Authentication For Installing System Dependencies"
-    sudo apt-get install -y git-core g++ cmake extra-cmake-modules gettext pkg-config qml-module-qtwebengine pkg-kde-tools qtbase5-dev qtdeclarative5-dev libkf5kio-dev libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libqt5webview5-dev
+    sudo apt-get install -y git-core g++ cmake extra-cmake-modules gettext pkg-config qml-module-qtwebengine pkg-kde-tools qtbase5-dev qtdeclarative5-dev libkf5kio-dev libqt5websockets5-dev libkf5i18n-dev libkf5notifications-dev libkf5plasma-dev libqt5webview5-dev qtmultimedia5-dev
     build_gui
 }
 

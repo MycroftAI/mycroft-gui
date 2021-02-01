@@ -8,37 +8,38 @@ Item {
     id: root
     anchors.fill: parent
     property alias record: audrectimer.running
-    
-    Mycroft.AudioRec {
-        id: audioRec
-    }
-        
+
     Timer {
         id: audrectimer
         interval: 10000
         running: false
         onRunningChanged: {
             if(running){
-                audioRec.recordTStart()
+                Mycroft.AudioRec.recordTStart()
                 numAnim.start()
             } else {
-                audioRec.recordTStop()
+                Mycroft.AudioRec.recordTStop()
+                numAnim.stop()
             }
         }
     }
 
     function sendAudioClip() {
-        audioRec.returnStream()
+        Mycroft.AudioRec.returnStream()
     }
 
     Connections {
-        target: audioRec
+        target: Mycroft.AudioRec
+
+        onMicAudioLevelChanged: {
+            animatedCircle.width = Kirigami.Units.iconSizes.large + (Kirigami.Units.iconSizes.smallMedium * micLevel)
+        }
+
         onRecordTStatus: {
-            console.log(recStatus)
             switch(recStatus){
             case "Completed":
                 console.log("In Completed")
-                audioRec.readStream()
+                Mycroft.AudioRec.readStream()
                 sendAudioClip()
                 audioRecorder.close()
                 break;
@@ -57,6 +58,7 @@ Item {
         Kirigami.Heading {
             id: lbl1
             text: "Listening"
+            Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
             level: 2
             font.bold: true
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
@@ -65,20 +67,59 @@ Item {
         Kirigami.Separator {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
+            color: Kirigami.Theme.disabledTextColor
         }
 
         Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
+
+            Rectangle {
+                id: animatedCircle
+                anchors.centerIn: parent
+                width: Kirigami.Units.iconSizes.large
+                height: width
+                radius: 1000
+                color: Qt.rgba(Kirigami.Theme.linkColor.r, Kirigami.Theme.linkColor.g, Kirigami.Theme.linkColor.b, 0.7)
+
+                Image {
+                    source: "images/microphone.svg"
+                    anchors.centerIn: parent
+                    width: Kirigami.Units.iconSizes.large
+                    height: width
+
+                }
+            }
+        }
+
+        Kirigami.Heading {
+            Layout.fillWidth: true
+            Layout.topMargin: Kirigami.Units.smallSpacing
+            Layout.bottomMargin: Kirigami.Units.smallSpacing
+            Layout.preferredHeight: paintedHeight
+            Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
+            wrapMode: Text.WordWrap
+            maximumLineCount: 2
+            level: 3
+            horizontalAlignment: Text.AlignHCenter
+            text: "Say something to Mycroft"
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Kirigami.Units.smallSpacing * 0.15
+
             ProgressBar {
                 id: bar
                 to: 100
                 from: 0
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Kirigami.Units.largeSpacing
-                anchors.rightMargin: Kirigami.Units.largeSpacing
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.fill: parent
+
+                background: Rectangle {
+                    implicitWidth: parent.width
+                    implicitHeight: parent.height
+                    color: Kirigami.Theme.disabledTextColor
+                }
 
                 contentItem: Item {
                     implicitWidth: parent.width
@@ -90,8 +131,6 @@ Item {
                         radius: 2
                         gradient: Gradient {
                             GradientStop { position: 0.0; color: Kirigami.Theme.linkColor }
-                            GradientStop { position: 0.3; color: Qt.lighter(Kirigami.Theme.linkColor, 1.5)}
-                            GradientStop { position: 0.6; color: Qt.lighter(Kirigami.Theme.linkColor, 1.5)}
                             GradientStop { position: 1.0; color: Kirigami.Theme.linkColor }
                         }
                     }
@@ -108,14 +147,11 @@ Item {
             }
         }
 
-        Kirigami.Separator {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 1
-        }
-
         Rectangle {
+            Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
             color: Kirigami.Theme.hoverColor
             Layout.fillWidth: true
+            Layout.topMargin: Kirigami.Units.smallSpacing
             Layout.preferredHeight: Kirigami.Units.gridUnit * 1.5
 
             Kirigami.Heading {
@@ -132,4 +168,4 @@ Item {
         }
     }
 }
- 
+

@@ -160,19 +160,7 @@ Kirigami.ApplicationWindow {
                 }
             }
         ]
-        Switch {
-            id: remoteSTTSwitch
-            text: "Remote STT"
-            checked: applicationSettings.usesRemoteSTT
-            onCheckedChanged: applicationSettings.usesRemoteSTT = checked
-            visible: Mycroft.GlobalSettings.displayRemoteConfig
-        }
-        Switch {
-            text: "Remote TTS"
-            checked: Mycroft.GlobalSettings.usesRemoteTTS
-            onCheckedChanged: Mycroft.GlobalSettings.usesRemoteTTS = checked
-            visible: Mycroft.GlobalSettings.displayRemoteConfig
-        }
+        
         Switch {
             id: nightSwitch
             visible: !Kirigami.Settings.isMobile
@@ -225,12 +213,22 @@ Kirigami.ApplicationWindow {
 
             Popup {
                 id: audioRecorder
-                width: 300
-                height: 125
+                width: root.width - (Kirigami.Units.largeSpacing * 2)
+                height: root.height / 2
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
+                parent: root
                 x: (root.width - width) / 2
                 y: (root.height - height) / 2
-
+                
+                background: Rectangle {
+                    color: Kirigami.Theme.backgroundColor
+                    radius: Kirigami.Units.smallSpacing * 0.25
+                    border.width: 1
+                    Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
+                    border.color: Qt.rgba(Kirigami.Theme.disabledTextColor.r, Kirigami.Theme.disabledTextColor.g, Kirigami.Theme.disabledTextColor.b, 0.7)
+                }
+                
                 RemoteStt {
                     id: remoteSttInstance
                 }
@@ -250,6 +248,7 @@ Kirigami.ApplicationWindow {
                 Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.View
                 anchors.fill: parent
             }
+
             Button {
                 anchors.centerIn: parent
                 text: "start"
@@ -267,6 +266,7 @@ Kirigami.ApplicationWindow {
                 }
                 z: 999
             }
+
             Kirigami.Heading {
                 id: inputQuery
                 Kirigami.Theme.colorSet: mainView.Kirigami.Theme.colorSet
@@ -317,6 +317,23 @@ Kirigami.ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.preferredWidth: height
                 }
+                
+                ToolButton {
+                    id: backButton
+                    Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
+                    Layout.preferredWidth: handleAnchor.width
+                    Layout.fillHeight: true
+                    Layout.rightMargin: Kirigami.Units.smallSpacing
+                    enabled: !isAndroid && Kirigami.Settings.isMobile ? 1 : 0
+                    icon.name: "go-previous"
+                    
+                    onClicked:  {
+                        mainView.currentItem.backRequested()
+                    }
+                    visible: !isAndroid && Kirigami.Settings.isMobile ? 1 : 0
+                }
+                
+                
                 TextField {
                     id: qinput
                     Layout.fillWidth: true
@@ -339,15 +356,11 @@ Kirigami.ApplicationWindow {
                 
                 ToolButton {
                     id: micButton
-                    Kirigami.Theme.colorSet: Kirigami.Theme.Button
+                    Kirigami.Theme.colorSet: nightSwitch.checked ? Kirigami.Theme.Complementary : Kirigami.Theme.Window
                     Layout.preferredWidth: handleAnchor.width
                     Layout.fillHeight: true
                     Layout.rightMargin: Kirigami.Units.smallSpacing
-                    
-                    contentItem: Kirigami.Icon {
-                        anchors.centerIn: parent
-                        source: "audio-input-microphone"
-                    }
+                    icon.name: "audio-input-microphone"
                     
                     onClicked:  {
                         if(applicationSettings.usesRemoteSTT){

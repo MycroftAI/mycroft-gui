@@ -109,8 +109,10 @@ int main(int argc, char *argv[])
     
 #ifdef Q_OS_ANDROID
     engine.rootContext()->setContextProperty(QStringLiteral("keyFilter"), kf);
+    engine.rootContext()->setContextProperty(QStringLiteral("isAndroid"), true);
 #else
     engine.rootContext()->setContextProperty(QStringLiteral("keyFilter"), 0);
+    engine.rootContext()->setContextProperty(QStringLiteral("isAndroid"), false);
 #endif
 
     QString singleSkill = parser.value(skillOption);
