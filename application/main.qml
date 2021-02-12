@@ -331,6 +331,7 @@ Kirigami.ApplicationWindow {
                     Layout.rightMargin: Kirigami.Units.smallSpacing
                     enabled: !isAndroid && Kirigami.Settings.isMobile ? 1 : 0
                     icon.name: "go-previous"
+                    icon.color: "white"
                     
                     onClicked:  {
                         mainView.currentItem.backRequested()
@@ -366,6 +367,7 @@ Kirigami.ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.rightMargin: Kirigami.Units.smallSpacing
                     icon.name: "audio-input-microphone"
+                    icon.color: "white"
                     
                     onClicked:  {
                         if(applicationSettings.usesRemoteSTT){
