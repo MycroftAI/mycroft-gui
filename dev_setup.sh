@@ -92,11 +92,11 @@ alpine() {
     echo "Starting Installation For Alpine Linux"
     echo ""
     echo "The development headers for the following packages will be installed: cmake extra-cmake-modules kio kio-extras plasma-framework qt5-qtwebsockets qt5-qtwebview qt5-qtdeclarative qt5-qtmultimedia qt5-qtquickcontrols2 qt5-qtwebengine qt5-qtbase"
+    echo "They can easily be uninstalled later on by running 'apk del makedeps-mycroft-gui'"
     echo ""
     echo "Please Enter Authentication For Installing System Dependencies"
-    yes | sudo apk add alpine-sdk cmake extra-cmake-modules kio-dev kio-extras-dev plasma-framework-dev qt5-qtwebsockets-dev qt5-qtwebview-dev qt5-qtdeclarative-dev qt5-qtmultimedia-dev qt5-qtquickcontrols2-dev qt5-qtwebengine-dev qt5-qtbase-dev
-    build_gui   
-
+    sudo apk add --virtual makedeps-mycroft-gui alpine-sdk cmake extra-cmake-modules kio-dev kio-extras-dev plasma-framework-dev qt5-qtwebsockets-dev qt5-qtwebview-dev qt5-qtdeclarative-dev qt5-qtmultimedia-dev qt5-qtquickcontrols2-dev qt5-qtwebengine-dev qt5-qtbase-dev
+    build_gui
 }
 
 opensuse() {
