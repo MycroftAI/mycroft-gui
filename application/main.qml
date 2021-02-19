@@ -347,7 +347,7 @@ Kirigami.ApplicationWindow {
                     onAccepted: {
                         Mycroft.MycroftController.sendText(qinput.text)
                     }
-
+                    focus: false
                     Connections {
                         target: speechIntent
                         onSpeechRecognized: qinput.text = text
