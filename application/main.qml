@@ -48,9 +48,9 @@ Kirigami.ApplicationWindow {
         }
 
         //FIXME
-        if (qinput.visible) {
-            qinput.forceActiveFocus();
-        }
+        //if (qinput.visible) {
+        //    qinput.forceActiveFocus();
+        //}
 
         if (singleSkillHome.length > 0 && Mycroft.MycroftController.status === Mycroft.MycroftController.Open) {
             Mycroft.MycroftController.sendRequest(singleSkillHome, {});
@@ -331,7 +331,6 @@ Kirigami.ApplicationWindow {
                     Layout.rightMargin: Kirigami.Units.smallSpacing
                     enabled: !isAndroid && Kirigami.Settings.isMobile ? 1 : 0
                     icon.name: "go-previous"
-                    icon.color: "white"
                     
                     onClicked:  {
                         mainView.currentItem.backRequested()
@@ -367,7 +366,6 @@ Kirigami.ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.rightMargin: Kirigami.Units.smallSpacing
                     icon.name: "audio-input-microphone"
-                    icon.color: "white"
                     
                     onClicked:  {
                         if(applicationSettings.usesRemoteSTT){
