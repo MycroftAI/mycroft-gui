@@ -25,7 +25,7 @@ Delegate {
     id: root
 
     property int unitDensity: 100
-    property real proportionalGridUnit: root.contentHeight / unitDensity
+    property real proportionalGridUnit: Math.min(root.contentWidth, root.contentHeight) / unitDensity
     property int spacing: proportionalGridUnit * 10
     property alias enforceUniformSizes: layout.enforceUniformSizes
 
