@@ -98,6 +98,9 @@ Flickable {
         property real lastLineY: 0
         property real lastLineHeight: 0
 
+        font.pointSize: -1
+        font.pixelSize: Math.min(root.width, root.height) / 100 * 12
+
         function updateCurrentIndex() {
             root.currentIndex = Math.round(root.contentX / columnWidth);
             snap();
