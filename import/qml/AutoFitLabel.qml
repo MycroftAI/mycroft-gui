@@ -31,9 +31,6 @@ Label {
     //TODO: to remove, all of that should end up in the device system setup
     font.family: "Noto Sans Display"
 
-    //HACK: needs a better way to fit its box
-    topPadding: root.wrapMode === Text.NoWrap ? -height/5 : 0
-    bottomPadding: root.wrapMode === Text.NoWrap ? -height/5 : 0
     fontSizeMode: Text.Fit;
     TextMetrics {
         id: metrics
@@ -53,7 +50,7 @@ Label {
 
     Layout.preferredWidth: paintedWidth
     Layout.preferredHeight: paintedHeight
-    font.pixelSize: height
+    font.pixelSize: 1024
 
     Binding {
         target: root
@@ -69,8 +66,12 @@ Label {
         id: pixelSizeTimer
         interval: 250
         onTriggered: {
-            metrics.font.pixelSize = root.height*1.2;
-            while ((metrics.tightBoundingRect.width > width || metrics.tightBoundingRect.height > height) && metrics.font.pixelSize > 8) {
+            if (!root.visible) {
+                return;
+            }
+            metrics.font.pixelSize = root.parent.height
+            while (( metrics.tightBoundingRect.width > width || metrics.tightBoundingRect.height > height)
+                   && metrics.font.pixelSize > 8) {
                 --metrics.font.pixelSize;
             }
             root.font.pixelSize = metrics.font.pixelSize
